@@ -1,0 +1,23 @@
+/* pages/workout/list.wxss */
+.sync-tip {
+  font-size: 24rpx;
+  text-align: center;
+  padding: 8rpx 0 20rpx;
+}
+.workout-item { position: relative; }
+.workout-title { gap: 14rpx; }
+.workout-name { font-size: 32rpx; }
+.pr-badge {
+  font-size: 20rpx; color: #fff; background: var(--warning);
+  border-radius: 6rpx; padding: 2rpx 12rpx; font-weight: 600;
+}
+.workout-meta { margin-top: 18rpx; flex-wrap: wrap; gap: 14rpx; }
+.pending-tag { color: var(--warning); background: #FEF3C7; }
+.del-btn {
+  position: absolute;
+  right: 28rpx;
+  bottom: 24rpx;
+  color: var(--danger);
+  font-size: 24rpx;
+  padding: 8rpx 12rpx;
+}

@@ -1,0 +1,19 @@
+<!-- pages/body/detail.wxml -->
+<view class="container">
+  <view class="card">
+    <view class="date muted">{{dateLabel}}</view>
+    <view class="row metrics">
+      <view class="metric">
+        <view class="metric-val bold">{{weight}}</view>
+        <view class="metric-label muted">体重（{{unitLabel}}）</view>
+      </view>
+      <view wx:if="{{bodyFat !== null}}" class="metric">
+        <view class="metric-val bold">{{bodyFat}}</view>
+        <view class="metric-label muted">体脂率（%）</view>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-ghost" bindtap="goEdit">编辑</button>
+  <view class="del-link" bindtap="onDelete">删除这条记录</view>
+</view>

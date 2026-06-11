@@ -1,0 +1,94 @@
+<!-- pages/workout/edit.wxml -->
+<view class="container edit-page">
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <view class="form-item">
+      <view class="form-label">日期</view>
+      <picker mode="date" value="{{date}}" bindchange="onDateChange">
+        <view class="form-input">{{date}}</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="form-label">名称</view>
+      <input class="form-input" placeholder="如：胸+三头" value="{{name}}" bindinput="onNameInput" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">备注</view>
+      <input class="form-input" placeholder="选填" value="{{note}}" bindinput="onNoteInput" />
+    </view>
+  </view>
+
+  <!-- 动作列表 -->
+  <view wx:for="{{exercises}}" wx:key="index" wx:for-item="ex" wx:for-index="i" class="card">
+    <view class="row between ex-head">
+      <view class="bold">{{ex.name}}</view>
+      <view class="ex-remove" bindtap="removeExercise" data-i="{{i}}">移除</view>
+    </view>
+
+    <view class="set-head row">
+      <text class="set-col-idx">组</text>
+      <text class="set-col">重量(kg)</text>
+      <text class="set-col">次数</text>
+      <text class="set-col-del"></text>
+    </view>
+
+    <view wx:for="{{ex.sets}}" wx:key="index" wx:for-item="s" wx:for-index="j" class="set-row row">
+      <text class="set-col-idx">{{j + 1}}</text>
+      <input
+        class="set-col set-input"
+        type="digit"
+        placeholder="0"
+        value="{{s.weight}}"
+        data-i="{{i}}" data-j="{{j}}" data-field="weight"
+        bindinput="onSetInput"
+      />
+      <input
+        class="set-col set-input"
+        type="number"
+        placeholder="0"
+        value="{{s.reps}}"
+        data-i="{{i}}" data-j="{{j}}" data-field="reps"
+        bindinput="onSetInput"
+      />
+      <text class="set-col-del" bindtap="removeSet" data-i="{{i}}" data-j="{{j}}">✕</text>
+    </view>
+
+    <view class="add-set" bindtap="addSet" data-i="{{i}}">+ 添加一组</view>
+  </view>
+
+  <!-- 添加动作 -->
+  <view class="btn-ghost add-ex" bindtap="openPicker">+ 添加动作</view>
+
+  <!-- 保存 -->
+  <button class="btn-primary save-btn" bindtap="onSave" loading="{{saving}}">保存训练</button>
+</view>
+
+<!-- 动作选择面板 -->
+<view wx:if="{{pickerVisible}}" class="mask" bindtap="closePicker"></view>
+<view class="picker-panel {{pickerVisible ? 'show' : ''}}">
+  <view class="picker-head row between">
+    <text class="bold">选择动作</text>
+    <text class="picker-close" bindtap="closePicker">完成</text>
+  </view>
+  <view class="picker-body">
+    <scroll-view scroll-y class="cat-list">
+      <view
+        wx:for="{{lib}}" wx:key="category"
+        class="cat-item {{activeCategory === index ? 'active' : ''}}"
+        bindtap="switchCategory" data-index="{{index}}"
+      >{{item.category}}</view>
+    </scroll-view>
+    <scroll-view scroll-y class="ex-list">
+      <view
+        wx:for="{{lib[activeCategory].items}}" wx:key="*this"
+        class="ex-pick"
+        bindtap="pickExercise" data-name="{{item}}"
+      >{{item}}</view>
+    </scroll-view>
+  </view>
+  <view class="custom-row row">
+    <input class="custom-input" placeholder="自定义动作名称" value="{{customName}}" bindinput="onCustomInput" />
+    <view class="custom-add" bindtap="addCustom">添加</view>
+  </view>
+</view>

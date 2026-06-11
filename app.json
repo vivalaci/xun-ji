@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/curve/curve",
+    "pages/workout/list",
+    "pages/workout/edit",
+    "pages/body/body",
+    "pages/body/edit",
+    "pages/body/detail",
+    "pages/profile/profile",
+    "pages/template/manage",
+    "pages/template/edit",
+    "pages/exercise/library",
+    "pages/exercise/detail",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "训记",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFFFF"
+  },
+  "tabBar": {
+    "color": "#9CA3AF",
+    "selectedColor": "#111827",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/curve/curve",
+        "text": "曲线"
+      },
+      {
+        "pagePath": "pages/workout/list",
+        "text": "训练"
+      },
+      {
+        "pagePath": "pages/body/body",
+        "text": "身体"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

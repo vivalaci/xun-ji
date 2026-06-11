@@ -1,0 +1,21 @@
+<!-- pages/body/body.wxml —— 身体数据列表 -->
+<view class="container">
+
+  <view wx:if="{{pending}}" class="sync-tip muted">部分记录待联网同步</view>
+
+  <view wx:if="{{loaded && records.length === 0}}" class="empty">还没有身体数据
+点右下角 + 记录体重 / 体脂</view>
+
+  <view wx:for="{{records}}" wx:key="_id" class="card body-item row between"
+        bindtap="goDetail" data-id="{{item._id}}">
+    <view class="muted">{{item.dateLabel}}</view>
+    <view class="row body-values">
+      <text class="bold">{{item.weight}} {{unitLabel}}</text>
+      <text wx:if="{{item.bodyFat !== null}}" class="muted body-fat">{{item.bodyFat}}%</text>
+      <text wx:if="{{item.pending}}" class="tag pending-tag">待同步</text>
+    </view>
+  </view>
+
+</view>
+
+<view class="fab" bindtap="goNew">+</view>

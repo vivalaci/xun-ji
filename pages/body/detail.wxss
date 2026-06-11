@@ -1,0 +1,6 @@
+/* pages/body/detail.wxss */
+.date { margin-bottom: 24rpx; }
+.metrics { gap: 80rpx; }
+.metric-val { font-size: 56rpx; }
+.metric-label { font-size: 24rpx; margin-top: 8rpx; }
+.del-link { text-align: center; color: var(--danger); font-size: 26rpx; margin-top: 40rpx; }

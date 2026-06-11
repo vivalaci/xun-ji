@@ -1,0 +1,41 @@
+<!-- pages/exercise/library.wxml -->
+<view class="container">
+  <view wx:for="{{groups}}" wx:key="category" class="cat-group">
+    <view class="cat-title muted">{{item.category}}</view>
+    <view class="card">
+      <view wx:for="{{item.items}}" wx:for-item="ex" wx:key="id"
+            class="ex-row row between" bindtap="goDetail" data-id="{{ex.id}}">
+        <view class="row ex-left">
+          <text>{{ex.name}}</text>
+          <text wx:if="{{ex.isMainLift}}" class="main-badge">主项</text>
+          <text wx:if="{{ex.custom}}" class="custom-badge">自建</text>
+        </view>
+        <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="fab" bindtap="openAdd">+</view>
+
+<!-- 新建自定义动作 -->
+<view wx:if="{{addVisible}}" class="mask" bindtap="closeAdd"></view>
+<view class="add-panel {{addVisible ? 'show' : ''}}">
+  <view class="picker-head row between">
+    <text class="bold">新建自定义动作</text>
+    <text class="picker-close" bindtap="closeAdd">取消</text>
+  </view>
+  <view class="add-body">
+    <view class="field row between">
+      <text class="label">名称</text>
+      <input class="input" placeholder="如：哑铃耸肩" value="{{newName}}" bindinput="onNameInput" />
+    </view>
+    <view class="field row between no-border">
+      <text class="label">分类</text>
+      <picker range="{{categories}}" value="{{catIndex}}" bindchange="onCatChange">
+        <view class="picker-val">{{categories[catIndex]}} ›</view>
+      </picker>
+    </view>
+    <button class="btn-primary" bindtap="onAdd">添加</button>
+  </view>
+</view>

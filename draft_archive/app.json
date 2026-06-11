@@ -1,0 +1,47 @@
+{
+  "pages": [
+    "pages/dashboard/dashboard",
+    "pages/workout/list",
+    "pages/workout/edit",
+    "pages/body/body",
+    "pages/stats/stats",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#1f2937",
+    "navigationBarTitleText": "训记",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f3f4f6"
+  },
+  "tabBar": {
+    "color": "#9ca3af",
+    "selectedColor": "#2563eb",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/workout/list",
+        "text": "训练"
+      },
+      {
+        "pagePath": "pages/body/body",
+        "text": "身体"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

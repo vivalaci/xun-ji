@@ -1,0 +1,6 @@
+/* pages/settings/settings.wxss */
+.sec-title { font-size: 24rpx; margin: 8rpx 0 12rpx 8rpx; }
+.opt { padding: 30rpx 0; border-bottom: 1rpx solid var(--border); }
+.opt:last-child { border-bottom: none; }
+.check { color: var(--accent); font-weight: 600; }
+.tip { font-size: 24rpx; margin-top: 20rpx; line-height: 1.6; }

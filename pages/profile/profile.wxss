@@ -1,0 +1,8 @@
+/* pages/profile/profile.wxss */
+.menu-item {
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item.dim { color: var(--disabled); }
+.tip { text-align: center; font-size: 24rpx; margin-top: 20rpx; }

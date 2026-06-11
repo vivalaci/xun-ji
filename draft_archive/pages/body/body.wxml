@@ -1,0 +1,74 @@
+<!-- pages/body/body.wxml -->
+<view class="container">
+
+  <!-- 体重趋势 -->
+  <view class="card">
+    <view class="row between">
+      <text class="bold">体重趋势</text>
+      <text wx:if="{{latest && latest.weight}}" class="muted">最近 {{latest.weight}} kg</text>
+    </view>
+    <canvas id="weightChart" type="2d" class="chart"></canvas>
+  </view>
+
+  <!-- 最新数据 -->
+  <view wx:if="{{latest}}" class="card">
+    <view class="muted latest-date">{{latest.dateLabel}} 最新数据</view>
+    <view class="latest-grid">
+      <block wx:for="{{fields}}" wx:key="key">
+        <view wx:if="{{latest[item.key] !== undefined}}" class="latest-item">
+          <view class="latest-num">{{latest[item.key]}}</view>
+          <view class="muted latest-label">{{item.label}}{{item.unit ? '(' + item.unit + ')' : ''}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view wx:if="{{!loading && records.length === 0}}" class="empty">
+    还没有身体数据{{'\n'}}点右下角 + 记录体重、围度等
+  </view>
+
+  <view wx:for="{{records}}" wx:key="_id" class="card history-item">
+    <view class="row between">
+      <text class="bold">{{item.dateLabel}}</text>
+      <text class="del-link" catchtap="onDelete" data-id="{{item._id}}">删除</text>
+    </view>
+    <view class="history-meta">
+      <block wx:for="{{fields}}" wx:key="key" wx:for-item="f">
+        <text wx:if="{{item[f.key] !== undefined}}" class="tag">{{f.label}} {{item[f.key]}}{{f.unit}}</text>
+      </block>
+    </view>
+  </view>
+
+</view>
+
+<view class="fab" bindtap="openForm">+</view>
+
+<!-- 新增面板 -->
+<view wx:if="{{formVisible}}" class="mask" bindtap="closeForm"></view>
+<view class="form-panel {{formVisible ? 'show' : ''}}">
+  <view class="picker-head row between">
+    <text class="bold">记录身体数据</text>
+    <text class="picker-close" bindtap="closeForm">取消</text>
+  </view>
+  <scroll-view scroll-y class="form-scroll">
+    <view class="form-item">
+      <view class="form-label">日期</view>
+      <picker mode="date" value="{{form.date}}" bindchange="onFormDate">
+        <view class="form-input">{{form.date}}</view>
+      </picker>
+    </view>
+    <view wx:for="{{fields}}" wx:key="key" class="form-item">
+      <view class="form-label">{{item.label}}{{item.unit ? '(' + item.unit + ')' : ''}}</view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="选填"
+        value="{{form[item.key]}}"
+        data-key="{{item.key}}"
+        bindinput="onFieldInput"
+      />
+    </view>
+  </scroll-view>
+  <button class="btn-primary form-save" bindtap="onSave" loading="{{saving}}">保存</button>
+</view>

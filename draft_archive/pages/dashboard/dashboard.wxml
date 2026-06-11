@@ -1,0 +1,85 @@
+<!-- pages/dashboard/dashboard.wxml -->
+<view class="container">
+
+  <!-- 顶部问候 -->
+  <view class="hero">
+    <view class="hero-greet">{{greeting}}，{{nickname}} 👋</view>
+    <view class="hero-date">{{dateLabel}}</view>
+  </view>
+
+  <!-- 今日训练 -->
+  <view class="card today-card">
+    <view class="card-title row between">
+      <text class="bold">今日训练</text>
+      <text wx:if="{{todayHasWorkout}}" class="link" bindtap="startWorkout">+ 再记一次</text>
+    </view>
+
+    <block wx:if="{{todayHasWorkout}}">
+      <view
+        wx:for="{{todayWorkouts}}" wx:key="_id"
+        class="today-item" bindtap="viewWorkout" data-id="{{item._id}}"
+      >
+        <view class="bold">{{item.name}}</view>
+        <view class="today-meta muted">{{item.exerciseCount}} 个动作 · {{item.sets}} 组 · 容量 {{item.volume}} kg</view>
+      </view>
+    </block>
+
+    <view wx:else class="today-empty">
+      <view class="muted today-empty-tip">今天还没有训练记录</view>
+      <button class="btn-primary start-btn" bindtap="startWorkout">开始训练</button>
+    </view>
+  </view>
+
+  <!-- 本周进度 -->
+  <view class="card" bindtap="goStats">
+    <view class="card-title row between">
+      <text class="bold">本周进度</text>
+      <text class="muted">{{weekCount}} 次 · {{weekVolume}} kg</text>
+    </view>
+    <view class="week-bars">
+      <view wx:for="{{weekBars}}" wx:key="label" class="week-day">
+        <view class="dot {{item.active ? 'done' : ''}} {{item.isToday ? 'today' : ''}}">
+          <text wx:if="{{item.active}}" class="dot-check">✓</text>
+        </view>
+        <text class="week-label {{item.isToday ? 'accent' : ''}}">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 体重 -->
+  <view class="card row between weight-card" bindtap="goBody">
+    <view>
+      <view class="muted card-subtitle">最新体重</view>
+      <view class="weight-row">
+        <text wx:if="{{latestWeight !== null}}" class="weight-num">{{latestWeight}}</text>
+        <text wx:else class="weight-num muted">--</text>
+        <text wx:if="{{latestWeight !== null}}" class="weight-unit muted">kg</text>
+        <text wx:if="{{weightDelta}}" class="weight-delta {{weightDeltaClass}}">{{weightDelta}}{{weightDeltaClass ? ' kg' : ''}}</text>
+      </view>
+    </view>
+    <text class="link">记录 ›</text>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="quick-row">
+    <view class="quick-item" bindtap="startWorkout">
+      <view class="quick-icon">🏋️</view>
+      <text>记训练</text>
+    </view>
+    <view class="quick-item" bindtap="goBody">
+      <view class="quick-icon">⚖️</view>
+      <text>记身体</text>
+    </view>
+    <view class="quick-item" bindtap="goStats">
+      <view class="quick-icon">📈</view>
+      <text>看统计</text>
+    </view>
+    <view class="quick-item" bindtap="goWorkoutList">
+      <view class="quick-icon">📋</view>
+      <text>全部训练</text>
+    </view>
+  </view>
+
+  <view class="footer muted">累计训练 {{totalWorkouts}} 次，继续加油 💪</view>
+
+</view>

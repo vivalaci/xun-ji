@@ -1,0 +1,44 @@
+<!-- pages/workout/list.wxml -->
+<view class="container">
+
+  <!-- 本周概览 -->
+  <view class="card summary">
+    <view class="summary-item">
+      <view class="summary-num">{{weekCount}}</view>
+      <view class="muted">本周训练</view>
+    </view>
+    <view class="summary-divider"></view>
+    <view class="summary-item">
+      <view class="summary-num">{{weekVolume}}</view>
+      <view class="muted">本周容量(kg)</view>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:if="{{!loading && workouts.length === 0}}" class="empty">
+    还没有训练记录{{'\n'}}点右下角 + 开始记录第一次训练吧
+  </view>
+
+  <view
+    wx:for="{{workouts}}"
+    wx:key="_id"
+    class="card workout-item"
+    bindtap="goEdit"
+    data-id="{{item._id}}"
+  >
+    <view class="row between">
+      <view class="bold workout-name">{{item.name}}</view>
+      <view class="muted">{{item.dateLabel}}</view>
+    </view>
+    <view class="row workout-meta">
+      <text class="tag">{{item.exerciseCount}} 个动作</text>
+      <text class="tag">{{item.sets}} 组</text>
+      <text class="tag">容量 {{item.volume}} kg</text>
+    </view>
+    <view wx:if="{{item.note}}" class="muted workout-note">{{item.note}}</view>
+    <view class="del-btn" catchtap="onDelete" data-id="{{item._id}}">删除</view>
+  </view>
+
+</view>
+
+<view class="fab" bindtap="goNew">+</view>

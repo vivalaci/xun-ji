@@ -1,0 +1,22 @@
+<!-- pages/profile/profile.wxml -->
+<view class="container">
+  <view class="card menu">
+    <view class="menu-item row between" bindtap="goTemplates">
+      <text>训练模板管理</text>
+      <text class="muted">›</text>
+    </view>
+    <view class="menu-item row between" bindtap="goLibrary">
+      <text>动作库</text>
+      <text class="muted">›</text>
+    </view>
+    <view class="menu-item row between" bindtap="goSettings">
+      <text>设置</text>
+      <text class="muted">›</text>
+    </view>
+    <view class="menu-item row between" bindtap="about">
+      <text>关于训记</text>
+      <text class="muted">›</text>
+    </view>
+  </view>
+  <view class="tip muted">数据存储在你的微信云开发环境，仅你本人可见</view>
+</view>

@@ -1,0 +1,51 @@
+<!-- pages/stats/stats.wxml -->
+<view class="container">
+
+  <!-- 累计数据 -->
+  <view class="card">
+    <view class="stat-grid">
+      <view class="stat-item">
+        <view class="stat-num">{{totalWorkouts}}</view>
+        <view class="muted">总训练次数</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-num">{{trainDays}}</view>
+        <view class="muted">训练天数</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-num">{{totalSets}}</view>
+        <view class="muted">总组数</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-num">{{totalVolume}}</view>
+        <view class="muted">总容量(kg)</view>
+      </view>
+    </view>
+    <view class="month-line muted">本月已训练 <text class="bold accent">{{monthCount}}</text> 次</view>
+  </view>
+
+  <!-- 最近 8 周训练频率 -->
+  <view class="card">
+    <text class="bold">最近 8 周训练频率</text>
+    <view class="bar-chart">
+      <view wx:for="{{weekBars}}" wx:key="label" class="bar-col">
+        <view class="bar-count">{{item.count}}</view>
+        <view class="bar-track">
+          <view class="bar-fill" style="height: {{item.height}}%"></view>
+        </view>
+        <view class="bar-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 个人记录 -->
+  <view class="card">
+    <text class="bold">个人记录 (PR · 最大重量)</text>
+    <view wx:if="{{prList.length === 0}}" class="muted pr-empty">还没有数据，去记录训练吧</view>
+    <view wx:for="{{prList}}" wx:key="name" class="pr-item row between">
+      <text>{{item.name}}</text>
+      <text class="bold accent">{{item.weight}} kg</text>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,25 @@
+<!-- pages/curve/curve.wxml -->
+<view class="container">
+
+  <!-- 时间范围切换 -->
+  <view class="range-bar">
+    <view wx:for="{{ranges}}" wx:key="*this"
+          class="range-item {{range === item ? 'active' : ''}}"
+          bindtap="switchRange" data-range="{{item}}">{{item}}</view>
+  </view>
+
+  <!-- 5 条曲线 -->
+  <view wx:for="{{charts}}" wx:key="key" class="card chart-card"
+        bindtap="goDetail" data-key="{{item.key}}">
+    <view class="row between chart-head">
+      <view class="row">
+        <view class="dot" style="background: {{item.color}}"></view>
+        <text class="bold">{{item.name}}</text>
+      </view>
+      <text wx:if="{{item.hasData}}" class="latest">{{item.latest}} {{item.unit}}</text>
+      <text wx:else class="muted no-data">暂无数据</text>
+    </view>
+    <canvas id="chart_{{item.key}}" type="2d" class="chart"></canvas>
+  </view>
+
+</view>

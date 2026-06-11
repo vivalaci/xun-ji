@@ -1,0 +1,27 @@
+<!-- pages/exercise/detail.wxml -->
+<view class="container">
+
+  <view class="range-bar">
+    <view wx:for="{{ranges}}" wx:key="*this"
+          class="range-item {{range === item ? 'active' : ''}}"
+          bindtap="switchRange" data-range="{{item}}">{{item}}</view>
+  </view>
+
+  <view class="card chart-card">
+    <view class="muted chart-cap">主力工作组重量（{{unitLabel}}）</view>
+    <canvas id="detailChart" type="2d" class="chart"></canvas>
+  </view>
+
+  <view class="sec-title muted">历史记录</view>
+  <view wx:if="{{history.length === 0}}" class="empty">暂无该动作的训练记录</view>
+  <view wx:for="{{history}}" wx:key="dateLabel" class="card hist-item">
+    <view class="row between">
+      <view class="row hist-date">
+        <text class="muted">{{item.dateLabel}}</text>
+        <text wx:if="{{item.isPR}}" class="pr-badge">PR</text>
+      </view>
+    </view>
+    <view class="hist-sets">{{item.setsText}}</view>
+  </view>
+
+</view>

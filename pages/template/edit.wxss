@@ -1,0 +1,46 @@
+/* pages/template/edit.wxss */
+.form-item { display: flex; align-items: center; justify-content: space-between; padding: 22rpx 0; }
+.form-item.no-border { border-bottom: none; }
+.form-val { text-align: right; flex: 1; margin-left: 24rpx; }
+.input-val { color: var(--text); }
+
+.empty-line { text-align: center; padding: 20rpx 0; font-size: 26rpx; }
+.ex-row { padding: 22rpx 0; border-bottom: 1rpx solid var(--border); }
+.ex-row:last-child { border-bottom: none; }
+.ex-name { font-size: 30rpx; }
+.ops { gap: 28rpx; }
+.op { color: var(--muted); font-size: 30rpx; }
+.op.del { color: var(--danger); font-size: 24rpx; }
+
+.add-ex { text-align: center; margin: 8rpx 0 20rpx; }
+.save-btn { margin-top: 12rpx; }
+
+/* 动作选择面板 */
+.mask { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; }
+.picker-panel {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  border-radius: 28rpx 28rpx 0 0;
+  z-index: 201;
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.picker-panel.show { transform: translateY(0); }
+.picker-head { padding: 28rpx; border-bottom: 1rpx solid var(--border); }
+.picker-close { color: var(--accent); }
+.picker-body { display: flex; height: 560rpx; }
+.cat-list { width: 170rpx; background: var(--card); height: 100%; }
+.cat-item { padding: 30rpx 0; text-align: center; color: var(--muted); font-size: 28rpx; }
+.cat-item.active { background: #fff; color: var(--text); font-weight: 600; }
+.ex-list { flex: 1; height: 100%; }
+.ex-pick { padding: 30rpx 36rpx; border-bottom: 1rpx solid var(--border); }
+.ex-pick:active { background: var(--accent-light); }
+.main-badge {
+  font-size: 20rpx;
+  color: var(--accent);
+  background: var(--accent-light);
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-left: 12rpx;
+}

@@ -1,0 +1,12 @@
+<!-- pages/settings/settings.wxml -->
+<view class="container">
+  <view class="sec-title muted">重量单位</view>
+  <view class="card">
+    <view wx:for="{{units}}" wx:key="*this"
+          class="opt row between" bindtap="pickUnit" data-unit="{{item}}">
+      <text>{{item}}</text>
+      <text wx:if="{{weightUnit === item}}" class="check">✓</text>
+    </view>
+  </view>
+  <view class="tip muted">切换后所有重量的显示与录入步进随之改变，数据始终以 kg 存储，不丢精度。</view>
+</view>

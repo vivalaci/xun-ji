@@ -1,0 +1,97 @@
+/* app.wxss —— 全局样式（近黑色系 · 干净轻量）
+   设计 token 见 docs/05-visual-design.md */
+page {
+  --bg: #FFFFFF;
+  --card: #F9FAFB;
+  --border: #F3F4F6;
+  --text: #111827;        /* 主文字（近黑） */
+  --muted: #6B7280;       /* 次要文字 */
+  --disabled: #D1D5DB;    /* 占位 */
+  --accent: #1D4ED8;      /* 唯一强调色 */
+  --accent-light: #EFF6FF;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 28rpx;
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+.container {
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+/* 卡片 */
+.card {
+  background: var(--card);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+/* 文字 */
+.title { font-size: 36rpx; font-weight: 600; }
+.muted { color: var(--muted); }
+.bold { font-weight: 600; }
+.accent { color: var(--accent); }
+
+/* 布局 */
+.row { display: flex; align-items: center; }
+.between { justify-content: space-between; }
+
+/* 按钮 */
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  line-height: 2.8;
+}
+.btn-primary::after { border: none; }
+
+.btn-ghost {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  line-height: 2.6;
+}
+.btn-ghost::after { border: none; }
+
+/* 浮动新建按钮 */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: var(--text);
+  color: #fff;
+  font-size: 60rpx;
+  line-height: 108rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(17, 24, 39, 0.25);
+  z-index: 100;
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 120rpx 0;
+  font-size: 28rpx;
+  white-space: pre-line;
+}
+
+/* 标签 */
+.tag {
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+}

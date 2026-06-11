@@ -1,0 +1,46 @@
+/* pages/profile/profile.wxss */
+.profile-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 28rpx;
+}
+.avatar-btn {
+  padding: 0;
+  background: transparent;
+  line-height: normal;
+  width: 140rpx;
+  height: 140rpx;
+}
+.avatar-btn::after { border: none; }
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+}
+.avatar-placeholder {
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+.nickname {
+  margin-top: 24rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+.menu-item {
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+.menu-item:last-child { border-bottom: none; }
+
+.tip {
+  text-align: center;
+  font-size: 24rpx;
+  margin-top: 20rpx;
+}

@@ -1,0 +1,7 @@
+/* pages/template/manage.wxss */
+.tpl-item { align-items: center; }
+.tpl-meta { font-size: 24rpx; margin-top: 8rpx; }
+.tpl-right { gap: 18rpx; }
+.del-btn { color: var(--danger); font-size: 24rpx; }
+.pending-tag { color: var(--warning); background: #FEF3C7; }
+.new-btn { margin-top: 24rpx; }
