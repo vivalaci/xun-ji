@@ -1,17 +1,20 @@
 <!-- pages/workout/edit.wxml -->
 
-<!-- 阶段一：选择模板 -->
+<!-- 阶段一：选择模板（按组分节） -->
 <view wx:if="{{stage === 'pickTemplate'}}" class="container">
   <view class="pick-title title">选择训练模板</view>
   <view class="pick-sub muted">载入对应动作，并预填上一次同类训练的数据</view>
 
-  <view
-    wx:for="{{templates}}" wx:key="_id"
-    class="tpl-card" bindtap="pickTemplate" data-index="{{index}}"
-  >
-    <view class="bold">{{item.name}}</view>
-    <view class="muted tpl-meta">{{item.exercises.length}} 个动作</view>
-  </view>
+  <block wx:for="{{templateGroups}}" wx:key="name" wx:for-item="grp">
+    <view class="group-title muted">{{grp.name}}</view>
+    <view
+      wx:for="{{grp.items}}" wx:key="_id"
+      class="tpl-card" bindtap="pickTemplate" data-id="{{item._id}}"
+    >
+      <view class="bold">{{item.name}}</view>
+      <view class="muted tpl-meta">{{item.exercises.length}} 个动作</view>
+    </view>
+  </block>
 
   <view class="tpl-card blank" bindtap="pickBlank">
     <view class="bold">空白训练</view>

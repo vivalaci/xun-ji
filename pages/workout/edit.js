@@ -4,6 +4,7 @@ const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
 const { EXERCISES, CATEGORIES, getExercise } = require('../../config/exercises.js');
 const lib = require('../../utils/exerciseLib.js');
+const templateLib = require('../../utils/templateLib.js');
 
 Page({
   data: {
@@ -16,7 +17,8 @@ Page({
 
     // 模板选择
     stage: 'pickTemplate',   // pickTemplate | editing
-    templates: [],
+    templates: [],           // 平铺列表（按 _id 查）
+    templateGroups: [],      // 按组分节：[{ name, items }]
 
     // 动作选择面板
     pickerVisible: false,
@@ -43,10 +45,10 @@ Page({
       wx.setNavigationBarTitle({ title: '新建训练' });
       try {
         const templates = await db.ensureTemplatesSeeded();
-        this.setData({ templates });
+        this.setData({ templates, templateGroups: templateLib.groupTemplates(templates) });
       } catch (e) {
         // 云环境未就绪时也能用空白模板
-        this.setData({ templates: [] });
+        this.setData({ templates: [], templateGroups: [] });
       }
     }
   },
@@ -78,7 +80,8 @@ Page({
 
   // ---- 选模板 ----
   pickTemplate(e) {
-    const tpl = this.data.templates[e.currentTarget.dataset.index];
+    const tpl = this.data.templates.find((t) => t._id === e.currentTarget.dataset.id);
+    if (!tpl) return;
     const exercises = this.buildFromTemplate(tpl);
     this.setData({
       templateId: tpl._id,

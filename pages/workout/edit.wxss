@@ -3,6 +3,11 @@
 /* 选模板 */
 .pick-title { margin-bottom: 8rpx; }
 .pick-sub { margin-bottom: 32rpx; font-size: 26rpx; }
+.group-title {
+  font-size: 24rpx;
+  margin: 8rpx 8rpx 16rpx;
+}
+.tpl-card + .group-title { margin-top: 32rpx; }
 .tpl-card {
   background: var(--card);
   border-radius: 24rpx;

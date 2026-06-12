@@ -7,6 +7,7 @@
 
 const store = require('./store.js');
 const PRESET_TEMPLATES = require('../config/templates.js');
+const templateLib = require('./templateLib.js');
 
 const COLL = {
   WORKOUTS: 'workouts',
@@ -155,23 +156,35 @@ function hasPending() {
   return store.getQueue().length > 0;
 }
 
-// ---------- 模板首次播种 ----------
+// ---------- 模板首次播种 / 分组迁移 ----------
 
-// 确保用户已有预设模板；没有则写入 3 套。返回模板列表。
+// 存量模板缺 group 字段时执行一次性迁移（见 change template-groups design D2）：
+// 旧三件套归"三分化"（腿日改名蹲日），其余写显式空串；并补种二分化预设。
+// 迁移后所有模板都有 group，条件自然失效 → 幂等，删除二分化后不复活。
+function migrateTemplateGroups(list) {
+  const plan = templateLib.planTemplateMigration(list, PRESET_TEMPLATES);
+  if (!plan.needed) return list;
+  plan.updates.forEach((u) => updateLocalFirst(COLL.TEMPLATES, u.id, u.data));
+  plan.additions.forEach((p) => saveLocalFirst(COLL.TEMPLATES, p));
+  return store.getCache(COLL.TEMPLATES);
+}
+
+// 确保用户已有预设模板；没有则写入 5 套（三分化 + 二分化）。返回模板列表（已迁移）。
 async function ensureTemplatesSeeded() {
-  // 先看缓存
+  // 先看缓存（先迁移再后台刷新：refresh 内部会先冲队列，把迁移写入推上云端后才拉取）
   let cached = store.getCache(COLL.TEMPLATES);
   if (cached.length) {
+    const migrated = migrateTemplateGroups(cached);
     refresh(COLL.TEMPLATES, { orderBy: 'order', order: 'asc' }).catch(() => {});
-    return cached;
+    return migrated;
   }
   // 缓存空：查云端
   const res = await db().collection(COLL.TEMPLATES).orderBy('order', 'asc').get();
   if (res.data.length) {
     store.setCache(COLL.TEMPLATES, res.data);
-    return res.data;
+    return migrateTemplateGroups(res.data);
   }
-  // 云端也空：播种
+  // 云端也空：播种全部预设
   const created = [];
   for (const tpl of PRESET_TEMPLATES) {
     const r = await db().collection(COLL.TEMPLATES).add({
