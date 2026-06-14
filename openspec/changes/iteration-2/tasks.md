@@ -48,4 +48,4 @@
 
 - [x] 8.1 语法检查 + 关键算法（PR 识别、lb 换算）单测（21 个 js 过 `node --check`；`tests/algo.test.js` 7 测全过）
 - [x] 8.2 更新 `README.md` 与 `docs/00-overview.md` 进度
-- [ ] 8.3 真机/模拟器首次联调（依赖微信账号 + 云环境，见 design Open Questions）⏸ 阻塞：用户尚未搭建微信账号 + 云开发环境
+- [x] 8.3 真机/模拟器首次联调（微信账号 + 云开发环境已搭建，AppID 已配置，真机测试通过）

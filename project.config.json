@@ -27,12 +27,25 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "useCompilerModule": true
+    "useCompilerModule": true,
+    "compileWorklet": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "libVersion": "3.5.0",
-  "appid": "touristappid",
+  "appid": "wx4d177056e5ac5ca9",
   "projectname": "训记",
   "cloudfunctionRoot": "cloudfunctions/",
-  "condition": {}
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
 }

@@ -11,10 +11,10 @@
 |----|------|
 | 迭代一（训练记录 + 三大项曲线闭环） | ✅ 代码完成 |
 | 迭代二（身体数据、模板/动作库管理、设置 lb、动作详情、PR） | ✅ 代码完成，`node --check` + 7 个单测全过 |
-| 真机/模拟器联调 | ⏸ 阻塞：尚未注册微信小程序账号 + 开通云开发 |
-| 版本控制 | ⚠️ 目录尚未 `git init`，建议尽早初始化（见第七节） |
+| 真机/模拟器联调 | ✅ 通过（AppID 已配置，云环境已搭建） |
+| 版本控制 | ✅ git 已初始化（基线 commit 已建） |
 
-进度跟踪：`openspec/changes/iteration-2/tasks.md`（仅余 8.3 联调一项未勾）。
+进度跟踪：`openspec/changes/iteration-2/tasks.md`（全部完成，待归档）。
 
 ---
 
@@ -101,9 +101,9 @@ node tests/algo.test.js
 - 单位：设置切 lb → 录入步进 ±5、曲线/详情数值一致 → 切回 kg 数值不漂移
 - PR：录一次创新高的主力工作组重量 → 列表徽标 + 动作详情标记出现
 
-### 真机联调（当前最高优先级，迭代二 8.3）
+### 真机验证（已通过首次联调，后续迭代沿用）
 
-按第二节搭好环境后，首次联调重点验证：模板首启播种（自动写入推/拉/腿 3 套）、云端读写与 `_openid` 隔离、真机 Canvas 渲染、弱网队列在真实网络下的表现。联调通过后勾掉 8.3 → `/opsx:sync` → `/opsx:archive`。
+每个迭代上线前重点验证：云端读写与 `_openid` 隔离、真机 Canvas 渲染、弱网队列在真实网络下的表现。真机操作需用户在微信开发者工具「预览」执行，Claude 应主动提请并给出验证点清单。
 
 ---
 
@@ -116,17 +116,12 @@ node tests/algo.test.js
 
 ---
 
-## 七、版本控制（待办：尽快补上）
+## 七、版本控制
 
-目录当前**不是 git 仓库**。建议立即初始化：
+git 已初始化（基线 commit：迭代一+迭代二）。约定：
 
-```powershell
-git init
-git add -A
-git commit -m "迭代一+迭代二代码完成基线"
-```
-
-约定：每个 OpenSpec 任务或一组相关任务一个 commit；change 归档时打 tag（如 `iteration-2`）。`project.config.json` 中的 AppID 属个人配置，若将来推远端仓库注意脱敏。
+- 每个 OpenSpec 任务或一组相关任务一个 commit；change 归档时打 tag（如 `iteration-2`）。
+- `project.config.json` / `project.private.config.json` 中的 AppID 属个人配置，若将来推远端仓库注意脱敏。
 
 ---
 
