@@ -1,28 +1,47 @@
-// pages/curve/curve.js —— 曲线首页
+// pages/curve/curve.js —— 曲线首页（可定制：排序 / 自定义曲线，见 change custom-curves）
 const db = require('../../utils/db.js');
 const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
 const chart = require('../../utils/chart.js');
-
-// 5 条曲线定义（顺序即展示顺序），颜色见 docs/05
-const CHARTS = [
-  { key: 'bench',    type: 'lift', id: 'bench',       name: '卧推', unit: 'kg', color: '#1D4ED8' },
-  { key: 'squat',    type: 'lift', id: 'squat',       name: '深蹲', unit: 'kg', color: '#7C3AED' },
-  { key: 'deadlift', type: 'lift', id: 'deadlift',    name: '硬拉', unit: 'kg', color: '#0891B2' },
-  { key: 'weight',   type: 'body', field: 'weight',   name: '体重', unit: 'kg', color: '#111827' },
-  { key: 'bodyFat',  type: 'body', field: 'bodyFat',  name: '体脂', unit: '%',  color: '#6B7280' }
-];
+const curveConfig = require('../../utils/curveConfig.js');
+const exerciseLib = require('../../utils/exerciseLib.js');
 
 Page({
   data: {
     range: '3M',
     ranges: ['1M', '3M', '6M', 'ALL'],
-    charts: []   // 渲染用：{key,name,unit,color,latest,hasData}
+    charts: [],          // 渲染用：{key,name,unit,color,latest,hasData,fixed}
+    customCount: 0,
+    maxCustom: curveConfig.MAX_CUSTOM,
+
+    // 编辑模式
+    editing: false,
+    editRows: [],        // 紧凑行：{key,name,color,fixed,first,last}
+
+    // 添加曲线面板
+    pickerVisible: false,
+    categories: [],      // [分类名...]
+    activeCategory: 0,
+    libByCategory: {}    // 分类 -> [{id,name,disabled}]
+  },
+
+  onLoad() {
+    // 首次进入的一次性说明，仅弹一次
+    if (!wx.getStorageSync('seen_intro')) {
+      wx.showModal({
+        title: '欢迎使用训记',
+        content: '你的训练与身体数据已与微信账号绑定，仅你本人可见，并在你的微信云中跨设备自动同步。',
+        showCancel: false,
+        confirmText: '知道了'
+      });
+      wx.setStorageSync('seen_intro', true);
+    }
   },
 
   onShow() {
-    this.compute();          // 缓存优先
-    this.refresh();          // 后台更新
+    this._prefs = db.getCache(db.COLL.PREFS)[0] || null; // 缓存优先
+    this.compute();
+    this.refresh();
   },
 
   onPullDownRefresh() {
@@ -31,10 +50,12 @@ Page({
 
   async refresh() {
     try {
-      await Promise.all([
+      const [prefs] = await Promise.all([
+        db.ensurePrefs(curveConfig.defaultPrefs()),
         db.refresh(db.COLL.WORKOUTS),
         db.refresh(db.COLL.BODY)
       ]);
+      this._prefs = prefs;
       this.compute();
     } catch (e) { /* 云环境未就绪，保留缓存渲染 */ }
   },
@@ -43,14 +64,18 @@ Page({
     this.setData({ range: e.currentTarget.dataset.range }, () => this.compute());
   },
 
-  // 计算 5 条曲线数据并触发绘制
+  // 按配置合成图表定义，计算各曲线数据并触发绘制
   compute() {
+    if (this.data.editing) return; // 编辑模式不画图
+    const composed = curveConfig.composeCharts(this._prefs);
+    this._composed = composed;
+
     const start = util.rangeStartTs(this.data.range);
     const workouts = db.getCache(db.COLL.WORKOUTS);
     const body = db.getCache(db.COLL.BODY);
 
     this._series = {}; // key -> points（升序）
-    const meta = CHARTS.map((c) => {
+    const meta = composed.map((c) => {
       let points = [];
       if (c.type === 'lift') {
         points = workouts
@@ -72,19 +97,21 @@ Page({
       return {
         key: c.key,
         name: c.name,
-        unit: c.unit,
+        unit: c.unit === '%' ? '%' : unit.label(),
         color: c.color,
+        fixed: c.fixed,
         hasData: points.length > 0,
         latest: points.length ? points[points.length - 1].y : null
       };
     });
 
-    this.setData({ charts: meta }, () => this.draw());
+    const customCount = ((this._prefs && this._prefs.customCurves) || []).length;
+    this.setData({ charts: meta, customCount }, () => this.draw());
   },
 
   draw() {
     const dpr = (wx.getWindowInfo && wx.getWindowInfo().pixelRatio) || 2;
-    CHARTS.forEach((c) => {
+    (this._composed || []).forEach((c) => {
       wx.createSelectorQuery().in(this)
         .select('#chart_' + c.key)
         .fields({ node: true, size: true })
@@ -106,12 +133,94 @@ Page({
 
   goDetail(e) {
     const key = e.currentTarget.dataset.key;
-    const c = CHARTS.find((x) => x.key === key);
+    const c = (this._composed || []).find((x) => x.key === key);
     if (c && c.type === 'lift') {
       wx.navigateTo({ url: `/pages/exercise/detail?id=${c.id}` });
     } else {
       // 体重/体脂：跳身体 Tab 查看明细
       wx.switchTab({ url: '/pages/body/body' });
     }
+  },
+
+  // ---- 编辑模式（长按进入；↑/↓ 排序；⊝ 删自定义；完成时一次性持久化） ----
+  enterEdit() {
+    const p = this._prefs || curveConfig.defaultPrefs();
+    this._draft = {
+      curveOrder: curveConfig.composeCharts(p).map((c) => c.key), // 以合成结果为准（已自愈）
+      customCurves: (p.customCurves || []).slice()
+    };
+    this.setData({ editing: true }, () => this.renderEditRows());
+  },
+
+  renderEditRows() {
+    const rows = curveConfig.composeCharts(this._draft).map((c, i, arr) => ({
+      key: c.key,
+      name: c.name,
+      color: c.color,
+      fixed: c.fixed,
+      first: i === 0,
+      last: i === arr.length - 1
+    }));
+    this.setData({ editRows: rows });
+  },
+
+  onMove(e) {
+    const { key, dir } = e.currentTarget.dataset;
+    this._draft.curveOrder = curveConfig.moveKey(this._draft.curveOrder, key, dir);
+    this.renderEditRows();
+  },
+
+  onRemoveCustom(e) {
+    this._draft = curveConfig.removeCustom(this._draft, e.currentTarget.dataset.key);
+    this.renderEditRows();
+  },
+
+  async finishEdit() {
+    this._prefs = await db.ensurePrefs(curveConfig.defaultPrefs()); // 确保文档存在（首次编辑即建档）
+    this._prefs = db.updatePrefs({
+      curveOrder: this._draft.curveOrder,
+      customCurves: this._draft.customCurves
+    }) || this._prefs;
+    this.setData({ editing: false }, () => this.compute());
+  },
+
+  // ---- 添加曲线 ----
+  openPicker() {
+    if (this.data.customCount >= curveConfig.MAX_CUSTOM) {
+      wx.showToast({ title: `自定义曲线最多 ${curveConfig.MAX_CUSTOM} 条`, icon: 'none' });
+      return;
+    }
+    const shownIds = {};
+    (this._composed || []).forEach((c) => { if (c.type === 'lift') shownIds[c.id] = true; });
+    const byCat = exerciseLib.byCategory();
+    const categories = Object.keys(byCat);
+    const libByCategory = {};
+    categories.forEach((cat) => {
+      libByCategory[cat] = byCat[cat].map((ex) => ({
+        id: ex.id, name: ex.name, disabled: !!shownIds[ex.id]
+      }));
+    });
+    this.setData({ pickerVisible: true, categories, libByCategory, activeCategory: 0 });
+  },
+  closePicker() { this.setData({ pickerVisible: false }); },
+  switchCategory(e) { this.setData({ activeCategory: e.currentTarget.dataset.index }); },
+
+  async pickExercise(e) {
+    const { id, disabled } = e.currentTarget.dataset;
+    if (disabled) {
+      wx.showToast({ title: '该动作已在首页展示', icon: 'none' });
+      return;
+    }
+    this._prefs = await db.ensurePrefs(curveConfig.defaultPrefs());
+    const result = curveConfig.addCustom(this._prefs, id);
+    if (!result.ok) {
+      wx.showToast({
+        title: result.reason === 'limit' ? `自定义曲线最多 ${curveConfig.MAX_CUSTOM} 条` : '该动作已在首页展示',
+        icon: 'none'
+      });
+      return;
+    }
+    this._prefs = db.updatePrefs(result.prefs) || this._prefs;
+    this.setData({ pickerVisible: false }, () => this.compute());
   }
 });

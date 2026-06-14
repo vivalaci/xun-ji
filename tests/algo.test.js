@@ -14,6 +14,7 @@ const unit = require('../utils/unit.js');
 const store = require('../utils/store.js');
 const templateLib = require('../utils/templateLib.js');
 const PRESETS = require('../config/templates.js');
+const curveConfig = require('../utils/curveConfig.js');
 
 let passed = 0;
 function test(name, fn) { fn(); passed++; console.log('  ✓ ' + name); }
@@ -124,6 +125,80 @@ test('补种前检：同名同组已存在则跳过', () => {
     { _id: 't8', name: '上肢', group: '二分化', order: 3 }
   ], PRESETS);
   assert.deepStrictEqual(plan.additions.map((p) => p.name), ['下肢']);
+});
+
+console.log('curveConfig.composeCharts:');
+test('无配置返回默认 5 条', () => {
+  const charts = curveConfig.composeCharts(null);
+  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift', 'weight', 'bodyFat']);
+  assert.ok(charts.every((c) => c.fixed));
+});
+test('按配置顺序渲染，缺失固定 key 自动追加', () => {
+  const charts = curveConfig.composeCharts({ curveOrder: ['weight', 'bench'], customCurves: [] });
+  assert.deepStrictEqual(charts.map((c) => c.key), ['weight', 'bench', 'squat', 'deadlift', 'bodyFat']);
+});
+test('未知 key 剔除', () => {
+  const charts = curveConfig.composeCharts({
+    curveOrder: ['bench', 'ex_ghost', 'squat', 'deadlift', 'weight', 'bodyFat'],
+    customCurves: []
+  });
+  assert.ok(!charts.some((c) => c.key === 'ex_ghost'));
+  assert.strictEqual(charts.length, 5);
+});
+test('自定义曲线取名 + 槽位配色，已删自建动作回退占位名', () => {
+  const charts = curveConfig.composeCharts({
+    curveOrder: ['bench', 'squat', 'deadlift', 'weight', 'bodyFat', 'ex_lat_pulldown', 'ex_cus_gone'],
+    customCurves: [
+      { key: 'ex_lat_pulldown', exerciseId: 'lat_pulldown', slot: 0 },
+      { key: 'ex_cus_gone', exerciseId: 'cus_gone', slot: 1 }
+    ]
+  });
+  const c1 = charts.find((c) => c.key === 'ex_lat_pulldown');
+  const c2 = charts.find((c) => c.key === 'ex_cus_gone');
+  assert.strictEqual(c1.name, '高位下拉');
+  assert.strictEqual(c1.color, curveConfig.CUSTOM_PALETTE[0]);
+  assert.strictEqual(c2.name, '已删除动作');
+  assert.strictEqual(c2.color, curveConfig.CUSTOM_PALETTE[1]);
+  assert.ok(!c1.fixed && !c2.fixed);
+});
+
+console.log('curveConfig.moveKey:');
+test('上移/下移交换相邻项', () => {
+  assert.deepStrictEqual(curveConfig.moveKey(['a', 'b', 'c'], 'b', 'up'), ['b', 'a', 'c']);
+  assert.deepStrictEqual(curveConfig.moveKey(['a', 'b', 'c'], 'b', 'down'), ['a', 'c', 'b']);
+});
+test('首行上移/末行下移不动', () => {
+  assert.deepStrictEqual(curveConfig.moveKey(['a', 'b'], 'a', 'up'), ['a', 'b']);
+  assert.deepStrictEqual(curveConfig.moveKey(['a', 'b'], 'b', 'down'), ['a', 'b']);
+});
+
+console.log('curveConfig.addCustom / removeCustom:');
+test('添加：入顺序末位 + 取最小空闲槽位', () => {
+  const r = curveConfig.addCustom(null, 'lat_pulldown');
+  assert.strictEqual(r.ok, true);
+  assert.strictEqual(r.prefs.curveOrder[r.prefs.curveOrder.length - 1], 'ex_lat_pulldown');
+  assert.strictEqual(r.prefs.customCurves[0].slot, 0);
+});
+test('重复拦截：三大项与已添加动作', () => {
+  assert.strictEqual(curveConfig.addCustom(null, 'bench').ok, false);
+  const r1 = curveConfig.addCustom(null, 'lat_pulldown');
+  assert.strictEqual(curveConfig.addCustom(r1.prefs, 'lat_pulldown').ok, false);
+});
+test('上限 2 条拦截', () => {
+  const r1 = curveConfig.addCustom(null, 'lat_pulldown');
+  const r2 = curveConfig.addCustom(r1.prefs, 'ohp');
+  const r3 = curveConfig.addCustom(r2.prefs, 'leg_press');
+  assert.strictEqual(r3.ok, false);
+  assert.strictEqual(r3.reason, 'limit');
+});
+test('删除后槽位颜色复用', () => {
+  const r1 = curveConfig.addCustom(null, 'lat_pulldown');
+  const r2 = curveConfig.addCustom(r1.prefs, 'ohp');
+  const removed = curveConfig.removeCustom(r2.prefs, 'ex_lat_pulldown');  // 释放槽位 0
+  const r3 = curveConfig.addCustom(removed, 'leg_press');
+  assert.strictEqual(r3.ok, true);
+  assert.strictEqual(r3.prefs.customCurves.find((c) => c.key === 'ex_leg_press').slot, 0);
+  assert.ok(!r3.prefs.curveOrder.includes('ex_lat_pulldown'));
 });
 
 console.log(`\nAll ${passed} tests passed ✓`);

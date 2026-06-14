@@ -1,25 +1,80 @@
 <!-- pages/curve/curve.wxml -->
 <view class="container">
 
-  <!-- 时间范围切换 -->
-  <view class="range-bar">
-    <view wx:for="{{ranges}}" wx:key="*this"
-          class="range-item {{range === item ? 'active' : ''}}"
-          bindtap="switchRange" data-range="{{item}}">{{item}}</view>
-  </view>
+  <!-- 常态 -->
+  <block wx:if="{{!editing}}">
+    <!-- 时间范围切换 -->
+    <view class="range-bar">
+      <view wx:for="{{ranges}}" wx:key="*this"
+            class="range-item {{range === item ? 'active' : ''}}"
+            bindtap="switchRange" data-range="{{item}}">{{item}}</view>
+    </view>
 
-  <!-- 5 条曲线 -->
-  <view wx:for="{{charts}}" wx:key="key" class="card chart-card"
-        bindtap="goDetail" data-key="{{item.key}}">
-    <view class="row between chart-head">
+    <!-- 曲线卡片（长按进入编辑模式） -->
+    <view wx:for="{{charts}}" wx:key="key" class="card chart-card"
+          bindtap="goDetail" bindlongpress="enterEdit" data-key="{{item.key}}">
+      <view class="row between chart-head">
+        <view class="row">
+          <view class="dot" style="background: {{item.color}}"></view>
+          <text class="bold">{{item.name}}</text>
+        </view>
+        <text wx:if="{{item.hasData}}" class="latest">{{item.latest}} {{item.unit}}</text>
+        <text wx:else class="muted no-data">暂无数据</text>
+      </view>
+      <canvas id="chart_{{item.key}}" type="2d" class="chart"></canvas>
+    </view>
+
+    <!-- 添加曲线（满 2 条禁用态） -->
+    <view class="add-curve {{customCount >= maxCustom ? 'disabled' : ''}}" bindtap="openPicker">
+      + 添加曲线{{customCount >= maxCustom ? '（已满）' : ''}}
+    </view>
+    <view class="edit-hint muted">长按任意卡片可调整顺序</view>
+  </block>
+
+  <!-- 编辑模式：紧凑行，不画图 -->
+  <block wx:else>
+    <view class="edit-title row between">
+      <text class="bold">调整曲线</text>
+      <text class="edit-done" bindtap="finishEdit">完成</text>
+    </view>
+    <view wx:for="{{editRows}}" wx:key="key" class="card edit-row row between">
       <view class="row">
         <view class="dot" style="background: {{item.color}}"></view>
-        <text class="bold">{{item.name}}</text>
+        <text>{{item.name}}</text>
       </view>
-      <text wx:if="{{item.hasData}}" class="latest">{{item.latest}} {{item.unit}}</text>
-      <text wx:else class="muted no-data">暂无数据</text>
+      <view class="row edit-ops">
+        <view class="op-btn {{item.first ? 'op-disabled' : ''}}"
+              bindtap="onMove" data-key="{{item.key}}" data-dir="up">↑</view>
+        <view class="op-btn {{item.last ? 'op-disabled' : ''}}"
+              bindtap="onMove" data-key="{{item.key}}" data-dir="down">↓</view>
+        <view wx:if="{{!item.fixed}}" class="op-btn op-del"
+              bindtap="onRemoveCustom" data-key="{{item.key}}">✕</view>
+        <view wx:else class="op-btn op-placeholder"></view>
+      </view>
     </view>
-    <canvas id="chart_{{item.key}}" type="2d" class="chart"></canvas>
-  </view>
+  </block>
 
+</view>
+
+<!-- 添加曲线：动作选择面板 -->
+<view wx:if="{{pickerVisible}}" class="mask" bindtap="closePicker"></view>
+<view class="picker-panel {{pickerVisible ? 'show' : ''}}">
+  <view class="picker-head row between">
+    <text class="bold">选择动作</text>
+    <text class="picker-close" bindtap="closePicker">取消</text>
+  </view>
+  <view class="picker-body">
+    <scroll-view scroll-y class="cat-list">
+      <view wx:for="{{categories}}" wx:key="*this"
+            class="cat-item {{activeCategory === index ? 'active' : ''}}"
+            bindtap="switchCategory" data-index="{{index}}">{{item}}</view>
+    </scroll-view>
+    <scroll-view scroll-y class="ex-list">
+      <view wx:for="{{libByCategory[categories[activeCategory]]}}" wx:key="id"
+            class="ex-pick {{item.disabled ? 'ex-disabled' : ''}}"
+            bindtap="pickExercise" data-id="{{item.id}}" data-disabled="{{item.disabled}}">
+        {{item.name}}<text wx:if="{{item.disabled}}" class="shown-badge">已展示</text>
+      </view>
+    </scroll-view>
+  </view>
 </view>

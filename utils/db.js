@@ -13,7 +13,8 @@ const COLL = {
   WORKOUTS: 'workouts',
   BODY: 'body_records',
   TEMPLATES: 'workout_templates',
-  CUSTOM_EXERCISES: 'custom_exercises'
+  CUSTOM_EXERCISES: 'custom_exercises',
+  PREFS: 'user_prefs'
 };
 
 function db() {
@@ -196,6 +197,34 @@ async function ensureTemplatesSeeded() {
   return created;
 }
 
+// ---------- 用户偏好（user_prefs 单文档） ----------
+
+// 读取偏好文档：缓存优先 → 云端 → 都没有则本地先写建默认文档（弱网下也立即可用）。
+// defaultDoc 由调用方提供（如 curveConfig.defaultPrefs()），避免 db 层依赖业务形态。
+async function ensurePrefs(defaultDoc) {
+  const cached = store.getCache(COLL.PREFS);
+  if (cached.length) {
+    refresh(COLL.PREFS, { orderBy: 'createTime', order: 'asc', limit: 1 }).catch(() => {});
+    return cached[0];
+  }
+  try {
+    const res = await db().collection(COLL.PREFS).orderBy('createTime', 'asc').limit(1).get();
+    if (res.data.length) {
+      store.setCache(COLL.PREFS, res.data);
+      return res.data[0];
+    }
+  } catch (e) { /* 云端不可用：走本地先写兜底 */ }
+  return saveLocalFirst(COLL.PREFS, defaultDoc);
+}
+
+// 更新偏好（按缓存里的文档 id，机制兼容未同步的本地临时文档）
+function updatePrefs(patch) {
+  const cached = store.getCache(COLL.PREFS);
+  if (!cached.length) return null;
+  updateLocalFirst(COLL.PREFS, cached[0]._id, patch);
+  return store.getCache(COLL.PREFS)[0];
+}
+
 module.exports = {
   COLL,
   getCache,
@@ -205,5 +234,7 @@ module.exports = {
   removeLocalFirst,
   flushQueue,
   hasPending,
-  ensureTemplatesSeeded
+  ensureTemplatesSeeded,
+  ensurePrefs,
+  updatePrefs
 };

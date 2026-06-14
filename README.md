@@ -25,7 +25,12 @@
 - ✅ 动作详情页：单动作主力工作组重量曲线 + 历史
 - ✅ PR 标记：主力工作组重量创新高自动标记（训练列表、动作详情可见）
 
-> 用 OpenSpec 管理：`openspec/changes/iteration-2/`，进度查 `openspec status --change iteration-2`。
+迭代三（代码完成，待真机验证）：
+
+- ✅ 模板分组：三分化（推日/拉日/蹲日）+ 二分化（上肢/下肢），存量数据自动迁移（change `template-groups`）
+- ✅ 曲线首页可定制：长按进编辑模式（↑/↓ 排序、自定义曲线可删）、底部"添加曲线"任选动作（上限 2 条、主力工作组重量口径、槽位配色）；配置存 `user_prefs` 跨设备同步（change `custom-curves`）
+
+> 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
 
 ---
@@ -45,6 +50,7 @@
 │   ├── unit.js                      单位转换层（kg/lb，从设置读取）
 │   ├── exerciseLib.js               动作合并查询（内置 + 自建，按 id 取名）
 │   ├── templateLib.js               模板分组/迁移纯函数（分桶展示、存量迁移判定）
+│   ├── curveConfig.js               曲线配置纯函数（合成/排序/增删校验/槽位配色）
 │   └── chart.js                     Canvas 折线图
 ├── pages/
 │   ├── curve/                       曲线（Tab1 · 首页）→ 点曲线进动作详情
@@ -82,8 +88,9 @@ https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html
 | --- | --- |
 | `workouts` | 训练记录 |
 | `body_records` | 身体数据（体重/体脂） |
-| `workout_templates` | 训练模板（首次启动自动写入 3 套） |
+| `workout_templates` | 训练模板（首次启动自动写入 5 套） |
 | `custom_exercises` | 自定义动作 |
+| `user_prefs` | 用户偏好（曲线顺序 / 自定义曲线，单文档） |
 
 ### 6. 编译运行
 点「编译」即可在模拟器使用；首次进入「新建训练」会自动创建 5 套预设模板（三分化：推日/拉日/蹲日；二分化：上肢/下肢）。旧版本数据会自动迁移（模板归组、腿日更名蹲日、补种二分化）。「预览」可扫码真机体验。
