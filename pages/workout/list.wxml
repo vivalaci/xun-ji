@@ -15,7 +15,10 @@
       </view>
       <view class="muted">{{item.dateLabel}}</view>
     </view>
-    <view class="row workout-meta">
+    <view wx:if="{{item.cardio}}" class="muted cardio-summary">{{item.cardioText}}
+      <text wx:if="{{item.pending}}" class="tag pending-tag">待同步</text>
+    </view>
+    <view wx:else class="row workout-meta">
       <text class="tag">{{item.exerciseCount}} 个动作</text>
       <text class="tag">{{item.sets}} 组</text>
       <text class="tag">容量 {{item.volume}} {{unitLabel}}</text>

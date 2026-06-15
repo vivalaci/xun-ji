@@ -180,22 +180,37 @@ function migrateTemplateGroups(list) {
   return store.getCache(COLL.TEMPLATES);
 }
 
-// 确保用户已有预设模板；没有则写入 5 套（三分化 + 二分化）。返回模板列表（已迁移）。
+// 有氧预设补种（存量用户，见 change cardio-tracking design D5）：
+// 已有有氧模板 → 跳过；否则查 user_prefs.seededCardio：未补种过则补种「有氧训练」并置标记；
+// 已标记（曾补种、被用户删除）→ 不复活。
+async function ensureCardioSeeded(templates) {
+  if ((templates || []).some((t) => t.group === '有氧')) return templates;
+  const prefs = await ensurePrefs({});
+  if (prefs && prefs.seededCardio) return templates; // 曾补种过、被删 → 尊重删除
+  const preset = PRESET_TEMPLATES.find((t) => t.group === '有氧');
+  if (preset) saveLocalFirst(COLL.TEMPLATES, preset);
+  updatePrefs({ seededCardio: true });
+  return store.getCache(COLL.TEMPLATES);
+}
+
+// 确保用户已有预设模板；没有则写入全部预设。返回模板列表（已迁移 + 补种有氧）。
 async function ensureTemplatesSeeded() {
   // 先看缓存（先迁移再后台刷新：refresh 内部会先冲队列，把迁移写入推上云端后才拉取）
   let cached = store.getCache(COLL.TEMPLATES);
   if (cached.length) {
     const migrated = migrateTemplateGroups(cached);
+    const withCardio = await ensureCardioSeeded(migrated);
     refresh(COLL.TEMPLATES, { orderBy: 'order', order: 'asc' }).catch(() => {});
-    return migrated;
+    return withCardio;
   }
   // 缓存空：查云端
   const res = await db().collection(COLL.TEMPLATES).orderBy('order', 'asc').get();
   if (res.data.length) {
     store.setCache(COLL.TEMPLATES, res.data);
-    return migrateTemplateGroups(res.data);
+    const migrated = migrateTemplateGroups(res.data);
+    return await ensureCardioSeeded(migrated);
   }
-  // 云端也空：播种全部预设
+  // 云端也空：播种全部预设（含有氧训练）
   const created = [];
   for (const tpl of PRESET_TEMPLATES) {
     const r = await db().collection(COLL.TEMPLATES).add({
@@ -211,7 +226,7 @@ async function ensureTemplatesSeeded() {
 
 // 读取偏好文档：缓存优先 → 云端 → 都没有则本地先写建默认文档（弱网下也立即可用）。
 // defaultDoc 由调用方提供（如 curveConfig.defaultPrefs()），避免 db 层依赖业务形态。
-async function ensurePrefs(defaultDoc) {
+async function ensurePrefs(defaultDoc = {}) {
   const cached = store.getCache(COLL.PREFS);
   if (cached.length) {
     refresh(COLL.PREFS, { orderBy: 'createTime', order: 'asc', limit: 1 }).catch(() => {});

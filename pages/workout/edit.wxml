@@ -41,12 +41,12 @@
     </view>
   </view>
 
-  <!-- 动作 -->
+  <!-- 动作 / 活动 -->
   <view wx:for="{{exercises}}" wx:key="index" wx:for-item="ex" wx:for-index="i" class="card">
     <view class="row between ex-head">
       <view class="row ex-head-left">
         <text class="bold ex-name">{{ex.name}}</text>
-        <view class="unit-seg row">
+        <view wx:if="{{workoutType !== 'cardio'}}" class="unit-seg row">
           <view wx:for="{{unitOptions}}" wx:key="*this" wx:for-item="u"
                 class="unit-opt {{ex.unit === u ? 'active' : ''}}"
                 catchtap="onSwitchExerciseUnit" data-i="{{i}}" data-unit="{{u}}">{{u}}</view>
@@ -55,37 +55,53 @@
       <view class="ex-remove" bindtap="removeExercise" data-i="{{i}}">移除</view>
     </view>
 
-    <view class="set-head row">
-      <text class="col-idx">组</text>
-      <text class="col-main">{{ex.loadType === 'bodyweight' ? '额外负重(' + ex.unit + ')' : '重量(' + ex.unit + ')'}}</text>
-      <text class="col-main">次数</text>
-      <text class="col-del"></text>
-    </view>
+    <!-- 有氧：时长 + 距离/层数 -->
+    <block wx:if="{{workoutType === 'cardio'}}">
+      <view class="cardio-row row">
+        <view class="cardio-field">
+          <text class="muted cardio-label">时长(min)</text>
+          <input class="cardio-input" type="digit" value="{{ex.duration}}" placeholder="0"
+                 data-i="{{i}}" data-field="duration" bindinput="onCardioInput" />
+        </view>
+        <view class="cardio-field">
+          <text class="muted cardio-label">{{ex.label2}}</text>
+          <input class="cardio-input" type="digit" value="{{ex.secondVal}}" placeholder="0"
+                 data-i="{{i}}" data-field="secondVal" bindinput="onCardioInput" />
+        </view>
+      </view>
+    </block>
 
-    <view wx:for="{{ex.sets}}" wx:key="index" wx:for-item="s" wx:for-index="j" class="set-row row">
-      <text class="col-idx">{{j + 1}}</text>
-
-      <view class="col-main stepper">
-        <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="weight" data-dir="down">−</view>
-        <input class="step-input" type="digit" value="{{s.weight}}" placeholder="{{ex.loadType === 'bodyweight' ? '自重' : '0'}}"
-               data-i="{{i}}" data-j="{{j}}" data-field="weight" bindinput="onSetInput" />
-        <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="weight" data-dir="up">+</view>
+    <!-- 力量：组 × 重量/次数 -->
+    <block wx:else>
+      <view class="set-head row">
+        <text class="col-idx">组</text>
+        <text class="col-main">{{ex.loadType === 'bodyweight' ? '额外负重(' + ex.unit + ')' : '重量(' + ex.unit + ')'}}</text>
+        <text class="col-main">次数</text>
+        <text class="col-del"></text>
       </view>
 
-      <view class="col-main stepper">
-        <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="reps" data-dir="down">−</view>
-        <input class="step-input" type="number" value="{{s.reps}}" placeholder="0"
-               data-i="{{i}}" data-j="{{j}}" data-field="reps" bindinput="onSetInput" />
-        <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="reps" data-dir="up">+</view>
+      <view wx:for="{{ex.sets}}" wx:key="index" wx:for-item="s" wx:for-index="j" class="set-row row">
+        <text class="col-idx">{{j + 1}}</text>
+        <view class="col-main stepper">
+          <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="weight" data-dir="down">−</view>
+          <input class="step-input" type="digit" value="{{s.weight}}" placeholder="{{ex.loadType === 'bodyweight' ? '自重' : '0'}}"
+                 data-i="{{i}}" data-j="{{j}}" data-field="weight" bindinput="onSetInput" />
+          <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="weight" data-dir="up">+</view>
+        </view>
+        <view class="col-main stepper">
+          <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="reps" data-dir="down">−</view>
+          <input class="step-input" type="number" value="{{s.reps}}" placeholder="0"
+                 data-i="{{i}}" data-j="{{j}}" data-field="reps" bindinput="onSetInput" />
+          <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="reps" data-dir="up">+</view>
+        </view>
+        <text class="col-del" catchtap="removeSet" data-i="{{i}}" data-j="{{j}}">✕</text>
       </view>
 
-      <text class="col-del" catchtap="removeSet" data-i="{{i}}" data-j="{{j}}">✕</text>
-    </view>
-
-    <view class="add-set" bindtap="addSet" data-i="{{i}}">+ 加一组</view>
+      <view class="add-set" bindtap="addSet" data-i="{{i}}">+ 加一组</view>
+    </block>
   </view>
 
-  <view class="btn-ghost add-ex" bindtap="openPicker">+ 添加动作</view>
+  <view class="btn-ghost add-ex" bindtap="openPicker">{{workoutType === 'cardio' ? '+ 添加有氧活动' : '+ 添加动作'}}</view>
   <button class="btn-primary save-btn" bindtap="onSave" loading="{{saving}}">保存训练</button>
 </view>
 
@@ -126,7 +142,7 @@
       </view>
     </scroll-view>
   </view>
-  <view class="custom-row row">
+  <view wx:if="{{workoutType !== 'cardio'}}" class="custom-row row">
     <input class="custom-input" placeholder="自定义动作名称" value="{{customName}}" bindinput="onCustomInput" />
     <view class="custom-add" bindtap="addCustom">添加</view>
   </view>

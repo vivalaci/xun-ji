@@ -9,6 +9,7 @@
   _id:        "自动生成",
   _openid:    "云开发自动注入，用于数据隔离",
   date:       "2026-06-06",         // 字符串，便于排序和范围查询
+  type:       "strength",           // 'strength'|'cardio'，缺省/旧记录=strength（change cardio-tracking）
   templateId: "tpl_xxx 或 null",    // 关联训练模板，用于"复用同类训练"
   name:       "推日",                // 训练名称（默认取模板名）
   exercises: [
@@ -26,6 +27,11 @@
   note:       "",                   // 可选备注
   createTime: "服务端时间戳"
 }
+
+// type:'cardio' 时，exercises 项形如（无 sets）：
+//   { exerciseId:"run_outdoor", name:"室外跑步", duration:30, distance:5 }   // 距离类：时长 min + 距离 km
+//   { exerciseId:"stairs",      name:"爬楼梯",   duration:15, floors:60 }    // 爬楼梯：时长 min + 层数
+// 有氧项无 sets，故 PR/容量/三大项曲线天然跳过，不污染力量统计。
 ```
 
 ### 集合二：`body_records`（身体数据）

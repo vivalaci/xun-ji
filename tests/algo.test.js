@@ -307,8 +307,9 @@ test('id 唯一', () => {
 test('MAIN_LIFTS 不变', () => {
   assert.deepStrictEqual(exercises.MAIN_LIFTS, ['bench', 'deadlift', 'squat']);
 });
-test('所有动作 category 都在 CATEGORIES 内', () => {
+test('所有动作 category 都在 CATEGORIES 内（有氧除外，故意不入 CATEGORIES）', () => {
   exercises.EXERCISES.forEach((e) => {
+    if (e.category === '有氧') return; // 有氧不参与力量分类/自建归类
     assert.ok(exercises.CATEGORIES.includes(e.category), '游离分类: ' + e.category);
   });
 });
@@ -374,6 +375,53 @@ test('bodyweight：正值 → 自重+X', () => {
 });
 test('bodyweight：负值 → 辅助−X（防御）', () => {
   assert.strictEqual(util.formatLoad(-15, 'bodyweight'), '辅助−15');
+});
+
+console.log('cardio（有氧）:');
+test('7 个有氧活动齐备且 metrics 正确', () => {
+  const cardio = exercises.EXERCISES.filter((e) => e.category === '有氧');
+  assert.strictEqual(cardio.length, 7);
+  assert.ok(cardio.every((e) => e.kind === 'cardio' && Array.isArray(e.metrics)));
+  const stairs = cardio.find((e) => e.id === 'stairs');
+  assert.deepStrictEqual(stairs.metrics, ['duration', 'floors']);
+  assert.deepStrictEqual(exercises.getExercise('run_outdoor').metrics, ['duration', 'distance']);
+});
+test('有氧活动 id 不与力量冲突、全库 id 唯一', () => {
+  const ids = exercises.EXERCISES.map((e) => e.id);
+  assert.strictEqual(new Set(ids).size, ids.length);
+});
+test('byCategory 中「有氧」排在末位', () => {
+  const cats = Object.keys(exerciseLib.byCategory());
+  assert.strictEqual(cats[cats.length - 1], '有氧');
+});
+test('有氧训练（无 sets）不进 PR / 容量', () => {
+  const workouts = [
+    { _id: 'c1', date: '2026-06-14', type: 'cardio', exercises: [{ exerciseId: 'run_outdoor', name: '室外跑步', duration: 30, distance: 5 }] }
+  ];
+  assert.deepStrictEqual(util.buildPRMap(workouts), {});
+  assert.strictEqual(util.totalVolume(workouts[0].exercises), 0);
+  assert.strictEqual(util.totalSets(workouts[0].exercises), 0);
+});
+test('日历按 type=cardio 归有氧色（不按名称）', () => {
+  const byDate = calendar.aggregateByDate([
+    { _id: 'c1', date: '2026-06-14', type: 'cardio', name: '有氧训练' }
+  ]);
+  assert.strictEqual(byDate['2026-06-14'][0].type.key, 'cardio');
+  assert.strictEqual(byDate['2026-06-14'][0].type.color, '#EA580C');
+});
+test('力量训练仍按名称归类（不受 type 影响）', () => {
+  const byDate = calendar.aggregateByDate([
+    { _id: 's1', date: '2026-06-14', type: 'strength', name: '推日' }
+  ]);
+  assert.strictEqual(byDate['2026-06-14'][0].type.key, 'push');
+});
+test('模板分组含「有氧」且排在二分化之后', () => {
+  const groups = templateLib.groupTemplates([
+    { _id: 'a', name: '有氧训练', group: '有氧', order: 5 },
+    { _id: 'b', name: '推日', group: '三分化', order: 0 },
+    { _id: 'c', name: '上肢', group: '二分化', order: 3 }
+  ]);
+  assert.deepStrictEqual(groups.map((g) => g.name), ['三分化', '二分化', '有氧']);
 });
 
 console.log(`\nAll ${passed} tests passed ✓`);

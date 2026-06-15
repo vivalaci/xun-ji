@@ -1,7 +1,7 @@
 // utils/templateLib.js —— 模板分组与迁移的纯函数（可在 node 单测）
 // 分组约定：group 为字符串标签；空串/缺失 = 用户自建，展示为"我的模板"。
 
-const PRESET_GROUPS = ['三分化', '二分化'];
+const PRESET_GROUPS = ['三分化', '二分化', '有氧'];
 const MY_GROUP_LABEL = '我的模板';
 
 // 旧预设名 → 迁移目标（腿日同时改名蹲日）

@@ -8,6 +8,7 @@ const TYPES = {
   squat: { key: 'squat', color: '#7C3AED' }, // 蹲（紫）
   upper: { key: 'upper', color: '#059669' }, // 上肢（绿）—— 避开腰围琥珀
   lower: { key: 'lower', color: '#DB2777' }, // 下肢（玫红）
+  cardio:{ key: 'cardio',color: '#EA580C' }, // 有氧（橙）—— 按 workout.type 归类
   other: { key: 'other', color: '#9CA3AF' }  // 其他（灰）
 };
 
@@ -30,7 +31,7 @@ function aggregateByDate(workouts) {
     (map[w.date] = map[w.date] || []).push({
       _id: w._id,
       name: w.name || '训练',
-      type: classify(w.name)
+      type: w.type === 'cardio' ? TYPES.cardio : classify(w.name)
     });
   });
   return map;

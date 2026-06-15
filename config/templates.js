@@ -64,5 +64,14 @@ module.exports = [
       { exerciseId: 'leg_curl' },   // 腿弯举
       { exerciseId: 'calf_raise' }  // 提踵
     ]
+  },
+  {
+    name: '有氧训练',
+    group: '有氧',
+    type: 'cardio',       // 选中后开一条 cardio 训练（区别于力量模板）
+    order: 5,
+    exercises: [
+      { exerciseId: 'run_outdoor' } // 起步含室外跑步，用户可增删有氧活动
+    ]
   }
 ];

@@ -27,11 +27,12 @@ function allExercises() {
   return EXERCISES.map((e) => Object.assign({ custom: false }, e)).concat(customs);
 }
 
-// 按分类分组：{ 分类: [动作...] }，分类顺序含内置 CATEGORIES + 自建出现的新分类
+// 按分类分组：{ 分类: [动作...] }，顺序：内置 CATEGORIES → 自建新分类（如「其他」）→「有氧」恒置末
 function byCategory() {
   const all = allExercises();
   const cats = CATEGORIES.slice();
-  all.forEach((e) => { if (!cats.includes(e.category)) cats.push(e.category); });
+  all.forEach((e) => { if (e.category !== '有氧' && !cats.includes(e.category)) cats.push(e.category); });
+  cats.push('有氧'); // 有氧永远排在「其他」之后
   const map = {};
   cats.forEach((c) => {
     const items = all.filter((e) => e.category === c);

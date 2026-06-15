@@ -53,7 +53,7 @@ const EXERCISES = [
   { id: 'back_extension',      name: '山羊挺身',       category: '背', equipment: '自重', primaryMuscle: '竖脊肌', secondaryMuscles: ['臀大肌', '腘绳肌'], pattern: '髋伸', aliases: ['背伸展', '罗马椅', 'back extension', 'hyperextension'], loadType: 'bodyweight' },
 
   // ===== 肩 =====
-  { id: 'ohp',                 name: '肩上推举',       category: '肩', equipment: '杠铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['站姿推举', '过头推举', 'ohp', 'overhead press'] },
+  { id: 'ohp',                 name: '站姿肩上推举',   category: '肩', equipment: '杠铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['肩上推举', '站姿推举', '过头推举', 'ohp', 'overhead press'] },
   { id: 'db_press',            name: '哑铃推举',       category: '肩', equipment: '哑铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['哑铃肩推', 'dumbbell shoulder press'] },
   { id: 'seated_db_press',     name: '坐姿哑铃推举',   category: '肩', equipment: '哑铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['seated db press'] },
   { id: 'arnold_press',        name: '阿诺德推举',     category: '肩', equipment: '哑铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['arnold press'] },
@@ -133,7 +133,16 @@ const EXERCISES = [
   { id: 'leg_raise',          name: '仰卧举腿',       category: '核心', equipment: '自重', primaryMuscle: '腹直肌', secondaryMuscles: ['髋屈肌'], pattern: '核心屈曲', aliases: ['仰卧举腿', 'lying leg raise'], loadType: 'bodyweight' },
   { id: 'russian_twist',       name: '俄罗斯转体',     category: '核心', equipment: '自重', primaryMuscle: '腹斜肌', secondaryMuscles: [], pattern: '核心抗旋', aliases: ['俄罗斯转体', 'russian twist'], loadType: 'bodyweight' },
   { id: 'plank',               name: '平板支撑',       category: '核心', equipment: '自重', primaryMuscle: '腹直肌', secondaryMuscles: ['核心'], pattern: '抗伸展', aliases: ['平板支撑', 'plank'], loadType: 'bodyweight' },
-  { id: 'side_plank',          name: '侧平板',         category: '核心', equipment: '自重', primaryMuscle: '腹斜肌', secondaryMuscles: [], pattern: '抗侧屈', aliases: ['侧平板支撑', 'side plank'], loadType: 'bodyweight' }
+  { id: 'side_plank',          name: '侧平板',         category: '核心', equipment: '自重', primaryMuscle: '腹斜肌', secondaryMuscles: [], pattern: '抗侧屈', aliases: ['侧平板支撑', 'side plank'], loadType: 'bodyweight' },
+
+  // ===== 有氧（kind:cardio；指标 metrics：距离类=时长+距离，爬楼梯=时长+层数；无 sets，不入力量聚合） =====
+  { id: 'run_outdoor',  name: '室外跑步', category: '有氧', kind: 'cardio', metrics: ['duration', 'distance'], aliases: ['户外跑', '路跑', 'outdoor run'] },
+  { id: 'run_indoor',   name: '室内跑步', category: '有氧', kind: 'cardio', metrics: ['duration', 'distance'], aliases: ['跑步机', '机跑', 'treadmill'] },
+  { id: 'walk_outdoor', name: '室外走路', category: '有氧', kind: 'cardio', metrics: ['duration', 'distance'], aliases: ['户外走', '健走', 'outdoor walk'] },
+  { id: 'walk_indoor',  name: '室内走路', category: '有氧', kind: 'cardio', metrics: ['duration', 'distance'], aliases: ['室内健走', 'indoor walk'] },
+  { id: 'elliptical',   name: '椭圆机',   category: '有氧', kind: 'cardio', metrics: ['duration', 'distance'], aliases: ['椭圆仪', 'elliptical'] },
+  { id: 'cycling',      name: '单车',     category: '有氧', kind: 'cardio', metrics: ['duration', 'distance'], aliases: ['骑行', '动感单车', 'bike', 'cycling'] },
+  { id: 'stairs',       name: '爬楼梯',   category: '有氧', kind: 'cardio', metrics: ['duration', 'floors'], aliases: ['爬楼', '楼梯机', 'stairs', 'stair climber'] }
 ];
 
 // 三大项 id，首页曲线用

@@ -59,16 +59,28 @@ Page({
 
   decorate(list) {
     const prMap = util.buildPRMap(list);
-    return (list || []).map((w) => ({
-      _id: w._id,
-      name: w.name || '训练',
-      dateLabel: `${util.formatMonthDay(w.date)} ${util.weekDay(w.date)}`,
-      exerciseCount: (w.exercises || []).length,
-      sets: util.totalSets(w.exercises),
-      volume: Math.round(unit.toDisplay(util.totalVolume(w.exercises))),
-      prCount: prMap[w._id] ? prMap[w._id].size : 0,
-      pending: !!w._pending
-    }));
+    return (list || []).map((w) => {
+      const base = {
+        _id: w._id,
+        name: w.name || '训练',
+        dateLabel: `${util.formatMonthDay(w.date)} ${util.weekDay(w.date)}`,
+        cardio: w.type === 'cardio',
+        pending: !!w._pending
+      };
+      if (w.type === 'cardio') {
+        // 有氧摘要：每个活动 "名称 时长min·距离km/层数"
+        base.cardioText = (w.exercises || []).map((ex) => {
+          const second = ex.distance != null ? `${ex.distance}km` : (ex.floors != null ? `${ex.floors}层` : '');
+          return `${ex.name} ${ex.duration || 0}min${second ? ' · ' + second : ''}`;
+        }).join('；');
+        return base;
+      }
+      base.exerciseCount = (w.exercises || []).length;
+      base.sets = util.totalSets(w.exercises);
+      base.volume = Math.round(unit.toDisplay(util.totalVolume(w.exercises)));
+      base.prCount = prMap[w._id] ? prMap[w._id].size : 0;
+      return base;
+    });
   },
 
   goNew() { wx.navigateTo({ url: '/pages/workout/edit' }); },
