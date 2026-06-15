@@ -38,6 +38,11 @@
 - ✅ 动作搜索：录入/模板/动作库三处面板按名称+别名模糊搜索（`exerciseLib.searchExercises`）
 - ✅ 自重记录：`loadType:'bodyweight'` 动作的 weight 语义为「额外负重」（0=自重、+X=负重，显示 `util.formatLoad`）；纯自重无曲线/PR、保留次数（复用 mww 跳过 0 机制）
 
+迭代五（代码完成 + 真机通过）：
+
+- ✅ 有氧训练大类：`workouts.type`(strength/cardio)，7 个有氧活动（跑步/走路室内外、椭圆机、单车、爬楼梯），按时长+距离/层数录入；预设「有氧训练」模板；列表摘要 + 日历橙色标记；有氧无 sets 天然不入力量聚合（change `cardio-tracking`）
+- ✅ 动作库微调：肩上推举→站姿肩上推举、新增坐姿肩上推举、T杠划船→海豹划船（id 不变）
+
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
 
