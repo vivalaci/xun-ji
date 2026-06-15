@@ -203,6 +203,13 @@
 
 **预留做法**：读写统一经过一个 `unit.js` 转换层（MVP 内为恒等函数 kg↔kg），迭代二只改这一层。
 
+### 主单位 vs 本次输入单位（change per-entry-input-unit）
+
+两条不同的轴，均经 `unit.js`，存储恒 kg：
+
+- **主单位**（「我的-设置」，`currentUnit`）：决定全 App 显示 + 录入默认单位。kg/lb 主用户对称（lb 主用户全程见 lb）。`toStore/toDisplay/step` 按主单位。
+- **本次输入单位**（训练录入页会话级段控）：临时覆盖某次录入的输入单位，默认=主单位。经显式换算族 `toStoreFrom(v,srcUnit)`/`toDisplayIn(kg,dstUnit)`/`stepFor(unit)`；切换时就地重表达已显示值。**纯输入便利**，不持久化原单位，保存后按主单位显示。
+
 ---
 
 ## 八、技术选型汇总

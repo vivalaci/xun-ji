@@ -246,4 +246,27 @@ test('一天多练超 3 个圆点折叠 +N', () => {
   assert.strictEqual(cell.more, 1);
 });
 
+console.log('unit 显式单位换算族（per-entry-input-unit）:');
+test('toStoreFrom：kg 恒等 / lb→kg 精度', () => {
+  assert.strictEqual(unit.toStoreFrom(100, 'kg'), 100);
+  assert.ok(Math.abs(unit.toStoreFrom(225, 'lb') - 225 * 0.45359237) < 1e-9);
+});
+test('toDisplayIn：kg 恒等 / kg→lb round / 空透传', () => {
+  assert.strictEqual(unit.toDisplayIn(100, 'kg'), 100);
+  assert.strictEqual(unit.toDisplayIn(100, 'lb'), +(100 / 0.45359237).toFixed(1));
+  assert.strictEqual(unit.toDisplayIn('', 'lb'), '');
+  assert.strictEqual(unit.toDisplayIn(null, 'lb'), null);
+});
+test('stepFor：lb 5 / kg 2.5', () => {
+  assert.strictEqual(unit.stepFor('lb'), 5);
+  assert.strictEqual(unit.stepFor('kg'), 2.5);
+});
+test('切换单位往返：kg 显示值经 lb 再回 kg 一致', () => {
+  // 模拟录入页切换逻辑：显示值 -(原单位)-> kg -(新单位)-> 显示值
+  const kg = unit.toStoreFrom(100, 'kg');        // 100kg
+  const lbShown = unit.toDisplayIn(kg, 'lb');     // 显示 lb
+  const backKg = unit.toStoreFrom(lbShown, 'lb'); // 切回时存 kg
+  assert.ok(Math.abs(backKg - 100) < 0.05);       // 往返误差在 round 容忍内
+});
+
 console.log(`\nAll ${passed} tests passed ✓`);

@@ -41,6 +41,16 @@
     </view>
   </view>
 
+  <!-- 本次输入单位 -->
+  <view class="card unit-row row between">
+    <view class="muted">本次输入单位</view>
+    <view class="unit-seg row">
+      <view wx:for="{{unitOptions}}" wx:key="*this"
+            class="unit-opt {{inputUnit === item ? 'active' : ''}}"
+            bindtap="onSwitchInputUnit" data-unit="{{item}}">{{item}}</view>
+    </view>
+  </view>
+
   <!-- 动作 -->
   <view wx:for="{{exercises}}" wx:key="index" wx:for-item="ex" wx:for-index="i" class="card">
     <view class="row between ex-head">
@@ -50,7 +60,7 @@
 
     <view class="set-head row">
       <text class="col-idx">组</text>
-      <text class="col-main">重量({{unitLabel}})</text>
+      <text class="col-main">重量({{inputUnit}})</text>
       <text class="col-main">次数</text>
       <text class="col-del"></text>
     </view>

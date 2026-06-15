@@ -36,4 +36,23 @@ function label() {
   return currentUnit();
 }
 
-module.exports = { currentUnit, toStore, toDisplay, step, label };
+// ---- 显式单位换算族（不依赖全局主单位，供"本次输入单位"用，见 change per-entry-input-unit）----
+
+// 指定源单位的输入值 → 存库值（kg），完整精度不 round
+function toStoreFrom(value, srcUnit) {
+  const n = Number(value);
+  return srcUnit === 'lb' ? n * LB_TO_KG : n;
+}
+
+// kg → 指定目标单位的显示值（lb 保留 1 位）；null/'' 透传
+function toDisplayIn(kgValue, dstUnit) {
+  if (kgValue == null || kgValue === '') return kgValue;
+  return dstUnit === 'lb' ? +(Number(kgValue) / LB_TO_KG).toFixed(1) : Number(kgValue);
+}
+
+// 指定单位的步进
+function stepFor(u) {
+  return u === 'lb' ? 5 : 2.5;
+}
+
+module.exports = { currentUnit, toStore, toDisplay, step, label, toStoreFrom, toDisplayIn, stepFor };
