@@ -29,6 +29,7 @@
 
 - ✅ 模板分组：三分化（推日/拉日/蹲日）+ 二分化（上肢/下肢），存量数据自动迁移（change `template-groups`）
 - ✅ 曲线首页可定制：长按进编辑模式（↑/↓ 排序、自定义曲线可删）、底部"添加曲线"任选动作（上限 2 条、主力工作组重量口径、槽位配色）；配置存 `user_prefs` 跨设备同步（change `custom-curves`）
+- ✅ 训练日历：训练列表页顶部月视图，按分化类型配色圆点标记每天练的项，显示本月训练天数，点某天看详情并跳转（change `training-calendar`，纯读 workouts）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
@@ -51,6 +52,7 @@
 │   ├── exerciseLib.js               动作合并查询（内置 + 自建，按 id 取名）
 │   ├── templateLib.js               模板分组/迁移纯函数（分桶展示、存量迁移判定）
 │   ├── curveConfig.js               曲线配置纯函数（合成/排序/增删校验/槽位配色）
+│   ├── calendar.js                  训练日历纯函数（月网格/按日期聚合/分化分类配色）
 │   └── chart.js                     Canvas 折线图
 ├── pages/
 │   ├── curve/                       曲线（Tab1 · 首页）→ 点曲线进动作详情

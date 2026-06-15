@@ -15,6 +15,7 @@ const store = require('../utils/store.js');
 const templateLib = require('../utils/templateLib.js');
 const PRESETS = require('../config/templates.js');
 const curveConfig = require('../utils/curveConfig.js');
+const calendar = require('../utils/calendar.js');
 
 let passed = 0;
 function test(name, fn) { fn(); passed++; console.log('  ✓ ' + name); }
@@ -199,6 +200,50 @@ test('删除后槽位颜色复用', () => {
   assert.strictEqual(r3.ok, true);
   assert.strictEqual(r3.prefs.customCurves.find((c) => c.key === 'ex_leg_press').slot, 0);
   assert.ok(!r3.prefs.curveOrder.includes('ex_lat_pulldown'));
+});
+
+console.log('calendar.classify:');
+test('5 类按关键词归类，其余归其他', () => {
+  assert.strictEqual(calendar.classify('推日').key, 'push');
+  assert.strictEqual(calendar.classify('拉日').key, 'pull');
+  assert.strictEqual(calendar.classify('蹲日').key, 'squat');
+  assert.strictEqual(calendar.classify('腿日').key, 'squat');
+  assert.strictEqual(calendar.classify('胸三头').key, 'other');
+});
+test('上肢/下肢优先判定，不被其他关键词误吃', () => {
+  assert.strictEqual(calendar.classify('上肢').key, 'upper');
+  assert.strictEqual(calendar.classify('下肢').key, 'lower');
+});
+
+console.log('calendar.aggregateByDate / trainedDaysInMonth:');
+test('按日期聚合 + 当月训练天数', () => {
+  const ws = [
+    { _id: 'a', date: '2026-06-01', name: '推日' },
+    { _id: 'b', date: '2026-06-01', name: '下肢' },
+    { _id: 'c', date: '2026-06-03', name: '拉日' },
+    { _id: 'd', date: '2026-05-30', name: '蹲日' }
+  ];
+  const byDate = calendar.aggregateByDate(ws);
+  assert.strictEqual(byDate['2026-06-01'].length, 2);
+  assert.strictEqual(calendar.trainedDaysInMonth(byDate, 2026, 5), 2); // 6月(month=5)有 1日、3日
+});
+
+console.log('calendar.monthMatrix:');
+test('周一起始、今日标记、跨月单元格标记', () => {
+  const byDate = calendar.aggregateByDate([{ _id: 'a', date: '2026-06-15', name: '推日' }]);
+  const cells = calendar.monthMatrix(2026, 5, byDate, '2026-06-15'); // 2026-06-01 是周一
+  assert.strictEqual(cells[0].dateStr, '2026-06-01');
+  assert.strictEqual(cells[0].inMonth, true);
+  const d15 = cells.find((c) => c.dateStr === '2026-06-15');
+  assert.strictEqual(d15.isToday, true);
+  assert.deepStrictEqual(d15.dots, ['#1D4ED8']);
+});
+test('一天多练超 3 个圆点折叠 +N', () => {
+  const ws = ['推日', '拉日', '蹲日', '上肢'].map((n, i) => ({ _id: 'x' + i, date: '2026-06-10', name: n }));
+  const byDate = calendar.aggregateByDate(ws);
+  const cell = calendar.monthMatrix(2026, 5, byDate, '2026-06-01').find((c) => c.dateStr === '2026-06-10');
+  assert.strictEqual(cell.dots.length, 3);
+  assert.strictEqual(cell.more, 1);
 });
 
 console.log(`\nAll ${passed} tests passed ✓`);
