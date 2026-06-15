@@ -16,6 +16,8 @@ const templateLib = require('../utils/templateLib.js');
 const PRESETS = require('../config/templates.js');
 const curveConfig = require('../utils/curveConfig.js');
 const calendar = require('../utils/calendar.js');
+const exercises = require('../config/exercises.js');
+const exerciseLib = require('../utils/exerciseLib.js');
 
 let passed = 0;
 function test(name, fn) { fn(); passed++; console.log('  ✓ ' + name); }
@@ -285,6 +287,93 @@ test('切换单位往返：kg 显示值经 lb 再回 kg 一致', () => {
   const lbShown = unit.toDisplayIn(kg, 'lb');     // 显示 lb
   const backKg = unit.toStoreFrom(lbShown, 'lb'); // 切回时存 kg
   assert.ok(Math.abs(backKg - 100) < 0.05);       // 往返误差在 round 容忍内
+});
+
+console.log('exercises 动作库稳定性:');
+test('原 27 个内置 id 全部存在', () => {
+  const ORIG = ['bench', 'incline_bench', 'db_bench', 'db_fly', 'dips',
+    'deadlift', 'pullup', 'lat_pulldown', 'barbell_row', 'seated_row',
+    'squat', 'rdl', 'leg_press', 'leg_ext', 'leg_curl', 'calf_raise',
+    'ohp', 'db_press', 'lateral_raise', 'face_pull',
+    'barbell_curl', 'db_curl', 'tricep_pushdown', 'close_grip_bench',
+    'crunch', 'plank', 'hanging_leg_raise'];
+  const ids = exercises.EXERCISES.map((e) => e.id);
+  ORIG.forEach((id) => assert.ok(ids.includes(id), '缺少原始 id: ' + id));
+});
+test('id 唯一', () => {
+  const ids = exercises.EXERCISES.map((e) => e.id);
+  assert.strictEqual(new Set(ids).size, ids.length);
+});
+test('MAIN_LIFTS 不变', () => {
+  assert.deepStrictEqual(exercises.MAIN_LIFTS, ['bench', 'deadlift', 'squat']);
+});
+test('所有动作 category 都在 CATEGORIES 内', () => {
+  exercises.EXERCISES.forEach((e) => {
+    assert.ok(exercises.CATEGORIES.includes(e.category), '游离分类: ' + e.category);
+  });
+});
+
+console.log('exerciseLib.searchExercises:');
+test('名称命中', () => {
+  store.setCache('custom_exercises', []);
+  const r = exerciseLib.searchExercises('卧推');
+  assert.ok(r.length > 0);
+  assert.ok(r.some((e) => e.id === 'bench'));
+});
+test('别名命中（中英）', () => {
+  assert.ok(exerciseLib.searchExercises('bench').some((e) => e.id === 'bench'));
+  assert.ok(exerciseLib.searchExercises('rdl').some((e) => e.id === 'rdl'));
+});
+test('大小写无关', () => {
+  assert.ok(exerciseLib.searchExercises('BENCH').some((e) => e.id === 'bench'));
+});
+test('空/空白关键词返回 null（不过滤）', () => {
+  assert.strictEqual(exerciseLib.searchExercises(''), null);
+  assert.strictEqual(exerciseLib.searchExercises('   '), null);
+  assert.strictEqual(exerciseLib.searchExercises(null), null);
+});
+test('无命中返回空数组', () => {
+  assert.deepStrictEqual(exerciseLib.searchExercises('zzzznotexist'), []);
+});
+
+console.log('exerciseLib 元数据透传与缺省回退:');
+test('内置动作透传元数据', () => {
+  const ex = exerciseLib.getExercise('bench');
+  assert.strictEqual(ex.equipment, '杠铃');
+  assert.strictEqual(ex.primaryMuscle, '胸大肌');
+});
+test('自建动作缺元数据不报错，getExercise/getName 正常', () => {
+  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_x', name: '我的动作' }]);
+  const ex = exerciseLib.getExercise('cus_x');
+  assert.strictEqual(ex.name, '我的动作');
+  assert.strictEqual(ex.category, '其他');
+  assert.strictEqual(ex.equipment, undefined); // 缺字段
+  assert.strictEqual(exerciseLib.getName('cus_x'), '我的动作');
+  assert.ok(exerciseLib.searchExercises('我的动作').some((e) => e.id === 'cus_x'));
+  store.setCache('custom_exercises', []);
+});
+test('未知 id getName 回退占位', () => {
+  assert.strictEqual(exerciseLib.getName('cus_gone'), '已删除动作');
+  assert.strictEqual(exerciseLib.getExercise('cus_gone'), null);
+});
+
+console.log('util.formatLoad:');
+test('weighted 返回数值字符串，空透传', () => {
+  assert.strictEqual(util.formatLoad(50, 'weighted'), '50');
+  assert.strictEqual(util.formatLoad(50), '50');
+  assert.strictEqual(util.formatLoad('', 'weighted'), '');
+  assert.strictEqual(util.formatLoad(null, 'weighted'), '');
+});
+test('bodyweight：0/空 → 自重', () => {
+  assert.strictEqual(util.formatLoad(0, 'bodyweight'), '自重');
+  assert.strictEqual(util.formatLoad('', 'bodyweight'), '自重');
+  assert.strictEqual(util.formatLoad(null, 'bodyweight'), '自重');
+});
+test('bodyweight：正值 → 自重+X', () => {
+  assert.strictEqual(util.formatLoad(20, 'bodyweight'), '自重+20');
+});
+test('bodyweight：负值 → 辅助−X（防御）', () => {
+  assert.strictEqual(util.formatLoad(-15, 'bodyweight'), '辅助−15');
 });
 
 console.log(`\nAll ${passed} tests passed ✓`);

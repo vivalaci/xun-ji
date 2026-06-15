@@ -41,6 +41,19 @@ function mainWorkingWeight(sets) {
   return weights[0];
 }
 
+// 重量列展示文本（不含单位，与既有 "50×5" 风格一致，由调用方拼 ×reps）。
+// 入参 displayWeight 为「已换算到显示单位」的数值（即 unit.toDisplay 的结果）。
+//   weighted（默认）: 返回数值字符串，如 "50"；空/缺省返回 ''。
+//   bodyweight     : 0/空 → "自重"；>0 → "自重+20"（额外负重）；<0 → "辅助−15"（防御回退，本迭代不录入负值）。
+function formatLoad(displayWeight, loadType) {
+  const w = (displayWeight === '' || displayWeight == null) ? null : Number(displayWeight);
+  if (loadType === 'bodyweight') {
+    if (w == null || w === 0) return '自重';
+    return w > 0 ? '自重+' + w : '辅助−' + Math.abs(w);
+  }
+  return w == null ? '' : String(w);
+}
+
 // 训练总容量 Σ(重量×次数)
 function totalVolume(exercises) {
   let v = 0;
@@ -99,6 +112,7 @@ module.exports = {
   formatMonthDay,
   weekDay,
   mainWorkingWeight,
+  formatLoad,
   totalVolume,
   totalSets,
   buildPRMap,

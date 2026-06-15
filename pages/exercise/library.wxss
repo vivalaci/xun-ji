@@ -13,6 +13,13 @@
   border-radius: 6rpx; padding: 2rpx 10rpx;
 }
 .del-btn { color: var(--danger); font-size: 24rpx; }
+.ex-cat { font-size: 22rpx; }
+
+/* 搜索 */
+.search-row { margin-bottom: 20rpx; }
+.search-input { flex: 1; background: var(--card); border-radius: 14rpx; padding: 18rpx 24rpx; font-size: 28rpx; }
+.search-clear { width: 60rpx; text-align: center; color: var(--muted); font-size: 30rpx; }
+.search-empty { text-align: center; padding: 40rpx 0; font-size: 26rpx; }
 
 /* 新建面板 */
 .mask { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; }

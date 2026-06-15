@@ -30,7 +30,22 @@
     <text class="bold">选择动作</text>
     <text class="picker-close" bindtap="closePicker">完成</text>
   </view>
-  <view class="picker-body">
+
+  <view class="search-row row">
+    <input class="search-input" placeholder="搜索动作名称 / 别名" value="{{searchKw}}" bindinput="onSearchInput" confirm-type="search" />
+    <text wx:if="{{searchKw}}" class="search-clear" bindtap="clearSearch">✕</text>
+  </view>
+
+  <scroll-view wx:if="{{searching}}" scroll-y class="search-results">
+    <view wx:if="{{searchResults.length === 0}}" class="search-empty muted">无匹配动作</view>
+    <view wx:for="{{searchResults}}" wx:key="id"
+          class="ex-pick row between" bindtap="pickFromLib" data-id="{{item.id}}" data-name="{{item.name}}">
+      <text>{{item.name}}<text wx:if="{{item.isMainLift}}" class="main-badge">主项</text></text>
+      <text class="ex-cat muted">{{item.category}}</text>
+    </view>
+  </scroll-view>
+
+  <view wx:else class="picker-body">
     <scroll-view scroll-y class="cat-list">
       <view wx:for="{{categories}}" wx:key="*this"
             class="cat-item {{activeCategory === index ? 'active' : ''}}"

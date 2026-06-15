@@ -1,19 +1,42 @@
 <!-- pages/exercise/library.wxml -->
 <view class="container">
-  <view wx:for="{{groups}}" wx:key="category" class="cat-group">
-    <view class="cat-title muted">{{item.category}}</view>
-    <view class="card">
-      <view wx:for="{{item.items}}" wx:for-item="ex" wx:key="id"
-            class="ex-row row between" bindtap="goDetail" data-id="{{ex.id}}">
-        <view class="row ex-left">
-          <text>{{ex.name}}</text>
-          <text wx:if="{{ex.isMainLift}}" class="main-badge">主项</text>
-          <text wx:if="{{ex.custom}}" class="custom-badge">自建</text>
-        </view>
-        <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
+  <view class="search-row row">
+    <input class="search-input" placeholder="搜索动作名称 / 别名" value="{{searchKw}}" bindinput="onSearchInput" confirm-type="search" />
+    <text wx:if="{{searchKw}}" class="search-clear" bindtap="clearSearch">✕</text>
+  </view>
+
+  <!-- 搜索结果（扁平列表，标注分类） -->
+  <view wx:if="{{searching}}" class="card">
+    <view wx:if="{{searchResults.length === 0}}" class="search-empty muted">无匹配动作</view>
+    <view wx:for="{{searchResults}}" wx:for-item="ex" wx:key="id"
+          class="ex-row row between" bindtap="goDetail" data-id="{{ex.id}}">
+      <view class="row ex-left">
+        <text>{{ex.name}}</text>
+        <text wx:if="{{ex.isMainLift}}" class="main-badge">主项</text>
+        <text wx:if="{{ex.custom}}" class="custom-badge">自建</text>
+        <text class="ex-cat muted">{{ex.category}}</text>
       </view>
+      <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
     </view>
   </view>
+
+  <!-- 分类分组 -->
+  <block wx:else>
+    <view wx:for="{{groups}}" wx:key="category" class="cat-group">
+      <view class="cat-title muted">{{item.category}}</view>
+      <view class="card">
+        <view wx:for="{{item.items}}" wx:for-item="ex" wx:key="id"
+              class="ex-row row between" bindtap="goDetail" data-id="{{ex.id}}">
+          <view class="row ex-left">
+            <text>{{ex.name}}</text>
+            <text wx:if="{{ex.isMainLift}}" class="main-badge">主项</text>
+            <text wx:if="{{ex.custom}}" class="custom-badge">自建</text>
+          </view>
+          <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
+        </view>
+      </view>
+    </view>
+  </block>
 </view>
 
 <view class="fab" bindtap="openAdd">+</view>

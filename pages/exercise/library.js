@@ -5,6 +5,10 @@ const lib = require('../../utils/exerciseLib.js');
 Page({
   data: {
     groups: [],            // [{ category, items:[{id,name,isMainLift,custom,_id}] }]
+    // 搜索
+    searchKw: '',
+    searchResults: [],
+    searching: false,
     // 新建面板
     addVisible: false,
     newName: '',
@@ -28,7 +32,16 @@ Page({
     const byCat = lib.byCategory();
     const groups = Object.keys(byCat).map((c) => ({ category: c, items: byCat[c] }));
     this.setData({ groups, categories: lib.CATEGORIES });
+    // 搜索态下同步刷新结果（如删除后）
+    if (this.data.searching) this.applySearch(this.data.searchKw);
   },
+
+  onSearchInput(e) { this.applySearch(e.detail.value); },
+  applySearch(kw) {
+    const res = lib.searchExercises(kw); // null=不过滤
+    this.setData({ searchKw: kw, searchResults: res || [], searching: res !== null });
+  },
+  clearSearch() { this.setData({ searchKw: '', searchResults: [], searching: false }); },
 
   openAdd() { this.setData({ addVisible: true, newName: '', catIndex: 0 }); },
   closeAdd() { this.setData({ addVisible: false }); },

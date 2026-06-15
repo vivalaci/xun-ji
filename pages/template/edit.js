@@ -12,6 +12,10 @@ Page({
     categories: [],
     activeCategory: 0,
     libByCategory: {},
+    // 动作搜索
+    searchKw: '',
+    searchResults: [],
+    searching: false,
     saving: false
   },
 
@@ -55,9 +59,18 @@ Page({
   },
 
   // 动作选择面板
-  openPicker() { this.setData({ pickerVisible: true }); },
-  closePicker() { this.setData({ pickerVisible: false }); },
+  openPicker() {
+    const byCat = lib.byCategory(); // 刷新（含会话内新增的自建动作）
+    this.setData({ pickerVisible: true, libByCategory: byCat, categories: Object.keys(byCat), searchKw: '', searchResults: [], searching: false });
+  },
+  closePicker() { this.setData({ pickerVisible: false, searchKw: '', searchResults: [], searching: false }); },
   switchCategory(e) { this.setData({ activeCategory: e.currentTarget.dataset.index }); },
+  onSearchInput(e) {
+    const kw = e.detail.value;
+    const res = lib.searchExercises(kw); // null=不过滤
+    this.setData({ searchKw: kw, searchResults: res || [], searching: res !== null });
+  },
+  clearSearch() { this.setData({ searchKw: '', searchResults: [], searching: false }); },
   pickFromLib(e) {
     const { id, name } = e.currentTarget.dataset;
     if (this.data.exercises.some((x) => x.exerciseId === id)) {
@@ -66,7 +79,7 @@ Page({
     }
     this.setData({
       exercises: this.data.exercises.concat({ exerciseId: id, name }),
-      pickerVisible: false
+      pickerVisible: false, searchKw: '', searchResults: [], searching: false
     });
   },
 

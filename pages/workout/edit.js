@@ -2,7 +2,6 @@
 const db = require('../../utils/db.js');
 const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
-const { EXERCISES, CATEGORIES, getExercise } = require('../../config/exercises.js');
 const lib = require('../../utils/exerciseLib.js');
 const templateLib = require('../../utils/templateLib.js');
 
@@ -22,10 +21,14 @@ Page({
 
     // 动作选择面板
     pickerVisible: false,
-    categories: CATEGORIES,
+    categories: [],          // 由 refreshLib 填充（含自建分类）
     activeCategory: 0,
-    libByCategory: {},       // category -> [{id,name}]
+    libByCategory: {},       // category -> [{id,name,...}]
     customName: '',
+    // 动作搜索
+    searchKw: '',
+    searchResults: [],
+    searching: false,
 
     // 每个动作各自的输入单位（默认主单位，可逐动作切换；存库仍恒 kg）
     unitOptions: ['kg', 'lb'],
@@ -33,10 +36,8 @@ Page({
   },
 
   async onLoad(options) {
-    // 预处理动作库分类
-    const libByCategory = {};
-    CATEGORIES.forEach((c) => { libByCategory[c] = EXERCISES.filter((e) => e.category === c); });
-    this.setData({ libByCategory });
+    // 预处理动作库分类（走 exerciseLib，含自建动作与扩充后的分类）
+    this.refreshLib();
 
     if (options.id) {
       wx.setNavigationBarTitle({ title: '编辑训练' });
@@ -63,6 +64,7 @@ Page({
     const exercises = (w.exercises || []).map((ex) => ({
       exerciseId: ex.exerciseId,
       name: ex.name,
+      loadType: (lib.getExercise(ex.exerciseId) || {}).loadType || 'weighted',
       unit: mainUnit,
       sets: (ex.sets || []).map((s) => ({
         weight: unit.toDisplayIn(s.weight, mainUnit),
@@ -102,7 +104,7 @@ Page({
     const lastSame = workouts.find((w) => w.templateId === tpl._id);
     const mainUnit = unit.currentUnit();
     return (tpl.exercises || []).map((te) => {
-      const ex = getExercise(te.exerciseId);
+      const ex = lib.getExercise(te.exerciseId);
       const name = ex ? ex.name : te.exerciseId;
       let sets = [{ weight: '', reps: '' }];
       if (lastSame) {
@@ -111,7 +113,7 @@ Page({
           sets = prev.sets.map((s) => ({ weight: unit.toDisplayIn(s.weight, mainUnit), reps: s.reps }));
         }
       }
-      return { exerciseId: te.exerciseId, name, unit: mainUnit, sets };
+      return { exerciseId: te.exerciseId, name, loadType: (ex && ex.loadType) || 'weighted', unit: mainUnit, sets };
     });
   },
 
@@ -174,9 +176,21 @@ Page({
   },
 
   // ---- 动作选择 ----
-  openPicker() { this.setData({ pickerVisible: true }); },
-  closePicker() { this.setData({ pickerVisible: false, customName: '' }); },
+  // 重建分类分组数据（含自建动作）。新增自建/打开面板时调用，保证最新。
+  refreshLib() {
+    const byCat = lib.byCategory();
+    this.setData({ libByCategory: byCat, categories: Object.keys(byCat) });
+  },
+  openPicker() { this.refreshLib(); this.setData({ pickerVisible: true, searchKw: '', searchResults: [], searching: false }); },
+  closePicker() { this.setData({ pickerVisible: false, customName: '', searchKw: '', searchResults: [], searching: false }); },
   switchCategory(e) { this.setData({ activeCategory: e.currentTarget.dataset.index }); },
+  // 动作搜索：按名称+别名模糊匹配；空关键词回落分类分组
+  onSearchInput(e) {
+    const kw = e.detail.value;
+    const res = lib.searchExercises(kw); // null=不过滤
+    this.setData({ searchKw: kw, searchResults: res || [], searching: res !== null });
+  },
+  clearSearch() { this.setData({ searchKw: '', searchResults: [], searching: false }); },
   onCustomInput(e) { this.setData({ customName: e.detail.value }); },
   pickFromLib(e) {
     const { id, name } = e.currentTarget.dataset;
@@ -191,10 +205,12 @@ Page({
     this.addExercise(id, name);
   },
   addExercise(exerciseId, name) {
+    const meta = lib.getExercise(exerciseId) || {};
     const exercises = this.data.exercises.concat({
-      exerciseId, name, unit: unit.currentUnit(), sets: [{ weight: '', reps: '' }]
+      exerciseId, name, loadType: meta.loadType || 'weighted',
+      unit: unit.currentUnit(), sets: [{ weight: '', reps: '' }]
     });
-    this.setData({ exercises, pickerVisible: false, customName: '' });
+    this.setData({ exercises, pickerVisible: false, customName: '', searchKw: '', searchResults: [], searching: false });
   },
 
   // ---- 保存 ----

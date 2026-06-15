@@ -15,14 +15,21 @@ Page({
     range: '3M',
     ranges: ['1M', '3M', '6M', 'ALL'],
     history: [],     // [{ dateLabel, setsText, isPR }]
-    hasData: false
+    hasData: false,
+    isBodyweight: false,
+    chartHint: '暂无数据'
   },
 
   onLoad(options) {
     this.exerciseId = options.id;
+    this.loadType = (lib.getExercise(options.id) || {}).loadType || 'weighted';
     this.color = LIFT_COLOR[options.id] || '#1D4ED8';
     wx.setNavigationBarTitle({ title: lib.getName(options.id) });
-    this.setData({ exerciseId: options.id, name: lib.getName(options.id), unitLabel: unit.label() });
+    const isBW = this.loadType === 'bodyweight';
+    this.setData({
+      exerciseId: options.id, name: lib.getName(options.id), unitLabel: unit.label(),
+      isBodyweight: isBW, chartHint: isBW ? '纯自重，进步看次数' : '暂无数据'
+    });
   },
 
   onShow() {
@@ -70,7 +77,7 @@ Page({
       .sort((a, b) => b.ts - a.ts)
       .map((e) => ({
         dateLabel: `${util.formatMonthDay(e.date)} ${util.weekDay(e.date)}`,
-        setsText: e.sets.map((s) => `${unit.toDisplay(s.weight)}×${s.reps}`).join('  '),
+        setsText: e.sets.map((s) => `${util.formatLoad(unit.toDisplay(s.weight), this.loadType)}×${s.reps}`).join('  '),
         isPR: e.isPR
       }));
 

@@ -6,7 +6,7 @@
 
 ---
 
-## 当前进度（迭代一 + 迭代二完成，已真机测试通过）
+## 当前进度（迭代一 ~ 三完成并真机通过；迭代四代码完成，待真机验证）
 
 迭代一核心闭环：
 
@@ -31,6 +31,12 @@
 - ✅ 曲线首页可定制：长按进编辑模式（↑/↓ 排序、自定义曲线可删）、底部"添加曲线"任选动作（上限 2 条、主力工作组重量口径、槽位配色）；配置存 `user_prefs` 跨设备同步（change `custom-curves`）
 - ✅ 训练日历：首页顶部月视图，按分化类型配色圆点标记每天练的项，显示本月训练天数，点某天看详情并跳转（change `training-calendar`，纯读 workouts）
 - ✅ 大数据量：数据层全量分页拉取（绕过客户端 100 条上限，保证曲线/PR/日历正确），训练页/身体页增量渲染（默认 30 条上拉加载更多）（change `data-pagination`）
+
+迭代四（代码完成，待真机验证）：
+
+- ✅ 动作库扩充：内置动作 27→92，按肌群细化分类（腿拆股四/腘绳/臀/小腿，手臂拆肱二/肱三/前臂），同类内复合动作优先；动作补元数据（器械/主肌群/动作模式/别名），原 27 个 id 不变（change `enrich-exercise-library`）
+- ✅ 动作搜索：录入/模板/动作库三处面板按名称+别名模糊搜索（`exerciseLib.searchExercises`）
+- ✅ 自重记录：`loadType:'bodyweight'` 动作的 weight 语义为「额外负重」（0=自重、+X=负重，显示 `util.formatLoad`）；纯自重无曲线/PR、保留次数（复用 mww 跳过 0 机制）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
@@ -102,7 +108,7 @@ https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html
 
 ## 改动指南
 
-- **加动作**：编辑 `config/exercises.js`，注意给唯一 `id`。
+- **加动作**：编辑 `config/exercises.js`，给唯一 `id`（勿改/删既有 id），可选填元数据（equipment/primaryMuscle/secondaryMuscles/pattern/aliases）；自重动作标 `loadType:'bodyweight'`。
 - **改预设模板**：编辑 `config/templates.js`。
 - **改主题色**：编辑 `app.wxss` 顶部 CSS 变量。
 - **曲线口径/单位换算**：分别在 `utils/util.js` 的 `mainWorkingWeight` 和 `utils/unit.js`。

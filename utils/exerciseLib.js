@@ -14,6 +14,7 @@ function customList() {
 }
 
 // 全部动作：内置 + 自建（自建标 custom:true，便于 UI 区分/允许删除）
+// 内置动作透传全部元数据（equipment/primaryMuscle/.../loadType）；自建动作缺这些字段，UI 侧需容缺。
 function allExercises() {
   const customs = customList().map((c) => ({
     id: c.id,
@@ -39,13 +40,24 @@ function byCategory() {
   return map;
 }
 
-// 按 id 取动作对象（内置优先，再查自建）
+// 按 id 取动作对象（内置优先，再查自建）。内置含元数据透传，自建缺字段安全回退。
 function getExercise(id) {
   const builtin = getBuiltin(id);
   if (builtin) return Object.assign({ custom: false }, builtin);
   const c = customList().find((x) => x.id === id);
   if (c) return { id: c.id, name: c.name, category: c.category || '其他', isMainLift: false, custom: true, _id: c._id };
   return null;
+}
+
+// 关键词模糊搜索：按 name + aliases 大小写无关匹配。
+// 空/纯空白关键词返回 null（约定：表示「不过滤」，由调用方回落到分类分组）。
+function searchExercises(keyword) {
+  const kw = (keyword || '').trim().toLowerCase();
+  if (!kw) return null;
+  return allExercises().filter((e) => {
+    if ((e.name || '').toLowerCase().includes(kw)) return true;
+    return (e.aliases || []).some((a) => String(a).toLowerCase().includes(kw));
+  });
 }
 
 // 按 id 取名称；找不到（如自建动作已删）回退占位，绝不返回空
@@ -68,5 +80,6 @@ module.exports = {
   byCategory,
   getExercise,
   getName,
+  searchExercises,
   genCustomId
 };

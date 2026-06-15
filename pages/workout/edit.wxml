@@ -57,7 +57,7 @@
 
     <view class="set-head row">
       <text class="col-idx">组</text>
-      <text class="col-main">重量({{ex.unit}})</text>
+      <text class="col-main">{{ex.loadType === 'bodyweight' ? '额外负重(' + ex.unit + ')' : '重量(' + ex.unit + ')'}}</text>
       <text class="col-main">次数</text>
       <text class="col-del"></text>
     </view>
@@ -67,7 +67,7 @@
 
       <view class="col-main stepper">
         <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="weight" data-dir="down">−</view>
-        <input class="step-input" type="digit" value="{{s.weight}}" placeholder="0"
+        <input class="step-input" type="digit" value="{{s.weight}}" placeholder="{{ex.loadType === 'bodyweight' ? '自重' : '0'}}"
                data-i="{{i}}" data-j="{{j}}" data-field="weight" bindinput="onSetInput" />
         <view class="step-btn" catchtap="stepValue" data-i="{{i}}" data-j="{{j}}" data-field="weight" data-dir="up">+</view>
       </view>
@@ -96,7 +96,24 @@
     <text class="bold">选择动作</text>
     <text class="picker-close" bindtap="closePicker">完成</text>
   </view>
-  <view class="picker-body">
+
+  <view class="search-row row">
+    <input class="search-input" placeholder="搜索动作名称 / 别名" value="{{searchKw}}" bindinput="onSearchInput" confirm-type="search" />
+    <text wx:if="{{searchKw}}" class="search-clear" bindtap="clearSearch">✕</text>
+  </view>
+
+  <!-- 搜索结果（扁平列表，标注分类） -->
+  <scroll-view wx:if="{{searching}}" scroll-y class="search-results">
+    <view wx:if="{{searchResults.length === 0}}" class="search-empty muted">无匹配动作</view>
+    <view wx:for="{{searchResults}}" wx:key="id"
+          class="ex-pick row between" bindtap="pickFromLib" data-id="{{item.id}}" data-name="{{item.name}}">
+      <text>{{item.name}}<text wx:if="{{item.isMainLift}}" class="main-badge">主项</text></text>
+      <text class="ex-cat muted">{{item.category}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 分类分组 -->
+  <view wx:else class="picker-body">
     <scroll-view scroll-y class="cat-list">
       <view wx:for="{{categories}}" wx:key="*this"
             class="cat-item {{activeCategory === index ? 'active' : ''}}"
