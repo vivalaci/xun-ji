@@ -32,11 +32,21 @@ function getCache(coll) {
   return store.getCache(coll);
 }
 
-// 从云端刷新：先冲队列，再拉取，更新缓存并返回最新列表
-async function refresh(coll, { orderBy = 'date', order = 'desc', limit = 200 } = {}) {
+// 客户端单次查询上限 100；分页累积全量，避免 >100 条被静默截断（见 change data-pagination）
+const PAGE = 100;
+const MAX_RECORDS = 5000; // 安全上限，防异常数据无限循环（约 24 年训练量）
+
+// 从云端刷新：先冲队列，再分页拉全量，更新缓存并返回最新列表
+async function refresh(coll, { orderBy = 'date', order = 'desc' } = {}) {
   await flushQueue(); // 先把本地未同步的推上去
-  const res = await db().collection(coll).orderBy(orderBy, order).limit(limit).get();
-  let list = res.data;
+  let list = [];
+  let skip = 0;
+  while (skip < MAX_RECORDS) {
+    const res = await db().collection(coll).orderBy(orderBy, order).skip(skip).limit(PAGE).get();
+    list = list.concat(res.data);
+    if (res.data.length < PAGE) break; // 取尽
+    skip += PAGE;
+  }
 
   // 合并仍未同步成功的本地记录（避免刷新把它们冲掉）
   const pendingLocal = store.getCache(coll).filter((r) => r._pending);

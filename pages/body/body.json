@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "身体",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark"
+  "backgroundTextStyle": "dark",
+  "onReachBottomDistance": 50
 }

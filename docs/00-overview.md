@@ -10,11 +10,10 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一 + 迭代二完成（已真机通过）；🔄 迭代三代码完成待真机（模板分组 + 自定义曲线） |
-| ⑧ | 测试上线 | 🔄 进行中（暂置，待迭代三验证后继续） |
+| ⑦ | 开发实现 | ✅ 迭代一/二/三全部完成并真机通过；三个 change 均已归档 |
+| ⑧ | 测试上线 | 🔄 进行中（备案 / 隐私指引 / 类目 / 提审待办） |
 
-> 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）已真机验证，详见 `openspec/changes/iteration-2/`。
-> 迭代三：模板分组（`openspec/changes/template-groups/`）+ 曲线首页可定制（`openspec/changes/custom-curves/`），代码完成、24 项单测全过，待真机验证。**注意：需在云控制台新建集合 `user_prefs`（仅创建者可读写）。**
+> 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
 
 ## 文档索引
 

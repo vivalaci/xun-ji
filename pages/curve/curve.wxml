@@ -3,6 +3,44 @@
 
   <!-- 常态 -->
   <block wx:if="{{!editing}}">
+    <!-- 训练日历（置顶） -->
+    <view class="card cal-card">
+      <view class="cal-head row between">
+        <view class="cal-nav" bindtap="prevMonth">‹</view>
+        <view class="cal-title">
+          <text class="bold">{{calLabel}}</text>
+          <text class="muted cal-count">本月训练 {{trainedDays}} 天</text>
+        </view>
+        <view class="cal-nav" bindtap="nextMonth">›</view>
+      </view>
+      <view class="cal-week">
+        <text wx:for="{{weekHeaders}}" wx:key="*this" class="cal-wk">{{item}}</text>
+      </view>
+      <view class="cal-grid">
+        <view wx:for="{{cells}}" wx:key="dateStr"
+              class="cal-cell {{item.inMonth ? '' : 'cal-out'}} {{item.dateStr === selectedDate ? 'cal-sel' : ''}}"
+              bindtap="onPickDay" data-date="{{item.dateStr}}">
+          <text class="cal-day {{item.isToday ? 'cal-today' : ''}}">{{item.day}}</text>
+          <view class="cal-dots">
+            <view wx:for="{{item.dots}}" wx:for-item="c" wx:key="index"
+                  class="cal-dot" style="background: {{c}}"></view>
+            <text wx:if="{{item.more > 0}}" class="cal-more">+{{item.more}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{selectedItems.length}}" class="cal-detail">
+        <view class="muted cal-detail-date">{{selectedLabel}}</view>
+        <view wx:for="{{selectedItems}}" wx:key="_id" class="cal-detail-item row between"
+              bindtap="goWorkout" data-id="{{item._id}}">
+          <view class="row">
+            <view class="cal-dot" style="background: {{item.type.color}}"></view>
+            <text>{{item.name}}</text>
+          </view>
+          <text class="muted">›</text>
+        </view>
+      </view>
+    </view>
+
     <!-- 时间范围切换 -->
     <view class="range-bar">
       <view wx:for="{{ranges}}" wx:key="*this"

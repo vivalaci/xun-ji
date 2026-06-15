@@ -5,6 +5,9 @@ const unit = require('../../utils/unit.js');
 const chart = require('../../utils/chart.js');
 const curveConfig = require('../../utils/curveConfig.js');
 const exerciseLib = require('../../utils/exerciseLib.js');
+const calendar = require('../../utils/calendar.js');
+
+const WEEK_HEADERS = ['一', '二', '三', '四', '五', '六', '日'];
 
 Page({
   data: {
@@ -13,6 +16,17 @@ Page({
     charts: [],          // 渲染用：{key,name,unit,color,latest,hasData,fixed}
     customCount: 0,
     maxCustom: curveConfig.MAX_CUSTOM,
+
+    // 训练日历（置顶）
+    weekHeaders: WEEK_HEADERS,
+    calYear: 0,
+    calMonth: 0,
+    calLabel: '',
+    cells: [],
+    trainedDays: 0,
+    selectedDate: '',
+    selectedItems: [],
+    selectedLabel: '',
 
     // 编辑模式
     editing: false,
@@ -26,6 +40,9 @@ Page({
   },
 
   onLoad() {
+    const now = new Date();
+    this.setData({ calYear: now.getFullYear(), calMonth: now.getMonth() });
+
     // 首次进入的一次性说明，仅弹一次
     if (!wx.getStorageSync('seen_intro')) {
       wx.showModal({
@@ -41,6 +58,7 @@ Page({
   onShow() {
     this._prefs = db.getCache(db.COLL.PREFS)[0] || null; // 缓存优先
     this.compute();
+    this.renderCalendar();
     this.refresh();
   },
 
@@ -57,7 +75,51 @@ Page({
       ]);
       this._prefs = prefs;
       this.compute();
+      this.renderCalendar();
     } catch (e) { /* 云环境未就绪，保留缓存渲染 */ }
+  },
+
+  // ---- 训练日历 ----
+  renderCalendar() {
+    const raw = db.getCache(db.COLL.WORKOUTS);
+    this._byDate = calendar.aggregateByDate(raw);
+    const { calYear, calMonth } = this.data;
+    const data = {
+      cells: calendar.monthMatrix(calYear, calMonth, this._byDate, util.formatDate()),
+      calLabel: `${calYear}年${calMonth + 1}月`,
+      trainedDays: calendar.trainedDaysInMonth(this._byDate, calYear, calMonth)
+    };
+    if (this.data.selectedDate) data.selectedItems = (this._byDate[this.data.selectedDate] || []);
+    this.setData(data);
+  },
+
+  prevMonth() {
+    let { calYear, calMonth } = this.data;
+    if (calMonth === 0) { calYear--; calMonth = 11; } else { calMonth--; }
+    this.setData({ calYear, calMonth, selectedDate: '', selectedItems: [], selectedLabel: '' }, () => this.renderCalendar());
+  },
+  nextMonth() {
+    let { calYear, calMonth } = this.data;
+    if (calMonth === 11) { calYear++; calMonth = 0; } else { calMonth++; }
+    this.setData({ calYear, calMonth, selectedDate: '', selectedItems: [], selectedLabel: '' }, () => this.renderCalendar());
+  },
+
+  onPickDay(e) {
+    const dateStr = e.currentTarget.dataset.date;
+    const items = (this._byDate && this._byDate[dateStr]) || [];
+    if (!items.length) {
+      this.setData({ selectedDate: '', selectedItems: [], selectedLabel: '' });
+      return;
+    }
+    this.setData({
+      selectedDate: dateStr,
+      selectedItems: items,
+      selectedLabel: `${util.formatMonthDay(dateStr)} ${util.weekDay(dateStr)}`
+    });
+  },
+
+  goWorkout(e) {
+    wx.navigateTo({ url: `/pages/workout/edit?id=${e.currentTarget.dataset.id}` });
   },
 
   switchRange(e) {

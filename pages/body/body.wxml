@@ -16,6 +16,8 @@
     </view>
   </view>
 
+  <view wx:if="{{loaded && records.length > 0 && !hasMore}}" class="list-end muted">没有更多了</view>
+
 </view>
 
 <view class="fab" bindtap="goNew">+</view>

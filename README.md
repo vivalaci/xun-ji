@@ -29,7 +29,8 @@
 
 - ✅ 模板分组：三分化（推日/拉日/蹲日）+ 二分化（上肢/下肢），存量数据自动迁移（change `template-groups`）
 - ✅ 曲线首页可定制：长按进编辑模式（↑/↓ 排序、自定义曲线可删）、底部"添加曲线"任选动作（上限 2 条、主力工作组重量口径、槽位配色）；配置存 `user_prefs` 跨设备同步（change `custom-curves`）
-- ✅ 训练日历：训练列表页顶部月视图，按分化类型配色圆点标记每天练的项，显示本月训练天数，点某天看详情并跳转（change `training-calendar`，纯读 workouts）
+- ✅ 训练日历：首页顶部月视图，按分化类型配色圆点标记每天练的项，显示本月训练天数，点某天看详情并跳转（change `training-calendar`，纯读 workouts）
+- ✅ 大数据量：数据层全量分页拉取（绕过客户端 100 条上限，保证曲线/PR/日历正确），训练页/身体页增量渲染（默认 30 条上拉加载更多）（change `data-pagination`）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
@@ -55,7 +56,7 @@
 │   ├── calendar.js                  训练日历纯函数（月网格/按日期聚合/分化分类配色）
 │   └── chart.js                     Canvas 折线图
 ├── pages/
-│   ├── curve/                       曲线（Tab1 · 首页）→ 点曲线进动作详情
+│   ├── curve/                       首页（Tab1）：训练日历 + 进步曲线 → 点曲线进动作详情
 │   ├── workout/{list,edit}          训练列表 / 新建编辑（Tab2）
 │   ├── body/{body,edit,detail}      身体数据 列表/录入/详情（Tab3）
 │   ├── profile/                     我的（Tab4，含模板/动作库/设置入口）

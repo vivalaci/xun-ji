@@ -4,3 +4,4 @@
 .body-values { gap: 18rpx; }
 .body-fat { font-size: 26rpx; }
 .pending-tag { color: var(--warning); background: #FEF3C7; }
+.list-end { text-align: center; font-size: 22rpx; padding: 16rpx 0 32rpx; }

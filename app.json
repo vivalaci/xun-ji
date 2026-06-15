@@ -28,7 +28,7 @@
     "list": [
       {
         "pagePath": "pages/curve/curve",
-        "text": "曲线"
+        "text": "首页"
       },
       {
         "pagePath": "pages/workout/list",
