@@ -3,12 +3,12 @@
 
 // 分化类型配色（见 change training-calendar design D2）
 const TYPES = {
-  push:  { key: 'push',  color: '#1D4ED8' }, // 推
-  pull:  { key: 'pull',  color: '#0891B2' }, // 拉
-  squat: { key: 'squat', color: '#7C3AED' }, // 蹲
-  upper: { key: 'upper', color: '#D97706' }, // 上肢
-  lower: { key: 'lower', color: '#DB2777' }, // 下肢
-  other: { key: 'other', color: '#9CA3AF' }  // 其他
+  push:  { key: 'push',  color: '#1D4ED8' }, // 推（蓝）
+  pull:  { key: 'pull',  color: '#0891B2' }, // 拉（青）
+  squat: { key: 'squat', color: '#7C3AED' }, // 蹲（紫）
+  upper: { key: 'upper', color: '#059669' }, // 上肢（绿）—— 避开腰围琥珀
+  lower: { key: 'lower', color: '#DB2777' }, // 下肢（玫红）
+  other: { key: 'other', color: '#9CA3AF' }  // 其他（灰）
 };
 
 // 按训练名称归类。上肢/下肢先判，再判推/拉/蹲，其余归其他。

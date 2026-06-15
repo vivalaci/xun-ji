@@ -20,8 +20,8 @@ const FIXED_CHARTS = [
   }
 ];
 
-// 自定义曲线按槽位配色（上限 2 条）
-const CUSTOM_PALETTE = ['#D97706', '#DB2777'];
+// 自定义曲线按槽位配色（上限 2 条）；避开腰围琥珀(#D97706)与下肢玫红(#DB2777)
+const CUSTOM_PALETTE = ['#DC2626', '#C026D3']; // 红、品红
 const MAX_CUSTOM = 2;
 
 function customKey(exerciseId) {
