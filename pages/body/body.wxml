@@ -12,6 +12,7 @@
     <view class="row body-values">
       <text class="bold">{{item.weight}} {{unitLabel}}</text>
       <text wx:if="{{item.bodyFat !== null}}" class="muted body-fat">{{item.bodyFat}}%</text>
+      <text wx:if="{{item.waist !== null}}" class="muted body-fat">腰 {{item.waist}}cm</text>
       <text wx:if="{{item.pending}}" class="tag pending-tag">待同步</text>
     </view>
   </view>

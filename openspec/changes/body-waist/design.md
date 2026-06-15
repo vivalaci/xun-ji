@@ -1,0 +1,50 @@
+# Design: body-waist
+
+## Context
+
+`body_records` 现有 `date`、`weight`（kg，必填）、`bodyFat`（%，选填）。录入在 `pages/body/edit`，列表 `pages/body/body`，详情 `pages/body/detail`。重量经 `unit.js` 换算落 kg；体脂为 % 不换算。首页曲线固定展示体重、体脂两条 body 线。
+
+## Goals / Non-Goals
+
+**Goals:**
+- 新增选填腰围（cm），录入/列表/详情可见。
+- 提示用户腰围价值（体脂替代）。
+- 零迁移、零单位换算、不破坏既有记录。
+
+**Non-Goals:**
+- 本次不加腰围趋势曲线（见开放问题）。
+- 不动体重/体脂逻辑与 kg 存储。
+- 不做围度的其它项（胸围/臂围等）——仅腰围（最具体脂代理价值）。
+
+## Decisions
+
+### D1：`waist` 为可缺省 cm 数字，不经换算层
+- 存 `body_records.waist`（number, cm），选填。旧记录无该字段 → 视为未填（null），无需迁移（铁律 6）。
+- 与体脂 % 同类：直接存、直接显示，不过 `unit.js`（unit 只管重量 kg/lb）。
+
+### D2：提示文案就近展示，轻量不打扰
+录入页腰围输入下方一行 `muted` 小字，如「腰围是重要的身体成分指标；体脂不便测量时，可用腰围变化追踪趋势」。不弹窗、不强制。
+
+### D3：列表/详情按"有值才显示"
+腰围有值才渲染该项（与体脂同款 `wx:if`），避免大量未填记录显示空腰围。
+
+### D4：身体合并图——一张三线、每线独立缩放（开放问题已定）
+- `chart.js` 新增 `drawMultiLine({ series })`，`series=[{points,color}]`；**每条线按自身 min/max 占满图高**（独立缩放），只表达趋势形状；缺值断线不补零。不画共用数值 Y 轴（不同量级无可比性），靠图例给实际值。
+- 首页身体卡片：上方图例（体重近黑 / 体脂灰 / 腰围琥珀 `#D97706`，各显最新实际值或"—"），下方三线 canvas。
+- **被否方案**：共用原始值轴（体脂被压扁）；相对初始 %（不够直观）。
+
+### D5：固定项 weight/bodyFat 合并为单个 `body`（type=bodyCombined）
+- `curveConfig.FIXED_CHARTS`：`bench/squat/deadlift/body`（4 项）。`body` 携带三条 series 定义（field+color+unit）。
+- `composeCharts` 自愈：旧 prefs 的 `curveOrder` 含 `weight`/`bodyFat` → 作未知键剔除，`body` 缺失 → 追加（旧用户身体图回到默认位置，可接受）。
+- `curve.js`：bodyCombined 类型从 body 缓存构建三条 series（体重 `toDisplay`、体脂/腰围原值），独立缩放绘制 + 图例。
+- 编辑模式：`body` 是一个可排序、不可删的固定行。
+
+## Risks / Trade-offs
+
+- [独立缩放线位置不可比] 这是有意为之：kg/%/cm 本不可比，只看各自趋势；图例给实际值兜底。
+- [旧 prefs 身体图位置丢失] 自愈后身体图回默认位置；个人量级仅一次、可接受。
+- [用户混淆腰围与体脂] 提示文案点明关系；二者都选填、互不依赖。
+
+## Open Questions
+
+（已解决：身体三线合并图采用"每线各自缩放"。）

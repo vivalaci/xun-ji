@@ -9,6 +9,7 @@ Page({
     date: util.formatDate(),
     weight: '',     // 显示单位
     bodyFat: '',    // %（无单位换算）
+    waist: '',      // cm（无单位换算，选填）
     unitLabel: 'kg',
     saving: false
   },
@@ -23,7 +24,8 @@ Page({
           id: options.id,
           date: r.date,
           weight: r.weight == null ? '' : unit.toDisplay(r.weight),
-          bodyFat: typeof r.bodyFat === 'number' ? r.bodyFat : ''
+          bodyFat: typeof r.bodyFat === 'number' ? r.bodyFat : '',
+          waist: typeof r.waist === 'number' ? r.waist : ''
         });
       } else {
         wx.showToast({ title: '记录不存在', icon: 'none' });
@@ -36,6 +38,7 @@ Page({
   onDateChange(e) { this.setData({ date: e.detail.value }); },
   onWeightInput(e) { this.setData({ weight: e.detail.value }); },
   onBodyFatInput(e) { this.setData({ bodyFat: e.detail.value }); },
+  onWaistInput(e) { this.setData({ waist: e.detail.value }); },
 
   onSave() {
     if (this.data.saving) return;
@@ -47,10 +50,12 @@ Page({
     this.setData({ saving: true });
 
     const bf = this.data.bodyFat === '' ? null : Number(this.data.bodyFat);
+    const wa = this.data.waist === '' ? null : Number(this.data.waist);
     const payload = {
       date: this.data.date,
       weight: unit.toStore(w),                 // 落库恒为 kg，不提前 round
-      bodyFat: (bf == null || isNaN(bf)) ? null : bf
+      bodyFat: (bf == null || isNaN(bf)) ? null : bf,
+      waist: (wa == null || isNaN(wa)) ? null : wa  // cm，不换算
     };
 
     try {

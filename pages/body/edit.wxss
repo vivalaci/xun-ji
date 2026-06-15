@@ -5,4 +5,5 @@
 .label { color: var(--muted); }
 .picker-val { color: var(--text); }
 .input { text-align: right; min-width: 240rpx; }
-.save-btn { margin-top: 40rpx; }
+.waist-tip { font-size: 24rpx; line-height: 1.6; padding: 16rpx 8rpx 0; }
+.save-btn { margin-top: 32rpx; }

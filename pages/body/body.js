@@ -61,6 +61,7 @@ Page({
       dateLabel: `${util.formatMonthDay(r.date)} ${util.weekDay(r.date)}`,
       weight: r.weight == null ? '—' : unit.toDisplay(r.weight),
       bodyFat: typeof r.bodyFat === 'number' ? r.bodyFat : null,
+      waist: typeof r.waist === 'number' ? r.waist : null,
       pending: !!r._pending
     }));
   },

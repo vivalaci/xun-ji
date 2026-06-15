@@ -78,4 +78,63 @@ function drawLineChart({ canvas, ctx, width, height, dpr, points, color, yDecima
   });
 }
 
-module.exports = { drawLineChart };
+// 多线图：每条线按自身 min/max 独立缩放（只看趋势），X 轴按日期对齐，无共用 Y 轴。
+// series: [{ points:[{x:'YYYY-MM-DD', y}], color }]
+function drawMultiLine({ canvas, ctx, width, height, dpr, series }) {
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, width, height);
+
+  const active = (series || []).filter((s) => s.points && s.points.length);
+  if (!active.length) {
+    ctx.fillStyle = '#D1D5DB';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('暂无数据', width / 2, height / 2);
+    return;
+  }
+
+  const pad = { l: 14, r: 14, t: 14, b: 18 };
+  // 全局时间范围（X 轴对齐用）
+  let tsMin = Infinity;
+  let tsMax = -Infinity;
+  active.forEach((s) => s.points.forEach((p) => {
+    const t = new Date(p.x).getTime();
+    if (t < tsMin) tsMin = t;
+    if (t > tsMax) tsMax = t;
+  }));
+  const spanX = tsMax - tsMin;
+  const px = (x) => (spanX ? pad.l + (new Date(x).getTime() - tsMin) / spanX * (width - pad.l - pad.r) : width / 2);
+
+  active.forEach((s) => {
+    const ys = s.points.map((p) => p.y);
+    let mn = Math.min(...ys);
+    let mx = Math.max(...ys);
+    if (mn === mx) { mn -= 1; mx += 1; }
+    const rng = mx - mn;
+    const lo = mn - rng * 0.18;
+    const hi = mx + rng * 0.18;
+    const py = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (height - pad.t - pad.b);
+
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    s.points.forEach((p, i) => {
+      const x = px(p.x);
+      const y = py(p.y);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    ctx.fillStyle = s.color;
+    s.points.forEach((p) => {
+      ctx.beginPath();
+      ctx.arc(px(p.x), py(p.y), 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  });
+}
+
+module.exports = { drawLineChart, drawMultiLine };

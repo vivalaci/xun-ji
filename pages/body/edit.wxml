@@ -11,11 +11,17 @@
       <text class="label">体重（{{unitLabel}}）</text>
       <input class="input" type="digit" placeholder="必填" value="{{weight}}" bindinput="onWeightInput" />
     </view>
-    <view class="field row between no-border">
+    <view class="field row between">
       <text class="label">体脂率（%）</text>
       <input class="input" type="digit" placeholder="选填" value="{{bodyFat}}" bindinput="onBodyFatInput" />
     </view>
+    <view class="field row between no-border">
+      <text class="label">腰围（cm）</text>
+      <input class="input" type="digit" placeholder="选填" value="{{waist}}" bindinput="onWaistInput" />
+    </view>
   </view>
+
+  <view class="waist-tip muted">腰围是重要的身体成分指标；体脂不便测量时，可用腰围变化追踪趋势。</view>
 
   <button class="btn-primary save-btn" bindtap="onSave" loading="{{saving}}">保存</button>
 </view>

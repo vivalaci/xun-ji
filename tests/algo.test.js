@@ -129,26 +129,37 @@ test('补种前检：同名同组已存在则跳过', () => {
 });
 
 console.log('curveConfig.composeCharts:');
-test('无配置返回默认 5 条', () => {
+test('无配置返回默认 4 项（三大项 + 身体趋势）', () => {
   const charts = curveConfig.composeCharts(null);
-  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift', 'weight', 'bodyFat']);
+  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift', 'body']);
   assert.ok(charts.every((c) => c.fixed));
+  const body = charts.find((c) => c.key === 'body');
+  assert.strictEqual(body.type, 'bodyCombined');
+  assert.deepStrictEqual(body.series.map((s) => s.field), ['weight', 'bodyFat', 'waist']);
 });
 test('按配置顺序渲染，缺失固定 key 自动追加', () => {
-  const charts = curveConfig.composeCharts({ curveOrder: ['weight', 'bench'], customCurves: [] });
-  assert.deepStrictEqual(charts.map((c) => c.key), ['weight', 'bench', 'squat', 'deadlift', 'bodyFat']);
+  const charts = curveConfig.composeCharts({ curveOrder: ['squat', 'bench'], customCurves: [] });
+  assert.deepStrictEqual(charts.map((c) => c.key), ['squat', 'bench', 'deadlift', 'body']);
+});
+test('旧键 weight/bodyFat 自愈：剔除并补入 body', () => {
+  const charts = curveConfig.composeCharts({
+    curveOrder: ['bench', 'squat', 'deadlift', 'weight', 'bodyFat'],
+    customCurves: []
+  });
+  assert.ok(!charts.some((c) => c.key === 'weight' || c.key === 'bodyFat'));
+  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift', 'body']);
 });
 test('未知 key 剔除', () => {
   const charts = curveConfig.composeCharts({
-    curveOrder: ['bench', 'ex_ghost', 'squat', 'deadlift', 'weight', 'bodyFat'],
+    curveOrder: ['bench', 'ex_ghost', 'squat', 'deadlift', 'body'],
     customCurves: []
   });
   assert.ok(!charts.some((c) => c.key === 'ex_ghost'));
-  assert.strictEqual(charts.length, 5);
+  assert.strictEqual(charts.length, 4);
 });
 test('自定义曲线取名 + 槽位配色，已删自建动作回退占位名', () => {
   const charts = curveConfig.composeCharts({
-    curveOrder: ['bench', 'squat', 'deadlift', 'weight', 'bodyFat', 'ex_lat_pulldown', 'ex_cus_gone'],
+    curveOrder: ['bench', 'squat', 'deadlift', 'body', 'ex_lat_pulldown', 'ex_cus_gone'],
     customCurves: [
       { key: 'ex_lat_pulldown', exerciseId: 'lat_pulldown', slot: 0 },
       { key: 'ex_cus_gone', exerciseId: 'cus_gone', slot: 1 }

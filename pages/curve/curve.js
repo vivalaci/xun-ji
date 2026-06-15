@@ -136,37 +136,55 @@ Page({
     const workouts = db.getCache(db.COLL.WORKOUTS);
     const body = db.getCache(db.COLL.BODY);
 
-    this._series = {}; // key -> points（升序）
+    this._series = {}; // key -> points（升序）或 bodyCombined 的 [{def, points}]
     const meta = composed.map((c) => {
-      let points = [];
-      if (c.type === 'lift') {
-        points = workouts
-          .filter((w) => new Date(w.date).getTime() >= start)
-          .map((w) => {
-            const ex = (w.exercises || []).find((x) => x.exerciseId === c.id);
-            if (!ex) return null;
-            const mw = util.mainWorkingWeight(ex.sets);
-            return mw == null ? null : { x: w.date, y: unit.toDisplay(mw) };
-          })
-          .filter(Boolean);
-      } else {
-        points = body
-          .filter((r) => new Date(r.date).getTime() >= start && typeof r[c.field] === 'number')
-          .map((r) => ({ x: r.date, y: c.field === 'weight' ? unit.toDisplay(r[c.field]) : r[c.field] }));
+      // 身体趋势：三线合并（体重/体脂/腰围），每线独立缩放
+      if (c.type === 'bodyCombined') {
+        const built = c.series.map((sd) => {
+          const pts = body
+            .filter((r) => new Date(r.date).getTime() >= start && typeof r[sd.field] === 'number')
+            .map((r) => ({ x: r.date, y: sd.convert ? unit.toDisplay(r[sd.field]) : r[sd.field] }))
+            .sort((a, b) => new Date(a.x) - new Date(b.x));
+          return { def: sd, points: pts };
+        });
+        this._series[c.key] = built;
+        return {
+          key: c.key,
+          name: c.name,
+          type: 'bodyCombined',
+          fixed: c.fixed,
+          hasData: built.some((b) => b.points.length > 0),
+          legend: built.map((b) => ({
+            name: b.def.name,
+            color: b.def.color,
+            unit: b.def.unit === 'kg' ? unit.label() : b.def.unit,
+            latest: b.points.length ? b.points[b.points.length - 1].y : null
+          }))
+        };
       }
-      points.sort((a, b) => new Date(a.x) - new Date(b.x));
+
+      // lift 单线
+      const points = workouts
+        .filter((w) => new Date(w.date).getTime() >= start)
+        .map((w) => {
+          const ex = (w.exercises || []).find((x) => x.exerciseId === c.id);
+          if (!ex) return null;
+          const mw = util.mainWorkingWeight(ex.sets);
+          return mw == null ? null : { x: w.date, y: unit.toDisplay(mw) };
+        })
+        .filter(Boolean)
+        .sort((a, b) => new Date(a.x) - new Date(b.x));
       this._series[c.key] = points;
       const lastY = points.length ? points[points.length - 1].y : null;
       return {
         key: c.key,
         name: c.name,
-        unit: c.unit === '%' ? '%' : unit.label(),
+        unit: unit.label(),
         color: c.color,
         fixed: c.fixed,
         type: c.type,
         hasData: points.length > 0,
-        // lift 曲线取整（用户反馈：换算 kg 长尾太长），体重/体脂保留 1 位
-        latest: lastY == null ? null : (c.type === 'lift' ? Math.round(lastY) : lastY)
+        latest: lastY == null ? null : Math.round(lastY) // lift 取整
       };
     });
 
@@ -183,16 +201,20 @@ Page({
         .exec((res) => {
           if (!res[0] || !res[0].node) return;
           const canvas = res[0].node;
-          chart.drawLineChart({
-            canvas,
-            ctx: canvas.getContext('2d'),
-            width: res[0].width,
-            height: res[0].height,
-            dpr,
-            points: this._series[c.key],
-            color: c.color,
-            yDecimals: c.type === 'lift' ? 0 : 1
-          });
+          const ctx = canvas.getContext('2d');
+          const dim = { canvas, ctx, width: res[0].width, height: res[0].height, dpr };
+          if (c.type === 'bodyCombined') {
+            const built = this._series[c.key] || [];
+            chart.drawMultiLine(Object.assign(dim, {
+              series: built.map((b) => ({ points: b.points, color: b.def.color }))
+            }));
+          } else {
+            chart.drawLineChart(Object.assign(dim, {
+              points: this._series[c.key],
+              color: c.color,
+              yDecimals: 0 // lift 取整
+            }));
+          }
         });
     });
   },

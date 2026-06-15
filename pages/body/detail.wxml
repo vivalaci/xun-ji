@@ -11,6 +11,10 @@
         <view class="metric-val bold">{{bodyFat}}</view>
         <view class="metric-label muted">体脂率（%）</view>
       </view>
+      <view wx:if="{{waist !== null}}" class="metric">
+        <view class="metric-val bold">{{waist}}</view>
+        <view class="metric-label muted">腰围（cm）</view>
+      </view>
     </view>
   </view>
 

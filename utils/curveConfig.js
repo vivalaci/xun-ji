@@ -5,13 +5,19 @@
 
 const exerciseLib = require('./exerciseLib.js');
 
-// 固定 5 条（不可删，仅可排序），颜色见 docs/05
+// 固定 4 项（不可删，仅可排序）：三大项 + 身体趋势合并图。颜色见 docs/05
 const FIXED_CHARTS = [
-  { key: 'bench',    type: 'lift', id: 'bench',      name: '卧推', unit: 'kg', color: '#1D4ED8', fixed: true },
-  { key: 'squat',    type: 'lift', id: 'squat',      name: '深蹲', unit: 'kg', color: '#7C3AED', fixed: true },
-  { key: 'deadlift', type: 'lift', id: 'deadlift',   name: '硬拉', unit: 'kg', color: '#0891B2', fixed: true },
-  { key: 'weight',   type: 'body', field: 'weight',  name: '体重', unit: 'kg', color: '#111827', fixed: true },
-  { key: 'bodyFat',  type: 'body', field: 'bodyFat', name: '体脂', unit: '%',  color: '#6B7280', fixed: true }
+  { key: 'bench',    type: 'lift', id: 'bench',    name: '卧推', unit: 'kg', color: '#1D4ED8', fixed: true },
+  { key: 'squat',    type: 'lift', id: 'squat',    name: '深蹲', unit: 'kg', color: '#7C3AED', fixed: true },
+  { key: 'deadlift', type: 'lift', id: 'deadlift', name: '硬拉', unit: 'kg', color: '#0891B2', fixed: true },
+  {
+    key: 'body', type: 'bodyCombined', name: '身体趋势', color: '#111827', fixed: true,
+    series: [
+      { field: 'weight',  name: '体重', unit: 'kg', color: '#111827', convert: true },
+      { field: 'bodyFat', name: '体脂', unit: '%',  color: '#6B7280' },
+      { field: 'waist',   name: '腰围', unit: 'cm', color: '#D97706' }
+    ]
+  }
 ];
 
 // 自定义曲线按槽位配色（上限 2 条）
