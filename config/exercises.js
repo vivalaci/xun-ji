@@ -43,7 +43,7 @@ const EXERCISES = [
   { id: 'chinup',              name: '反手引体',       category: '背', equipment: '自重', primaryMuscle: '背阔肌', secondaryMuscles: ['肱二头肌'], pattern: '垂直拉', aliases: ['反握引体', 'chin up', 'chinup'], loadType: 'bodyweight' },
   { id: 'lat_pulldown',        name: '高位下拉',       category: '背', equipment: '器械', primaryMuscle: '背阔肌', secondaryMuscles: ['肱二头肌'], pattern: '垂直拉', aliases: ['高位下拉', 'lat pulldown'] },
   { id: 'barbell_row',         name: '杠铃划船',       category: '背', equipment: '杠铃', primaryMuscle: '背阔肌', secondaryMuscles: ['斜方肌', '肱二头肌'], pattern: '水平拉', aliases: ['俯身划船', 'barbell row', 'bent over row'] },
-  { id: 't_bar_row',           name: 'T杠划船',        category: '背', equipment: '杠铃', primaryMuscle: '背阔肌', secondaryMuscles: ['斜方肌', '肱二头肌'], pattern: '水平拉', aliases: ['t bar row', 't杠'] },
+  { id: 't_bar_row',           name: '海豹划船',       category: '背', equipment: '器械', primaryMuscle: '背阔肌', secondaryMuscles: ['斜方肌', '肱二头肌'], pattern: '水平拉', aliases: ['海豹划船', '俯卧划船', 'seal row'] },
   { id: 'db_row',              name: '单臂哑铃划船',   category: '背', equipment: '哑铃', primaryMuscle: '背阔肌', secondaryMuscles: ['斜方肌', '肱二头肌'], pattern: '水平拉', aliases: ['哑铃划船', 'dumbbell row', 'one arm row'] },
   { id: 'seated_row',          name: '坐姿划船',       category: '背', equipment: '绳索', primaryMuscle: '背阔肌', secondaryMuscles: ['斜方肌', '肱二头肌'], pattern: '水平拉', aliases: ['坐姿绳索划船', 'seated row', 'cable row'] },
   { id: 'machine_row',         name: '器械划船',       category: '背', equipment: '器械', primaryMuscle: '背阔肌', secondaryMuscles: ['斜方肌', '肱二头肌'], pattern: '水平拉', aliases: ['坐姿器械划船', 'machine row'] },
@@ -54,6 +54,7 @@ const EXERCISES = [
 
   // ===== 肩 =====
   { id: 'ohp',                 name: '站姿肩上推举',   category: '肩', equipment: '杠铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['肩上推举', '站姿推举', '过头推举', 'ohp', 'overhead press'] },
+  { id: 'seated_ohp',          name: '坐姿肩上推举',   category: '肩', equipment: '杠铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['坐姿肩上推举', '坐姿推举', '坐姿杠铃推举', 'seated ohp', 'seated overhead press'] },
   { id: 'db_press',            name: '哑铃推举',       category: '肩', equipment: '哑铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['哑铃肩推', 'dumbbell shoulder press'] },
   { id: 'seated_db_press',     name: '坐姿哑铃推举',   category: '肩', equipment: '哑铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['seated db press'] },
   { id: 'arnold_press',        name: '阿诺德推举',     category: '肩', equipment: '哑铃', primaryMuscle: '三角肌前束', secondaryMuscles: ['三角肌中束', '肱三头肌'], pattern: '垂直推', aliases: ['arnold press'] },
