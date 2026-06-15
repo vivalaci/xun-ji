@@ -6,14 +6,19 @@
 - [x] 1.2 新增 `toDisplayIn(kgValue, dstUnit)`：dstUnit lb→kg/0.453592 保留 1 位，kg 直返；null/'' 透传
 - [x] 1.3 新增 `stepFor(unit)`：lb→5，kg→2.5；导出三者（现有函数不动）
 
-## 2. 训练录入页（pages/workout/edit）
+## 2. 训练录入页（pages/workout/edit）——每个动作各自单位
 
-- [x] 2.1 data 加 `inputUnit`（默认 `unit.currentUnit()`）+ `unitOptions=['kg','lb']`；`step` 改用 `stepFor`
-- [x] 2.2 预填/载入：每组重量用 `toDisplayIn(kg, inputUnit)` 显示（替换原 `toDisplay`）
-- [x] 2.3 基本信息区下加「本次输入单位」段控（高亮 inputUnit）；组表头单位随 inputUnit
-- [x] 2.4 `onSwitchInputUnit`：遍历各组非空 weight 经 `toDisplayIn(toStoreFrom(w, old), new)` 就地换算；更新 inputUnit 与 step
-- [x] 2.5 保存：weight 用 `unit.toStoreFrom(s.weight, inputUnit)`（替换原 `toStore`）
-- [x] 2.6 段控样式
+- [x] 2.1 每个动作加 `unit` 字段（默认 `unit.currentUnit()`）；新增/预填/载入均带 unit
+- [x] 2.2 预填/载入：每组重量用 `toDisplayIn(kg, ex.unit)` 显示
+- [x] 2.3 动作标题行（名旁）加 kg/lb 段控；组表头单位随 ex.unit
+- [x] 2.4 `onSwitchExerciseUnit(i,unit)`：仅该动作各组非空 weight 就地换算；步进 `stepFor(ex.unit)`
+- [x] 2.5 保存：weight 用 `unit.toStoreFrom(s.weight, ex.unit)`
+- [x] 2.6 段控样式（动作头部小号）
+
+## 2b. 显示去浮点长尾（真机反馈）
+
+- [x] 2b.1 `unit.toDisplay/toDisplayIn` round 到 1 位
+- [x] 2b.2 `chart.drawLineChart` 加 `yDecimals`；curve/detail lift 传 0（取整）、body 传 1；curve `latest` lift 取整
 
 ## 3. 验证
 

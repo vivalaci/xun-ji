@@ -27,10 +27,8 @@ Page({
     libByCategory: {},       // category -> [{id,name}]
     customName: '',
 
-    // 本次输入单位（默认主单位，可临时切换；存库仍恒 kg）
-    inputUnit: unit.currentUnit(),
+    // 每个动作各自的输入单位（默认主单位，可逐动作切换；存库仍恒 kg）
     unitOptions: ['kg', 'lb'],
-    step: unit.stepFor(unit.currentUnit()),
     saving: false
   },
 
@@ -61,11 +59,13 @@ Page({
       wx.showToast({ title: '记录不存在', icon: 'none' });
       return;
     }
+    const mainUnit = unit.currentUnit();
     const exercises = (w.exercises || []).map((ex) => ({
       exerciseId: ex.exerciseId,
       name: ex.name,
+      unit: mainUnit,
       sets: (ex.sets || []).map((s) => ({
-        weight: unit.toDisplayIn(s.weight, this.data.inputUnit),
+        weight: unit.toDisplayIn(s.weight, mainUnit),
         reps: s.reps
       }))
     }));
@@ -100,6 +100,7 @@ Page({
   buildFromTemplate(tpl) {
     const workouts = db.getCache(db.COLL.WORKOUTS); // 已按 date desc
     const lastSame = workouts.find((w) => w.templateId === tpl._id);
+    const mainUnit = unit.currentUnit();
     return (tpl.exercises || []).map((te) => {
       const ex = getExercise(te.exerciseId);
       const name = ex ? ex.name : te.exerciseId;
@@ -107,10 +108,10 @@ Page({
       if (lastSame) {
         const prev = (lastSame.exercises || []).find((x) => x.exerciseId === te.exerciseId);
         if (prev && prev.sets && prev.sets.length) {
-          sets = prev.sets.map((s) => ({ weight: unit.toDisplayIn(s.weight, this.data.inputUnit), reps: s.reps }));
+          sets = prev.sets.map((s) => ({ weight: unit.toDisplayIn(s.weight, mainUnit), reps: s.reps }));
         }
       }
-      return { exerciseId: te.exerciseId, name, sets };
+      return { exerciseId: te.exerciseId, name, unit: mainUnit, sets };
     });
   },
 
@@ -118,21 +119,19 @@ Page({
   onNameInput(e) { this.setData({ name: e.detail.value }); },
   onNoteInput(e) { this.setData({ note: e.detail.value }); },
 
-  // 切换「本次输入单位」：就地把已显示的重量从原单位换算到新单位（保持实际重量不变）
-  onSwitchInputUnit(e) {
-    const newUnit = e.currentTarget.dataset.unit;
-    const old = this.data.inputUnit;
-    if (newUnit === old) return;
-    const exercises = this.data.exercises.map((ex) => ({
-      exerciseId: ex.exerciseId,
-      name: ex.name,
-      sets: ex.sets.map((s) => {
-        if (s.weight === '' || s.weight == null) return { weight: s.weight, reps: s.reps };
-        const kg = unit.toStoreFrom(s.weight, old);
-        return { weight: unit.toDisplayIn(kg, newUnit), reps: s.reps };
-      })
-    }));
-    this.setData({ inputUnit: newUnit, step: unit.stepFor(newUnit), exercises });
+  // 切换某个动作的输入单位：就地把该动作各组重量从原单位换算到新单位（保持实际重量不变）
+  onSwitchExerciseUnit(e) {
+    const { i, unit: newUnit } = e.currentTarget.dataset;
+    const exercises = this.data.exercises.slice();
+    const ex = exercises[i];
+    if (!ex || ex.unit === newUnit) return;
+    const old = ex.unit;
+    ex.sets = ex.sets.map((s) => {
+      if (s.weight === '' || s.weight == null) return { weight: s.weight, reps: s.reps };
+      return { weight: unit.toDisplayIn(unit.toStoreFrom(s.weight, old), newUnit), reps: s.reps };
+    });
+    ex.unit = newUnit;
+    this.setData({ exercises });
   },
 
   // ---- 组编辑 ----
@@ -161,7 +160,7 @@ Page({
     const { i, j, field, dir } = e.currentTarget.dataset;
     const exercises = this.data.exercises.slice();
     const cur = Number(exercises[i].sets[j][field]) || 0;
-    const delta = field === 'weight' ? this.data.step : 1;
+    const delta = field === 'weight' ? unit.stepFor(exercises[i].unit) : 1;
     let next = cur + delta * (dir === 'up' ? 1 : -1);
     if (next < 0) next = 0;
     exercises[i].sets[j][field] = next;
@@ -193,7 +192,7 @@ Page({
   },
   addExercise(exerciseId, name) {
     const exercises = this.data.exercises.concat({
-      exerciseId, name, sets: [{ weight: '', reps: '' }]
+      exerciseId, name, unit: unit.currentUnit(), sets: [{ weight: '', reps: '' }]
     });
     this.setData({ exercises, pickerVisible: false, customName: '' });
   },
@@ -213,7 +212,7 @@ Page({
         name: ex.name,
         sets: ex.sets
           .filter((s) => s.weight !== '' || s.reps !== '')
-          .map((s) => ({ weight: unit.toStoreFrom(s.weight, this.data.inputUnit), reps: Number(s.reps) || 0 }))
+          .map((s) => ({ weight: unit.toStoreFrom(s.weight, ex.unit), reps: Number(s.reps) || 0 }))
       }))
       .filter((ex) => ex.sets.length > 0);
 

@@ -88,7 +88,7 @@ Page({
         chart.drawLineChart({
           canvas, ctx: canvas.getContext('2d'),
           width: res[0].width, height: res[0].height, dpr,
-          points: this._points, color: this.color
+          points: this._points, color: this.color, yDecimals: 0
         });
       });
   }

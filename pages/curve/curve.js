@@ -156,14 +156,17 @@ Page({
       }
       points.sort((a, b) => new Date(a.x) - new Date(b.x));
       this._series[c.key] = points;
+      const lastY = points.length ? points[points.length - 1].y : null;
       return {
         key: c.key,
         name: c.name,
         unit: c.unit === '%' ? '%' : unit.label(),
         color: c.color,
         fixed: c.fixed,
+        type: c.type,
         hasData: points.length > 0,
-        latest: points.length ? points[points.length - 1].y : null
+        // lift 曲线取整（用户反馈：换算 kg 长尾太长），体重/体脂保留 1 位
+        latest: lastY == null ? null : (c.type === 'lift' ? Math.round(lastY) : lastY)
       };
     });
 
@@ -187,7 +190,8 @@ Page({
             height: res[0].height,
             dpr,
             points: this._series[c.key],
-            color: c.color
+            color: c.color,
+            yDecimals: c.type === 'lift' ? 0 : 1
           });
         });
     });

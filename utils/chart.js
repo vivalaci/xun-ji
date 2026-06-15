@@ -2,7 +2,7 @@
 // 用法：传入 canvas 节点、CSS 尺寸、数据点和颜色，自动处理高清屏缩放。
 
 // points: [{ x: '2026-06-06', y: 100 }, ...]（按时间升序）
-function drawLineChart({ canvas, ctx, width, height, dpr, points, color }) {
+function drawLineChart({ canvas, ctx, width, height, dpr, points, color, yDecimals = 1 }) {
   canvas.width = width * dpr;
   canvas.height = height * dpr;
   ctx.scale(dpr, dpr);
@@ -24,7 +24,7 @@ function drawLineChart({ canvas, ctx, width, height, dpr, points, color }) {
     ctx.fillStyle = '#111827';
     ctx.font = '13px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(String(points[0].y), width / 2, height / 2 - 12);
+    ctx.fillText(Number(points[0].y).toFixed(yDecimals), width / 2, height / 2 - 12);
     return;
   }
 
@@ -53,7 +53,7 @@ function drawLineChart({ canvas, ctx, width, height, dpr, points, color }) {
     ctx.moveTo(pad.l, y);
     ctx.lineTo(width - pad.r, y);
     ctx.stroke();
-    ctx.fillText(v.toFixed(1), pad.l - 5, y + 3.5);
+    ctx.fillText(v.toFixed(yDecimals), pad.l - 5, y + 3.5);
   }
 
   // 折线

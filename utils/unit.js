@@ -19,11 +19,11 @@ function toStore(inputValue) {
   return n;
 }
 
-// 存库值（kg） → 显示值
+// 存库值（kg） → 显示值（round 到 1 位，消除浮点长尾；Number 自动去掉末尾 .0）
 function toDisplay(kgValue) {
   if (kgValue == null) return kgValue;
-  if (currentUnit() === 'lb') return +(kgValue / LB_TO_KG).toFixed(1); // 迭代二启用
-  return kgValue;
+  if (currentUnit() === 'lb') return +(kgValue / LB_TO_KG).toFixed(1);
+  return +Number(kgValue).toFixed(1);
 }
 
 // 当前单位下的重量步进
@@ -44,10 +44,12 @@ function toStoreFrom(value, srcUnit) {
   return srcUnit === 'lb' ? n * LB_TO_KG : n;
 }
 
-// kg → 指定目标单位的显示值（lb 保留 1 位）；null/'' 透传
+// kg → 指定目标单位的显示值（round 到 1 位，去浮点长尾）；null/'' 透传
 function toDisplayIn(kgValue, dstUnit) {
   if (kgValue == null || kgValue === '') return kgValue;
-  return dstUnit === 'lb' ? +(Number(kgValue) / LB_TO_KG).toFixed(1) : Number(kgValue);
+  return dstUnit === 'lb'
+    ? +(Number(kgValue) / LB_TO_KG).toFixed(1)
+    : +Number(kgValue).toFixed(1);
 }
 
 // 指定单位的步进

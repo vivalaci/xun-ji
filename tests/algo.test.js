@@ -261,6 +261,13 @@ test('stepFor：lb 5 / kg 2.5', () => {
   assert.strictEqual(unit.stepFor('lb'), 5);
   assert.strictEqual(unit.stepFor('kg'), 2.5);
 });
+test('toDisplayIn/toDisplay：消除浮点长尾，round 到 1 位', () => {
+  assert.strictEqual(unit.toDisplayIn(60.010270551000005, 'kg'), 60); // 长尾 → 60
+  assert.strictEqual(unit.toDisplayIn(62.5, 'kg'), 62.5);             // 半 kg 保留
+  store.setSettings({ weightUnit: 'kg' });
+  assert.strictEqual(unit.toDisplay(60.010270551000005), 60);
+  store.setSettings({ weightUnit: 'kg' });
+});
 test('切换单位往返：kg 显示值经 lb 再回 kg 一致', () => {
   // 模拟录入页切换逻辑：显示值 -(原单位)-> kg -(新单位)-> 显示值
   const kg = unit.toStoreFrom(100, 'kg');        // 100kg
