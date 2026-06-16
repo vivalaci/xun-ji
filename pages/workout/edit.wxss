@@ -1,18 +1,19 @@
 /* pages/workout/edit.wxss */
 
 /* 选模板 */
-.pick-title { margin-bottom: 8rpx; }
-.pick-sub { margin-bottom: 32rpx; font-size: 26rpx; }
+.pick-title { margin-bottom: 24rpx; }
 .group-title {
-  font-size: 24rpx;
-  margin: 8rpx 8rpx 8rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 8rpx 8rpx;
 }
 .group-note {
   font-size: 22rpx;
   line-height: 1.6;
   margin: 0 8rpx 16rpx;
 }
-.tpl-card + .group-title { margin-top: 32rpx; }
+.tpl-card + .group-title { margin-top: 36rpx; }
 .tpl-card {
   background: var(--card);
   border-radius: 24rpx;
