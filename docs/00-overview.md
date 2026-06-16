@@ -26,4 +26,5 @@
 - [05-visual-design.md](./05-visual-design.md) — 视觉设计
 - [06-technical-architecture.md](./06-technical-architecture.md) — 技术方案
 - [07-development-guide.md](./07-development-guide.md) — 开发指南（流程与规范）
+- [10-project-handoff.md](./10-project-handoff.md) — 项目交接 / 入职速览（接手先读这篇）
 - [08-launch-checklist.md](./08-launch-checklist.md) — 测试上线（边界测试 + 上线检查表）
