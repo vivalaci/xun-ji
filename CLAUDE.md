@@ -2,7 +2,7 @@
 
 面向进阶训练者的训练记录工具。微信原生小程序 + 云开发，无 npm 依赖、无构建步骤。
 
-**开发必须遵循 [docs/07-development-guide.md](docs/07-development-guide.md)**（流程与规范），技术背景见 [docs/06-technical-architecture.md](docs/06-technical-architecture.md)。下面是每次改代码都生效的硬约定。
+**接手先读 [docs/10-project-handoff.md](docs/10-project-handoff.md)**（项目交接/入职速览：现状、能力清单、迭代史、代码地图）。开发必须遵循 [docs/07-development-guide.md](docs/07-development-guide.md)（流程与规范），技术背景见 [docs/06-technical-architecture.md](docs/06-technical-architecture.md)。下面是每次改代码都生效的硬约定。
 
 ## 工作流（OpenSpec）
 
