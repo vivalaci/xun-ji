@@ -43,6 +43,10 @@
 - ✅ 有氧训练大类：`workouts.type`(strength/cardio)，7 个有氧活动（跑步/走路室内外、椭圆机、单车、爬楼梯），按时长+距离/层数录入；预设「有氧训练」模板；列表摘要 + 日历橙色标记；有氧无 sets 天然不入力量聚合（change `cardio-tracking`）
 - ✅ 动作库微调：肩上推举→站姿肩上推举、新增坐姿肩上推举、T杠划船→海豹划船（id 不变）
 
+迭代七（代码完成 + 真机通过）：
+
+- ✅ 日历分化配色升级：色相编码「系统」——三分化=蓝族（推靛蓝/拉正蓝/蹲天蓝）、二分化=绿族（上肢深草绿/下肢黄绿）、有氧=橙、其他=灰，族内区分单日；日历下方新增按系统分组图例（色值单一真源 `calendar.LEGEND_GROUPS`）。纯展示层换色，不动数据（change `calendar-split-palette`）
+
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
 

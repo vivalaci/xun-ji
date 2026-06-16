@@ -33,6 +33,11 @@
 .cal-dots { display: flex; align-items: center; height: 18rpx; margin-top: 6rpx; gap: 6rpx; }
 .cal-dot { width: 12rpx; height: 12rpx; border-radius: 50%; }
 .cal-more { font-size: 18rpx; color: var(--muted); }
+.cal-legend { margin-top: 18rpx; border-top: 1rpx solid var(--border); padding-top: 16rpx; display: flex; flex-wrap: wrap; column-gap: 28rpx; row-gap: 12rpx; }
+.cal-legend-group { align-items: center; gap: 12rpx; }
+.cal-legend-sys { font-size: 22rpx; }
+.cal-legend-item { align-items: center; gap: 6rpx; }
+.cal-legend-name { font-size: 22rpx; }
 .cal-detail { margin-top: 18rpx; border-top: 1rpx solid var(--border); padding-top: 16rpx; }
 .cal-detail-date { font-size: 24rpx; margin-bottom: 12rpx; }
 .cal-detail-item { padding: 16rpx 0; }

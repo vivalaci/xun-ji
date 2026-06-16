@@ -241,7 +241,7 @@ test('周一起始、今日标记、跨月单元格标记', () => {
   assert.strictEqual(cells[0].inMonth, true);
   const d15 = cells.find((c) => c.dateStr === '2026-06-15');
   assert.strictEqual(d15.isToday, true);
-  assert.deepStrictEqual(d15.dots, ['#1D4ED8']);
+  assert.deepStrictEqual(d15.dots, ['#4F46E5']); // 推日·靛蓝（三分化蓝族）
 });
 test('一天多练超 3 个圆点折叠 +N', () => {
   const ws = ['推日', '拉日', '蹲日', '上肢'].map((n, i) => ({ _id: 'x' + i, date: '2026-06-10', name: n }));
@@ -406,6 +406,15 @@ test('力量训练仍按名称归类（不受 type 影响）', () => {
     { _id: 's1', date: '2026-06-14', type: 'strength', name: '推日' }
   ]);
   assert.strictEqual(byDate['2026-06-14'][0].type.key, 'push');
+});
+test('图例按系统分组，色族与系统对应', () => {
+  const g = calendar.LEGEND_GROUPS;
+  assert.deepStrictEqual(g.map((x) => x.system), ['三分化', '二分化', '有氧', '其他']);
+  // 三分化=推/拉/蹲（蓝族），二分化=上肢/下肢（绿族）
+  assert.deepStrictEqual(g[0].items.map((i) => i.key), ['push', 'pull', 'squat']);
+  assert.deepStrictEqual(g[1].items.map((i) => i.key), ['upper', 'lower']);
+  // 图例色值即 TYPES 单一真源
+  assert.strictEqual(g[0].items[0].color, calendar.TYPES.push.color);
 });
 test('模板分组含「有氧」且排在二分化之后', () => {
   const groups = templateLib.groupTemplates([

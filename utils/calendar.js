@@ -1,16 +1,30 @@
 // utils/calendar.js —— 训练月历的纯函数层（node 可测，无副作用）
 // 纯读 workouts（date/name/_id），不依赖新集合/字段。
 
-// 分化类型配色（见 change training-calendar design D2）
+// 分化类型配色（见 change calendar-split-palette design D2）
+// 原则：色相编码"系统"——三分化=蓝族、二分化=绿族、有氧=橙、其他=灰；
+// 族内用色相弧+明度区分单日。蓝族往紫端铺、绿族往黄端铺，中间留空当保护族边界。
 const TYPES = {
-  push:  { key: 'push',  color: '#1D4ED8' }, // 推（蓝）
-  pull:  { key: 'pull',  color: '#0891B2' }, // 拉（青）
-  squat: { key: 'squat', color: '#7C3AED' }, // 蹲（紫）
-  upper: { key: 'upper', color: '#059669' }, // 上肢（绿）—— 避开腰围琥珀
-  lower: { key: 'lower', color: '#DB2777' }, // 下肢（玫红）
-  cardio:{ key: 'cardio',color: '#EA580C' }, // 有氧（橙）—— 按 workout.type 归类
-  other: { key: 'other', color: '#9CA3AF' }  // 其他（灰）
+  // 三分化·蓝族（靛蓝→正蓝→天蓝）
+  push:  { key: 'push',  label: '推',   color: '#4F46E5' }, // 推日·靛蓝
+  pull:  { key: 'pull',  label: '拉',   color: '#2563EB' }, // 拉日·正蓝
+  squat: { key: 'squat', label: '蹲',   color: '#0EA5E9' }, // 蹲日·天蓝
+  // 二分化·绿族（深草绿 / 黄绿，偏黄端，避开蓝族青端与腰围琥珀）
+  upper: { key: 'upper', label: '上肢', color: '#15803D' }, // 上肢·深草绿
+  lower: { key: 'lower', label: '下肢', color: '#84CC16' }, // 下肢·黄绿
+  // 有氧·橙（暖色孤立）；其他·灰
+  cardio:{ key: 'cardio',label: '有氧', color: '#EA580C' }, // 有氧（橙）—— 按 workout.type 归类
+  other: { key: 'other', label: '其他', color: '#9CA3AF' }  // 其他（灰）
 };
+
+// 图例分组：系统名 → 该系统单日色点。色值单一真源取自 TYPES，供页面复用，
+// 不在 wxml/wxss 硬编码。强化"色族=系统"的心智模型。
+const LEGEND_GROUPS = [
+  { system: '三分化', items: [TYPES.push, TYPES.pull, TYPES.squat] },
+  { system: '二分化', items: [TYPES.upper, TYPES.lower] },
+  { system: '有氧',   items: [TYPES.cardio] },
+  { system: '其他',   items: [TYPES.other] }
+];
 
 // 按训练名称归类。上肢/下肢先判，再判推/拉/蹲，其余归其他。
 function classify(name) {
@@ -77,4 +91,4 @@ function monthMatrix(year, month, byDate, todayStr) {
   return [].concat.apply([], rows);
 }
 
-module.exports = { TYPES, classify, aggregateByDate, trainedDaysInMonth, monthMatrix };
+module.exports = { TYPES, LEGEND_GROUPS, classify, aggregateByDate, trainedDaysInMonth, monthMatrix };
