@@ -173,44 +173,47 @@ function hasPending() {
 // 旧三件套归"三分化"（腿日改名蹲日），其余写显式空串；并补种二分化预设。
 // 迁移后所有模板都有 group，条件自然失效 → 幂等，删除二分化后不复活。
 function migrateTemplateGroups(list) {
-  const plan = templateLib.planTemplateMigration(list, PRESET_TEMPLATES);
+  const plan = templateLib.planTemplateMigration(list);
   if (!plan.needed) return list;
   plan.updates.forEach((u) => updateLocalFirst(COLL.TEMPLATES, u.id, u.data));
-  plan.additions.forEach((p) => saveLocalFirst(COLL.TEMPLATES, p));
   return store.getCache(COLL.TEMPLATES);
 }
 
-// 有氧预设补种（存量用户，见 change cardio-tracking design D5）：
-// 已有有氧模板 → 跳过；否则查 user_prefs.seededCardio：未补种过则补种「有氧训练」并置标记；
-// 已标记（曾补种、被用户删除）→ 不复活。
-async function ensureCardioSeeded(templates) {
-  if ((templates || []).some((t) => t.group === '有氧')) return templates;
+// 预设版本：升级 config/templates.js 后 +1，触发存量重刷（见 change preset-program-upgrade D3）
+const PRESET_VERSION = 2;
+const PRESET_GROUPS = ['三分化', '二分化', '有氧'];
+
+// 版本重刷：presetVersion 落后则把预设组模板重刷为当前版本，「我的模板」（group 空）不动。
+// 预设视为 App 托管，用户对预设的改动会被覆盖、被删的会恢复。
+async function ensurePresetVersion(templates) {
   const prefs = await ensurePrefs({});
-  if (prefs && prefs.seededCardio) return templates; // 曾补种过、被删 → 尊重删除
-  const preset = PRESET_TEMPLATES.find((t) => t.group === '有氧');
-  if (preset) saveLocalFirst(COLL.TEMPLATES, preset);
-  updatePrefs({ seededCardio: true });
+  if (prefs && prefs.presetVersion >= PRESET_VERSION) return templates;
+  (templates || []).forEach((t) => {
+    if (PRESET_GROUPS.indexOf(t.group) >= 0) removeLocalFirst(COLL.TEMPLATES, t._id);
+  });
+  PRESET_TEMPLATES.forEach((tpl) => saveLocalFirst(COLL.TEMPLATES, tpl));
+  updatePrefs({ presetVersion: PRESET_VERSION });
   return store.getCache(COLL.TEMPLATES);
 }
 
-// 确保用户已有预设模板；没有则写入全部预设。返回模板列表（已迁移 + 补种有氧）。
+// 确保用户已有预设模板；没有则写入全部预设。返回模板列表（已迁移分组 + 版本重刷）。
 async function ensureTemplatesSeeded() {
-  // 先看缓存（先迁移再后台刷新：refresh 内部会先冲队列，把迁移写入推上云端后才拉取）
+  // 先看缓存（先迁移/重刷再后台刷新）
   let cached = store.getCache(COLL.TEMPLATES);
   if (cached.length) {
-    const migrated = migrateTemplateGroups(cached);
-    const withCardio = await ensureCardioSeeded(migrated);
+    const migrated = migrateTemplateGroups(cached);     // 先给 legacy 模板补 group（供按组重刷识别）
+    const reseeded = await ensurePresetVersion(migrated); // 再按版本重刷预设组
     refresh(COLL.TEMPLATES, { orderBy: 'order', order: 'asc' }).catch(() => {});
-    return withCardio;
+    return reseeded;
   }
   // 缓存空：查云端
   const res = await db().collection(COLL.TEMPLATES).orderBy('order', 'asc').get();
   if (res.data.length) {
     store.setCache(COLL.TEMPLATES, res.data);
     const migrated = migrateTemplateGroups(res.data);
-    return await ensureCardioSeeded(migrated);
+    return await ensurePresetVersion(migrated);
   }
-  // 云端也空：播种全部预设（含有氧训练）
+  // 云端也空：播种全部预设并置版本
   const created = [];
   for (const tpl of PRESET_TEMPLATES) {
     const r = await db().collection(COLL.TEMPLATES).add({
@@ -219,6 +222,8 @@ async function ensureTemplatesSeeded() {
     created.push(Object.assign({ _id: r._id }, tpl));
   }
   store.setCache(COLL.TEMPLATES, created);
+  await ensurePrefs({});
+  updatePrefs({ presetVersion: PRESET_VERSION });
   return created;
 }
 

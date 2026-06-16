@@ -35,13 +35,14 @@ function groupTemplates(templates) {
 }
 
 // 迁移计划：找出缺 group 字段的存量模板，给出更新与补种清单。
-// templates: 现有模板；presets: config 预设（含 group）
-// 返回 { needed, updates: [{ id, data }], additions: [preset...] }
-// 幂等关键：迁移后所有模板都有 group（含显式空串），needed 永久为 false；
-// 之后用户删除二分化预设不会再触发补种（删除被尊重）。
-function planTemplateMigration(templates, presets) {
+// templates: 现有模板（presets 参数保留兼容，现不再用于补种）
+// 返回 { needed, updates: [{ id, data }] }
+// 职责仅「给 legacy 缺 group 的模板补 group + 腿日→蹲日」；预设的播种/补齐统一由
+// db.ensurePresetVersion（版本重刷）负责，故此处不再产出 additions（见 change preset-program-upgrade D3）。
+// 幂等：迁移后所有模板都有 group（含显式空串），needed 永久为 false。
+function planTemplateMigration(templates) {
   const missing = (templates || []).filter((t) => t.group === undefined || t.group === null);
-  if (missing.length === 0) return { needed: false, updates: [], additions: [] };
+  if (missing.length === 0) return { needed: false, updates: [] };
 
   const updates = missing.map((t) => {
     const legacy = LEGACY_PRESET[t.name];
@@ -51,13 +52,7 @@ function planTemplateMigration(templates, presets) {
     return { id: t._id, data };
   });
 
-  // 补种：仅迁移事件发生时一次；前检"同名+同组"已存在则跳过
-  const additions = (presets || []).filter((p) => {
-    if (p.group !== '二分化') return false;
-    return !(templates || []).some((t) => t.name === p.name && t.group === p.group);
-  });
-
-  return { needed: true, updates, additions };
+  return { needed: true, updates };
 }
 
 module.exports = { groupTemplates, planTemplateMigration, MY_GROUP_LABEL };

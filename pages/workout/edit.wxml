@@ -46,6 +46,7 @@
     <view class="row between ex-head">
       <view class="row ex-head-left">
         <text class="bold ex-name">{{ex.name}}</text>
+        <text wx:if="{{ex.repLow}}" class="rep-hint muted">{{ex.repLow}}–{{ex.repHigh}} 次</text>
         <view wx:if="{{workoutType !== 'cardio'}}" class="unit-seg row">
           <view wx:for="{{unitOptions}}" wx:key="*this" wx:for-item="u"
                 class="unit-opt {{ex.unit === u ? 'active' : ''}}"

@@ -108,14 +108,25 @@ Page({
     return (tpl.exercises || []).map((te) => {
       const ex = lib.getExercise(te.exerciseId);
       const name = ex ? ex.name : te.exerciseId;
-      let sets = [{ weight: '', reps: '' }];
+      // 目标定组数（无历史）、历史定重量（有历史优先复用，渐进超负荷）
+      let sets = null;
       if (lastSame) {
         const prev = (lastSame.exercises || []).find((x) => x.exerciseId === te.exerciseId);
         if (prev && prev.sets && prev.sets.length) {
           sets = prev.sets.map((s) => ({ weight: unit.toDisplayIn(s.weight, mainUnit), reps: s.reps }));
         }
       }
-      return { exerciseId: te.exerciseId, name, loadType: (ex && ex.loadType) || 'weighted', unit: mainUnit, sets };
+      if (!sets) {
+        const n = te.targetSets || 1;
+        sets = [];
+        for (let k = 0; k < n; k++) sets.push({ weight: '', reps: '' });
+      }
+      return {
+        exerciseId: te.exerciseId, name,
+        loadType: (ex && ex.loadType) || 'weighted', unit: mainUnit,
+        repLow: te.repLow, repHigh: te.repHigh, // 次数区间提示（可缺省）
+        sets
+      };
     });
   },
 

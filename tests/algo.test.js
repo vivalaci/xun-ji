@@ -99,35 +99,27 @@ test('桶内按 order 升序', () => {
 });
 
 console.log('templateLib.planTemplateMigration:');
-test('旧三件套归三分化且腿日改名蹲日，补种二分化', () => {
+test('旧三件套归三分化且腿日改名蹲日（迁移只补 group，不补种）', () => {
   const plan = templateLib.planTemplateMigration([
     { _id: 't1', name: '推日', order: 0 },
     { _id: 't2', name: '拉日', order: 1 },
     { _id: 't3', name: '腿日', order: 2 }
-  ], PRESETS);
+  ]);
   assert.strictEqual(plan.needed, true);
   assert.deepStrictEqual(plan.updates.find((u) => u.id === 't1').data, { group: '三分化' });
   assert.deepStrictEqual(plan.updates.find((u) => u.id === 't3').data, { group: '三分化', name: '蹲日' });
-  assert.deepStrictEqual(plan.additions.map((p) => p.name), ['上肢', '下肢']);
+  assert.strictEqual(plan.additions, undefined); // 补种改由 presetVersion 重刷负责
 });
 test('用户已改名的模板归我的模板（不动名称）', () => {
-  const plan = templateLib.planTemplateMigration([{ _id: 't9', name: '我的腿部计划', order: 5 }], PRESETS);
+  const plan = templateLib.planTemplateMigration([{ _id: 't9', name: '我的腿部计划', order: 5 }]);
   assert.deepStrictEqual(plan.updates[0].data, { group: '' });
 });
 test('迁移幂等：全部有 group 后不再触发', () => {
   const plan = templateLib.planTemplateMigration([
     { _id: 't1', name: '推日', group: '三分化', order: 0 },
     { _id: 't9', name: '自建', group: '', order: 5 }
-  ], PRESETS);
+  ]);
   assert.strictEqual(plan.needed, false);
-  assert.strictEqual(plan.additions.length, 0);
-});
-test('补种前检：同名同组已存在则跳过', () => {
-  const plan = templateLib.planTemplateMigration([
-    { _id: 't1', name: '推日', order: 0 },
-    { _id: 't8', name: '上肢', group: '二分化', order: 3 }
-  ], PRESETS);
-  assert.deepStrictEqual(plan.additions.map((p) => p.name), ['下肢']);
 });
 
 console.log('curveConfig.composeCharts:');
@@ -422,6 +414,40 @@ test('模板分组含「有氧」且排在二分化之后', () => {
     { _id: 'c', name: '上肢', group: '二分化', order: 3 }
   ]);
   assert.deepStrictEqual(groups.map((g) => g.name), ['三分化', '二分化', '有氧']);
+});
+
+console.log('preset-program-upgrade（预设升级）:');
+test('预设 8 套：三分化3 + 二分化4 + 有氧1', () => {
+  const byGroup = {};
+  PRESETS.forEach((t) => { byGroup[t.group] = (byGroup[t.group] || 0) + 1; });
+  assert.strictEqual(PRESETS.length, 8);
+  assert.strictEqual(byGroup['三分化'], 3);
+  assert.strictEqual(byGroup['二分化'], 4);
+  assert.strictEqual(byGroup['有氧'], 1);
+});
+test('二分化为 上肢A/下肢A/上肢B/下肢B', () => {
+  const names = PRESETS.filter((t) => t.group === '二分化').map((t) => t.name);
+  assert.deepStrictEqual(names, ['上肢A', '下肢A', '上肢B', '下肢B']);
+});
+test('力量预设动作带目标组次且 id 都在库', () => {
+  const { getExercise } = exercises;
+  PRESETS.forEach((t) => {
+    t.exercises.forEach((e) => {
+      assert.ok(getExercise(e.exerciseId), '缺动作: ' + e.exerciseId);
+      if (t.group !== '有氧') {
+        assert.ok(e.targetSets >= 1 && e.repLow >= 1 && e.repHigh >= e.repLow, '目标组次异常: ' + e.exerciseId);
+      }
+    });
+  });
+});
+test('有氧预设动作无组次目标', () => {
+  const cardio = PRESETS.find((t) => t.group === '有氧');
+  assert.strictEqual(cardio.type, 'cardio');
+  assert.ok(cardio.exercises.every((e) => e.targetSets === undefined));
+});
+test('预设 order 唯一递增', () => {
+  const orders = PRESETS.map((t) => t.order);
+  assert.strictEqual(new Set(orders).size, orders.length);
 });
 
 console.log(`\nAll ${passed} tests passed ✓`);

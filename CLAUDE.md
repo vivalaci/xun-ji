@@ -9,6 +9,7 @@
 - 凡动行为/页面/数据口径的改动，走 OpenSpec change：`/opsx:propose` → `/opsx:apply`（按 `tasks.md` 逐项勾选）→ 验证 → `/opsx:sync` + `/opsx:archive`。一个迭代 = 一个 change。
 - 设计决策写进 change 的 `design.md` Decisions 节，附被否方案和理由。
 - 完成后更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表。
+- 凡改动面向用户的功能/页面/交互，归档前必须同步更新 `docs/usermanual.md`（发版必需，列入 change 的 tasks）。
 - git：每个任务或一组相关任务一个 commit；change 归档时打 tag。
 
 ## 架构铁律

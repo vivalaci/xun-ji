@@ -110,9 +110,10 @@ node tests/algo.test.js
 ## 六、发布流程
 
 1. 真机联调清单全过，`tasks.md` 全勾。
-2. 开发者工具「上传」→ mp.weixin.qq.com 后台「版本管理」→ 提交审核（类目选工具/健康类）。
-3. 审核通过后「发布」。回滚方式：后台切回旧版本代码，数据 schema 向后兼容（见各 change 的 Migration Plan）。
-4. 发布后更新 `docs/00-overview.md` 阶段表（阶段⑧）与 README 进度区。
+2. **同步更新 `docs/usermanual.md`（发版必需）**：凡新增/改变面向用户的功能、页面或交互，归档/发版前必须把用户手册更新到与当前版本一致；手册更新本身列入该 change 的 tasks。
+3. 开发者工具「上传」→ mp.weixin.qq.com 后台「版本管理」→ 提交审核（类目选工具/健康类）。
+4. 审核通过后「发布」。回滚方式：后台切回旧版本代码，数据 schema 向后兼容（见各 change 的 Migration Plan）。
+5. 发布后更新 `docs/00-overview.md` 阶段表（阶段⑧）与 README 进度区。
 
 ---
 

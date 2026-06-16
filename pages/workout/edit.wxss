@@ -34,7 +34,8 @@
 .input-val { color: var(--text); }
 
 .ex-head { margin-bottom: 18rpx; }
-.ex-head-left { gap: 18rpx; }
+.ex-head-left { gap: 16rpx; flex-wrap: wrap; }
+.rep-hint { font-size: 22rpx; }
 
 /* 有氧录入 */
 .cardio-row { gap: 24rpx; }
