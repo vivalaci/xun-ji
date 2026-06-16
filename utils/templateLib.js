@@ -4,6 +4,12 @@
 const PRESET_GROUPS = ['三分化', '二分化', '有氧'];
 const MY_GROUP_LABEL = '我的模板';
 
+// 分组的循证说明（选模板界面展示，让用户理解设计逻辑；来源 docs/09）
+const GROUP_NOTES = {
+  '二分化': '上/下分化，4 练/周。多数中级训练者最优——天然每肌群 2×/周、容量好分摊。A 日偏力量·横向推拉，B 日偏肥大·垂直推拉，错开重复疲劳。',
+  '三分化': 'PPL 推/拉/腿。6 练/周最佳（每肌群 2×）；3 练版每肌群仅 1×、单日容量被迫堆高，适合时间紧或进阶者。'
+};
+
 // 旧预设名 → 迁移目标（腿日同时改名蹲日）
 const LEGACY_PRESET = {
   '推日': { group: '三分化' },
@@ -55,4 +61,4 @@ function planTemplateMigration(templates) {
   return { needed: true, updates };
 }
 
-module.exports = { groupTemplates, planTemplateMigration, MY_GROUP_LABEL };
+module.exports = { groupTemplates, planTemplateMigration, MY_GROUP_LABEL, GROUP_NOTES };

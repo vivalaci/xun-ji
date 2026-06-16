@@ -449,5 +449,9 @@ test('预设 order 唯一递增', () => {
   const orders = PRESETS.map((t) => t.order);
   assert.strictEqual(new Set(orders).size, orders.length);
 });
+test('分组循证说明含二分化/三分化', () => {
+  assert.ok(templateLib.GROUP_NOTES['二分化'] && templateLib.GROUP_NOTES['二分化'].length > 10);
+  assert.ok(templateLib.GROUP_NOTES['三分化'] && templateLib.GROUP_NOTES['三分化'].length > 10);
+});
 
 console.log(`\nAll ${passed} tests passed ✓`);

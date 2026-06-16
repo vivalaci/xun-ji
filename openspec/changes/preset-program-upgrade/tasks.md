@@ -17,6 +17,7 @@
 - [x] 3.1 `buildFromTemplate` strength：无历史按 `targetSets` 铺组（缺省 1）；有历史仍复用上次
 - [x] 3.2 动作项透传 `repLow/repHigh`；录入页组旁/表头显示「{repLow}–{repHigh} 次」提示（有则显示）
 - [x] 3.3 样式：次数区间提示（muted 小字），缺字段不显示
+- [x] 3.4 选模板界面在「二分化/三分化」组标题下展示循证说明（`templateLib.GROUP_NOTES`，来源 docs/09）
 
 ## 4. 验证
 

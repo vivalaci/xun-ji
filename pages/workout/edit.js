@@ -19,6 +19,7 @@ Page({
     stage: 'pickTemplate',
     templates: [],
     templateGroups: [],
+    groupNotes: templateLib.GROUP_NOTES, // 分组循证说明（选模板界面展示）
 
     // 动作选择面板
     pickerVisible: false,

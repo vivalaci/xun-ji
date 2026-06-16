@@ -7,6 +7,7 @@
 
   <block wx:for="{{templateGroups}}" wx:key="name" wx:for-item="grp">
     <view class="group-title muted">{{grp.name}}</view>
+    <view wx:if="{{groupNotes[grp.name]}}" class="group-note muted">{{groupNotes[grp.name]}}</view>
     <view
       wx:for="{{grp.items}}" wx:key="_id"
       class="tpl-card" bindtap="pickTemplate" data-id="{{item._id}}"

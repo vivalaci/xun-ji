@@ -5,7 +5,12 @@
 .pick-sub { margin-bottom: 32rpx; font-size: 26rpx; }
 .group-title {
   font-size: 24rpx;
-  margin: 8rpx 8rpx 16rpx;
+  margin: 8rpx 8rpx 8rpx;
+}
+.group-note {
+  font-size: 22rpx;
+  line-height: 1.6;
+  margin: 0 8rpx 16rpx;
 }
 .tpl-card + .group-title { margin-top: 32rpx; }
 .tpl-card {
