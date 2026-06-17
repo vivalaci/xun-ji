@@ -6,7 +6,7 @@
 
 ---
 
-## 当前进度（迭代一 ~ 九全部代码完成并真机通过；阶段⑧测试上线进行中）
+## 当前进度（迭代一 ~ 十全部代码完成并真机通过；阶段⑧测试上线进行中）
 
 迭代一核心闭环：
 
@@ -59,6 +59,10 @@
 迭代九（代码完成 + 真机通过）：
 
 - ✅ 应用内使用说明：「我的」页「设置」下方加「使用说明」入口，进 `pages/manual/manual` 按节渲染用户手册（段落/要点/问答三类块）；内容固化为 `config/manual.js`，与 `docs/usermanual.md` 同源维护（小程序运行时读不了 `.md`）（change `in-app-usermanual`）
+
+迭代十（代码完成 + 真机通过）：
+
+- ✅ 记录/曲线三修：① 保存力量训练保留全部动作、未填落 0（不再丢空动作）；② 训练组重量统一量化到 0.5（`unit.toDisplayWeight`，只现整数或 .5，覆盖历史脏值），lb 录入落库取整到 0.5kg（`roundHalfKg`），体重等仍保留 0.1；③ 硬拉曲线聚合家族（硬拉/罗马尼亚硬拉/直腿硬拉，`util.dayLiftValue` 当日取主力组最大），详情页同步聚合并在历史标注变式（change `record-and-deadlift-fixes`）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。

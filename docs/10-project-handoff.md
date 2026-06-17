@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-17（迭代一~九全部归档，无活跃 change）。
+> 其余文档为细节，本文是入口。最后更新：2026-06-17（迭代一~十全部归档，无活跃 change）。
 
 ---
 
@@ -12,11 +12,11 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑦开发 **全部完成**；⑧测试上线 **进行中** |
-| 开发 | 迭代一~九全部代码完成、真机通过并归档；**无活跃 change** |
+| 开发 | 迭代一~十全部代码完成、真机通过并归档；**无活跃 change** |
 | 代码量 | 100 个动作（含 7 有氧）、8 套预设、13 页面、12 个能力规格 |
-| 质量 | 64 个算法单测全过；全 js `node --check` 通过 |
+| 质量 | 75 个算法单测全过；全 js `node --check` 通过 |
 | 上线 | 未发布。卡点：**ICP 备案**（未办）、隐私指引、服务类目、提审 |
-| git | 干净；tag 见 `git tag`（最新 `preset-program-upgrade`/`in-app-usermanual`）；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `in-app-usermanual`/`record-and-deadlift-fixes`）；最新 commit 见 `git log` |
 
 > 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。下一步是阶段⑧上线，见第八节。
 
@@ -64,6 +64,7 @@
 - **迭代七**（tag `calendar-split-palette`）：日历分化配色按系统分色族（三分化蓝/二分化绿/有氧橙/其他灰）。
 - **迭代八**（tag `template-picker-split-dots`）：选模板行内分化色点（与日历同源），移除日历图例。
 - **迭代九**（tag `in-app-usermanual`）：应用内使用说明（我的页入口 + 独立说明页，内容固化 `config/manual.js` 与 docs/usermanual.md 同源）。
+- **迭代十**（tag `record-and-deadlift-fixes`）：记录/曲线三修——保存力量训练保留全部动作（未填落 0）；训练组重量统一量化到 0.5（`unit.roundHalfKg`/`toDisplayWeight`，lb 落库取整 0.5kg、体重保 0.1）；硬拉曲线与详情聚合家族（硬拉/罗马尼亚硬拉/直腿硬拉，`util.dayLiftValue`/`curveConfig.familyFor`）。
 
 ---
 
@@ -103,7 +104,7 @@ pages/exercise/       动作库管理 / 动作详情
 pages/template/       模板管理 / 编辑
 pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
-tests/algo.test.js    64 个纯函数单测
+tests/algo.test.js    75 个纯函数单测
 ```
 
 ---
@@ -138,7 +139,7 @@ node tests/algo.test.js
 ✅ 图标（assets/）、上线文案、边界测试清单 已就绪
 ```
 
-开发侧所有迭代（一~九）均已归档打 tag，无遗留 change。
+开发侧所有迭代（一~十）均已归档打 tag，无遗留 change。
 
 ---
 

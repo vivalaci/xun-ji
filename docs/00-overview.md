@@ -10,7 +10,7 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一~九全部完成、真机通过并归档（六=预设循证升级+目标组次 preset-program-upgrade；七=日历分化配色 calendar-split-palette；八=选模板行内色点 template-picker-split-dots；九=应用内使用说明 in-app-usermanual） |
+| ⑦ | 开发实现 | ✅ 迭代一~十全部完成、真机通过并归档（六=预设循证升级 preset-program-upgrade；七=日历分化配色 calendar-split-palette；八=选模板行内色点 template-picker-split-dots；九=应用内使用说明 in-app-usermanual；十=记录保存/重量0.5/硬拉聚合 record-and-deadlift-fixes） |
 | ⑧ | 测试上线 | 🔄 进行中（备案 / 隐私指引 / 类目 / 提审待办） |
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
@@ -24,6 +24,8 @@
 > 迭代八 `template-picker-split-dots`（代码完成 + 真机通过）：把"颜色钥匙"从日历图例移到选模板行——每个模板行右侧显示该训练日的分化色点（取色收敛 `calendar.typeOf`，与日历同源），空白训练为黑点；移除日历图例。修改主 spec `training-calendar`（撤图例）、`template-management`（加选模板色点）。
 >
 > 迭代九 `in-app-usermanual`（代码完成 + 真机通过）：「我的」页设置下方加「使用说明」入口，进独立页按节渲染用户手册（段落/要点/问答）；内容固化为 `config/manual.js`，与 `docs/usermanual.md` 同源。新增主 spec `in-app-usermanual`（共 12 个），纯展示不动集合。
+>
+> 迭代十 `record-and-deadlift-fixes`（代码完成 + 真机通过）：三个真机问题——① 保存力量训练保留全部动作、未填落 0（`edit.js` onSave 去过滤）；② 训练组重量统一量化到 0.5（`unit.roundHalfKg`/`toDisplayWeight`，含历史脏值），lb 录入落库取整 0.5kg，体重保留 0.1；③ 硬拉曲线与详情聚合家族（硬拉/罗马尼亚硬拉/直腿硬拉，`util.dayLiftValue`、`curveConfig.familyFor`）。改 3 主 spec（template-management/per-entry-input-unit/curve-customization），不新增集合；铁律 2 定向放宽已同步 CLAUDE.md/docs/06/07/10。
 
 ## 文档索引
 
