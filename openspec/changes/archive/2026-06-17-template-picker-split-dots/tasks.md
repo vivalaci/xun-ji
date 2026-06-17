@@ -26,4 +26,4 @@
 
 - [x] 5.1 更新 `docs/usermanual.md`：日历不再描述图例；选模板段补"每行右侧色点对应日历颜色"。
 - [x] 5.2 真机/模拟器验证：用户确认选模板色点与日历配色一致。
-- [ ] 5.3 归档（合并两条 delta 进主 spec）+ 更新 README/`docs/00-overview.md` + 打 tag。
+- [x] 5.3 归档（合并两条 delta 进主 spec）+ 更新 README/`docs/00-overview.md` + 打 tag。
