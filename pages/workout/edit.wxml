@@ -9,16 +9,22 @@
     <view wx:if="{{groupNotes[grp.name]}}" class="group-note muted">{{groupNotes[grp.name]}}</view>
     <view
       wx:for="{{grp.items}}" wx:key="_id"
-      class="tpl-card" bindtap="pickTemplate" data-id="{{item._id}}"
+      class="tpl-card row between" bindtap="pickTemplate" data-id="{{item._id}}"
     >
-      <view class="bold">{{item.name}}</view>
-      <view class="muted tpl-meta">{{item.exercises.length}} 个动作</view>
+      <view class="tpl-info">
+        <view class="bold">{{item.name}}</view>
+        <view class="muted tpl-meta">{{item.exercises.length}} 个动作</view>
+      </view>
+      <view class="tpl-dot" style="background: {{item.dotColor}}"></view>
     </view>
   </block>
 
-  <view class="tpl-card blank" bindtap="pickBlank">
-    <view class="bold">空白训练</view>
-    <view class="muted tpl-meta">不用模板，手动添加动作</view>
+  <view class="tpl-card blank row between" bindtap="pickBlank">
+    <view class="tpl-info">
+      <view class="bold">空白训练</view>
+      <view class="muted tpl-meta">不用模板，手动添加动作</view>
+    </view>
+    <view class="tpl-dot" style="background: #111827"></view>
   </view>
 </view>
 

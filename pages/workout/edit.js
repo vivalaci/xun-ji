@@ -4,6 +4,14 @@ const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
 const lib = require('../../utils/exerciseLib.js');
 const templateLib = require('../../utils/templateLib.js');
+const calendar = require('../../utils/calendar.js');
+
+// 给每个模板行附分化色点（与日历同源取色）。
+function withDotColors(groups) {
+  return (groups || []).map((g) => Object.assign({}, g, {
+    items: (g.items || []).map((it) => Object.assign({}, it, { dotColor: calendar.typeOf(it).color }))
+  }));
+}
 
 Page({
   data: {
@@ -44,7 +52,7 @@ Page({
       wx.setNavigationBarTitle({ title: '新建训练' });
       try {
         const templates = await db.ensureTemplatesSeeded();
-        this.setData({ templates, templateGroups: templateLib.groupTemplates(templates) });
+        this.setData({ templates, templateGroups: withDotColors(templateLib.groupTemplates(templates)) });
       } catch (e) {
         this.setData({ templates: [], templateGroups: [] });
       }

@@ -407,14 +407,13 @@ test('力量训练仍按名称归类（不受 type 影响）', () => {
   ]);
   assert.strictEqual(byDate['2026-06-14'][0].type.key, 'push');
 });
-test('图例按系统分组，色族与系统对应', () => {
-  const g = calendar.LEGEND_GROUPS;
-  assert.deepStrictEqual(g.map((x) => x.system), ['三分化', '二分化', '有氧', '其他']);
-  // 三分化=推/拉/蹲（蓝族），二分化=上肢/下肢（绿族）
-  assert.deepStrictEqual(g[0].items.map((i) => i.key), ['push', 'pull', 'squat']);
-  assert.deepStrictEqual(g[1].items.map((i) => i.key), ['upper', 'lower']);
-  // 图例色值即 TYPES 单一真源
-  assert.strictEqual(g[0].items[0].color, calendar.TYPES.push.color);
+test('typeOf：有氧按 type 优先，力量按名称，缺省归其他', () => {
+  assert.strictEqual(calendar.typeOf({ name: '有氧训练', type: 'cardio' }).key, 'cardio');
+  assert.strictEqual(calendar.typeOf({ name: '推日', type: 'strength' }).key, 'push');
+  assert.strictEqual(calendar.typeOf({ name: '上肢A' }).key, 'upper');
+  assert.strictEqual(calendar.typeOf({ name: '我的自定义' }).key, 'other');
+  // 与日历同源：色值取自 TYPES
+  assert.strictEqual(calendar.typeOf({ name: '推日' }).color, calendar.TYPES.push.color);
 });
 test('模板分组含「有氧」且排在二分化之后', () => {
   const groups = templateLib.groupTemplates([

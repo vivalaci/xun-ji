@@ -17,15 +17,6 @@ const TYPES = {
   other: { key: 'other', label: '其他', color: '#9CA3AF' }  // 其他（灰）
 };
 
-// 图例分组：系统名 → 该系统单日色点。色值单一真源取自 TYPES，供页面复用，
-// 不在 wxml/wxss 硬编码。强化"色族=系统"的心智模型。
-const LEGEND_GROUPS = [
-  { system: '三分化', items: [TYPES.push, TYPES.pull, TYPES.squat] },
-  { system: '二分化', items: [TYPES.upper, TYPES.lower] },
-  { system: '有氧',   items: [TYPES.cardio] },
-  { system: '其他',   items: [TYPES.other] }
-];
-
 // 按训练名称归类。上肢/下肢先判，再判推/拉/蹲，其余归其他。
 function classify(name) {
   const n = String(name || '');
@@ -37,6 +28,13 @@ function classify(name) {
   return TYPES.other;
 }
 
+// 训练/模板 → 分化类型（取色单一真源）：有氧按 type 优先，否则按名称归类。
+// 供日历聚合与选模板色点共用，保证两处同色。
+function typeOf(item) {
+  const it = item || {};
+  return it.type === 'cardio' ? TYPES.cardio : classify(it.name);
+}
+
 // 按日期聚合：{ 'YYYY-MM-DD': [{ _id, name, type }] }
 function aggregateByDate(workouts) {
   const map = {};
@@ -45,7 +43,7 @@ function aggregateByDate(workouts) {
     (map[w.date] = map[w.date] || []).push({
       _id: w._id,
       name: w.name || '训练',
-      type: w.type === 'cardio' ? TYPES.cardio : classify(w.name)
+      type: typeOf(w)
     });
   });
   return map;
@@ -91,4 +89,4 @@ function monthMatrix(year, month, byDate, todayStr) {
   return [].concat.apply([], rows);
 }
 
-module.exports = { TYPES, LEGEND_GROUPS, classify, aggregateByDate, trainedDaysInMonth, monthMatrix };
+module.exports = { TYPES, classify, typeOf, aggregateByDate, trainedDaysInMonth, monthMatrix };

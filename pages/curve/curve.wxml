@@ -28,15 +28,6 @@
           </view>
         </view>
       </view>
-      <view class="cal-legend">
-        <view wx:for="{{calLegend}}" wx:for-item="grp" wx:key="system" class="cal-legend-group row">
-          <text class="cal-legend-sys muted">{{grp.system}}</text>
-          <view wx:for="{{grp.items}}" wx:for-item="lg" wx:key="key" class="cal-legend-item row">
-            <view class="cal-dot" style="background: {{lg.color}}"></view>
-            <text class="cal-legend-name muted">{{lg.label}}</text>
-          </view>
-        </view>
-      </view>
       <view wx:if="{{selectedItems.length}}" class="cal-detail">
         <view class="muted cal-detail-date">{{selectedLabel}}</view>
         <view wx:for="{{selectedItems}}" wx:key="_id" class="cal-detail-item row between"

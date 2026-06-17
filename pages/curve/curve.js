@@ -27,7 +27,6 @@ Page({
     selectedDate: '',
     selectedItems: [],
     selectedLabel: '',
-    calLegend: calendar.LEGEND_GROUPS, // 图例按系统分组，色值单一真源取自 calendar.js
 
 
 

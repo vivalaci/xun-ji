@@ -25,6 +25,8 @@
   background: transparent;
 }
 .tpl-meta { font-size: 24rpx; margin-top: 8rpx; }
+.tpl-info { min-width: 0; }
+.tpl-dot { width: 20rpx; height: 20rpx; border-radius: 50%; flex: none; margin-left: 24rpx; }
 
 /* 录入 */
 .edit-page { padding-bottom: 60rpx; }
