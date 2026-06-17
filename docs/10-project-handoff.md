@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-16（迭代五完成，预设升级进行中）。
+> 其余文档为细节，本文是入口。最后更新：2026-06-17（迭代一~九全部归档，无活跃 change）。
 
 ---
 
@@ -12,13 +12,13 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑦开发 **全部完成**；⑧测试上线 **进行中** |
-| 开发 | 迭代一~五已真机通过并归档；迭代六（预设升级）代码完成、待真机走查 |
-| 代码量 | 100 个动作（含 7 有氧）、8 套预设、12 页面、11 个能力规格 |
-| 质量 | 63 个算法单测全过；全 js `node --check` 通过 |
+| 开发 | 迭代一~九全部代码完成、真机通过并归档；**无活跃 change** |
+| 代码量 | 100 个动作（含 7 有氧）、8 套预设、13 页面、12 个能力规格 |
+| 质量 | 64 个算法单测全过；全 js `node --check` 通过 |
 | 上线 | 未发布。卡点：**ICP 备案**（未办）、隐私指引、服务类目、提审 |
-| git | 干净；tag `iteration-3/4/5`；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `preset-program-upgrade`/`in-app-usermanual`）；最新 commit 见 `git log` |
 
-> 唯一活跃 change：`openspec/changes/preset-program-upgrade`（预设按 docs/09 升级，待真机）。
+> 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。下一步是阶段⑧上线，见第八节。
 
 ---
 
@@ -34,7 +34,7 @@
 
 ---
 
-## 三、当前能力清单（`openspec/specs/` 11 个，权威"App 现在做什么"）
+## 三、当前能力清单（`openspec/specs/` 12 个，权威"App 现在做什么"）
 
 | 能力 | 是什么 | 主要页面 |
 |------|--------|---------|
@@ -49,6 +49,7 @@
 | `per-entry-input-unit` | 录入时每个动作临时切 kg/lb，存仍 kg；显示去浮点长尾 | workout/edit |
 | `data-pagination` | 全量分页拉取（绕过客户端 100 上限）+ 列表增量渲染 | db.js、各列表页 |
 | `cardio-tracking` | 有氧大类：7 活动、时长+距离/层数、`workouts.type` 区分 | workout/edit、list、calendar |
+| `in-app-usermanual` | 应用内使用说明：我的页入口 + 独立页按节渲染手册，内容源 `config/manual.js`（与 docs/usermanual.md 同源）| profile/、manual/ |
 
 ---
 
@@ -59,7 +60,10 @@
 - **迭代三**（tag `iteration-3`，6 个 change）：`template-groups`（分组+迁移）、`custom-curves`（曲线可定制）、`training-calendar`（日历）、`data-pagination`（分页）、`per-entry-input-unit`（每动作单位+round）、`body-waist`（腰围+身体三线图）。
 - **迭代四**（tag `iteration-4`）：`enrich-exercise-library`（动作库 27→92、元数据、搜索、自重 loadType）。
 - **迭代五**（tag `iteration-5`）：`cardio-tracking`（有氧训练大类）。
-- **进行中**：`preset-program-upgrade`（预设按 [docs/09](./09-training-program-design.md) 升级为 8 套 + 目标组次 + 选模板循证说明 + 手册纳入发版流程）。
+- **迭代六**（tag `preset-program-upgrade`）：预设按 [docs/09](./09-training-program-design.md) 升级为 8 套（二分化 2→4）+ 模板目标组次（targetSets/repLow/repHigh）+ 选模板循证说明 + `presetVersion` 版本重刷 + 手册纳入发版流程。
+- **迭代七**（tag `calendar-split-palette`）：日历分化配色按系统分色族（三分化蓝/二分化绿/有氧橙/其他灰）。
+- **迭代八**（tag `template-picker-split-dots`）：选模板行内分化色点（与日历同源），移除日历图例。
+- **迭代九**（tag `in-app-usermanual`）：应用内使用说明（我的页入口 + 独立说明页，内容固化 `config/manual.js` 与 docs/usermanual.md 同源）。
 
 ---
 
@@ -82,6 +86,7 @@
 ```
 config/exercises.js   动作库（含 id/元数据/有氧 kind+metrics）
 config/templates.js   8 套预设（带目标组次）
+config/manual.js      使用说明内容（结构化，与 docs/usermanual.md 同源）
 utils/db.js           数据访问层（缓存优先读 + 本地先写队列 + 模板播种/版本重刷）
 utils/store.js        本地存储底层（缓存 + 队列 + settings）
 utils/util.js         主力工作组重量、PR 现算、容量、日期
@@ -96,8 +101,9 @@ pages/workout/        训练列表 / 新建编辑（力量+有氧双路径）
 pages/body/           身体数据 列表/录入/详情
 pages/exercise/       动作库管理 / 动作详情
 pages/template/       模板管理 / 编辑
+pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
-tests/algo.test.js    63 个纯函数单测
+tests/algo.test.js    64 个纯函数单测
 ```
 
 ---
@@ -132,7 +138,7 @@ node tests/algo.test.js
 ✅ 图标（assets/）、上线文案、边界测试清单 已就绪
 ```
 
-外加：`preset-program-upgrade` 待真机走查后归档打 tag。
+开发侧所有迭代（一~九）均已归档打 tag，无遗留 change。
 
 ---
 
