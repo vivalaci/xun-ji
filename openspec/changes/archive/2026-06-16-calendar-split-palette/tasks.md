@@ -21,4 +21,4 @@
 
 - [x] 4.1 更新 `docs/usermanual.md` 日历配色/图例说明（按系统色族表述）+ 更新日期。
 - [x] 4.2 真机/模拟器验证：用户确认日历与图例配色通过。
-- [ ] 4.3 `/opsx:sync` + `/opsx:archive`，更新 README 进度区 + `docs/00-overview.md` 阶段表，归档打 tag。
+- [x] 4.3 归档（合并 delta 进 `training-calendar` 主 spec）+ 更新 README 进度区 + `docs/00-overview.md` 阶段表 + 打 tag。
