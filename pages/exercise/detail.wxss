@@ -11,6 +11,10 @@
 .sec-title { font-size: 24rpx; margin: 24rpx 0 12rpx 8rpx; }
 .hist-item { padding: 24rpx 32rpx; }
 .hist-date { gap: 14rpx; }
+.hist-variant {
+  font-size: 20rpx; color: var(--accent); background: var(--accent-light);
+  border-radius: 6rpx; padding: 2rpx 12rpx;
+}
 .pr-badge {
   font-size: 20rpx; color: #fff; background: var(--warning);
   border-radius: 6rpx; padding: 2rpx 12rpx; font-weight: 600;

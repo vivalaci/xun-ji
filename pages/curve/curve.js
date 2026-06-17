@@ -165,13 +165,12 @@ Page({
         };
       }
 
-      // lift 单线
+      // lift 单线（c.ids 为变式聚合，如硬拉；无则单 id）
+      const ids = c.ids || [c.id];
       const points = workouts
         .filter((w) => new Date(w.date).getTime() >= start)
         .map((w) => {
-          const ex = (w.exercises || []).find((x) => x.exerciseId === c.id);
-          if (!ex) return null;
-          const mw = util.mainWorkingWeight(ex.sets);
+          const mw = util.dayLiftValue(w, ids);
           return mw == null ? null : { x: w.date, y: unit.toDisplay(mw) };
         })
         .filter(Boolean)

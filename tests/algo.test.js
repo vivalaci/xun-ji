@@ -67,13 +67,13 @@ test('kg 模式恒等', () => {
   assert.strictEqual(unit.toDisplay(100), 100);
   assert.strictEqual(unit.step(), 2.5);
 });
-test('lb 模式：输入 lb 落库 kg，读回显示 lb', () => {
+test('lb 模式：输入 lb 落库 kg 取整到 0.5（见 record-and-deadlift-fixes）', () => {
   store.setSettings({ weightUnit: 'lb' });
-  const kg = unit.toStore(100);           // 100 lb → kg
-  assert.ok(Math.abs(kg - 45.359237) < 1e-6, 'toStore 应为 45.359237');
-  assert.strictEqual(unit.toDisplay(kg), 100); // 往返一致（toDisplay 保留 1 位）
+  const kg = unit.toStore(100);            // 100 lb → 45.359 → 取整 45.5
+  assert.strictEqual(kg, 45.5);
   assert.strictEqual(unit.step(), 5);
   assert.strictEqual(unit.label(), 'lb');
+  store.setSettings({ weightUnit: 'kg' });
 });
 
 console.log('templateLib.groupTemplates:');
@@ -252,9 +252,10 @@ test('一天多练超 3 个圆点折叠 +N', () => {
 });
 
 console.log('unit 显式单位换算族（per-entry-input-unit）:');
-test('toStoreFrom：kg 恒等 / lb→kg 精度', () => {
+test('toStoreFrom：kg 完整精度恒等 / lb→kg 取整到 0.5', () => {
   assert.strictEqual(unit.toStoreFrom(100, 'kg'), 100);
-  assert.ok(Math.abs(unit.toStoreFrom(225, 'lb') - 225 * 0.45359237) < 1e-9);
+  assert.strictEqual(unit.toStoreFrom(100.3, 'kg'), 100.3);   // kg 不取整
+  assert.strictEqual(unit.toStoreFrom(225, 'lb'), 102);       // 102.06 → 102.0
 });
 test('toDisplayIn：kg 恒等 / kg→lb round / 空透传', () => {
   assert.strictEqual(unit.toDisplayIn(100, 'kg'), 100);
@@ -279,6 +280,78 @@ test('切换单位往返：kg 显示值经 lb 再回 kg 一致', () => {
   const lbShown = unit.toDisplayIn(kg, 'lb');     // 显示 lb
   const backKg = unit.toStoreFrom(lbShown, 'lb'); // 切回时存 kg
   assert.ok(Math.abs(backKg - 100) < 0.05);       // 往返误差在 round 容忍内
+});
+
+console.log('record-and-deadlift-fixes（问题2 重量 0.5 量化）:');
+test('roundHalfKg：四舍五入到 0.5，整数返回数字（非 "33.0"）', () => {
+  assert.strictEqual(unit.roundHalfKg(33.4), 33.5);
+  assert.strictEqual(unit.roundHalfKg(33.2), 33);
+  assert.strictEqual(unit.roundHalfKg(33.25), 33.5);
+  assert.strictEqual(unit.roundHalfKg(33.75), 34);
+  assert.strictEqual(unit.roundHalfKg(62.5), 62.5);
+  assert.strictEqual(unit.roundHalfKg(33), 33);
+  assert.strictEqual(typeof unit.roundHalfKg(33), 'number'); // 数字非字符串
+});
+test('toStoreFrom(lb) 落库取整到 0.5kg；kg 完整精度不变', () => {
+  assert.strictEqual(unit.toStoreFrom(99, 'lb'), 45);     // 44.9056 → 45
+  assert.strictEqual(unit.toStoreFrom(77, 'lb'), 35);     // 34.926 → 35
+  assert.strictEqual(unit.toStoreFrom(60.3, 'kg'), 60.3); // kg 原样完整精度
+});
+test('toStore(lb) 同样取整到 0.5kg', () => {
+  store.setSettings({ weightUnit: 'lb' });
+  assert.strictEqual(unit.toStore(99), 45);
+  store.setSettings({ weightUnit: 'kg' });
+  assert.strictEqual(unit.toStore(60.3), 60.3);
+});
+test('toDisplayWeight：组重量量化到 0.5（含历史脏值），整数不带 .0，空透传', () => {
+  assert.strictEqual(unit.toDisplayWeight(44.9056, 'kg'), 45);
+  assert.strictEqual(unit.toDisplayWeight(33.0, 'kg'), 33);
+  assert.strictEqual(unit.toDisplayWeight(62.5, 'kg'), 62.5);
+  assert.strictEqual(unit.toDisplayWeight('', 'kg'), '');
+  assert.strictEqual(unit.toDisplayWeight(null, 'kg'), null);
+});
+test('体重显示仍保留 0.1（不被 0.5 量化）', () => {
+  store.setSettings({ weightUnit: 'kg' });
+  assert.strictEqual(unit.toDisplay(70.3), 70.3);
+});
+
+console.log('record-and-deadlift-fixes（问题3 硬拉变式聚合）:');
+test('dayLiftValue：单一变式取其主力工作组重量', () => {
+  const w = { exercises: [{ exerciseId: 'rdl', sets: [{ weight: 100, reps: 8 }, { weight: 100, reps: 8 }] }] };
+  assert.strictEqual(util.dayLiftValue(w, ['deadlift', 'rdl', 'stiff_leg_deadlift']), 100);
+});
+test('dayLiftValue：当日多变式取各自主力组的最大值', () => {
+  const w = { exercises: [
+    { exerciseId: 'deadlift', sets: [{ weight: 140, reps: 3 }, { weight: 140, reps: 3 }] },
+    { exerciseId: 'stiff_leg_deadlift', sets: [{ weight: 100, reps: 8 }] }
+  ] };
+  assert.strictEqual(util.dayLiftValue(w, ['deadlift', 'rdl', 'stiff_leg_deadlift']), 140);
+});
+test('dayLiftValue：无匹配变式返回 null（断线不补零）', () => {
+  const w = { exercises: [{ exerciseId: 'bench', sets: [{ weight: 80, reps: 5 }] }] };
+  assert.strictEqual(util.dayLiftValue(w, ['deadlift', 'rdl', 'stiff_leg_deadlift']), null);
+});
+test('硬拉固定曲线配置含三变式 ids，且保留 id=deadlift 供详情跳转', () => {
+  const dl = curveConfig.FIXED_CHARTS.find((c) => c.key === 'deadlift');
+  assert.deepStrictEqual(dl.ids, ['deadlift', 'rdl', 'stiff_leg_deadlift']);
+  assert.strictEqual(dl.id, 'deadlift');
+});
+test('familyFor：硬拉锚点展开家族，其余（含 rdl/直腿）保持单一', () => {
+  assert.deepStrictEqual(curveConfig.familyFor('deadlift'), ['deadlift', 'rdl', 'stiff_leg_deadlift']);
+  assert.deepStrictEqual(curveConfig.familyFor('rdl'), ['rdl']);
+  assert.deepStrictEqual(curveConfig.familyFor('stiff_leg_deadlift'), ['stiff_leg_deadlift']);
+  assert.deepStrictEqual(curveConfig.familyFor('bench'), ['bench']);
+});
+
+console.log('record-and-deadlift-fixes（问题1 0 重量组不污染聚合）:');
+test('0 重量组不计入主力组/容量/PR（保留全部动作的前提）', () => {
+  const sets = [{ weight: 0, reps: 0 }, { weight: 60, reps: 5 }];
+  assert.strictEqual(util.mainWorkingWeight(sets), 60);
+  assert.strictEqual(util.totalVolume([{ sets }]), 300);
+  const prMap = util.buildPRMap([
+    { _id: 'w1', date: '2026-01-01', exercises: [{ exerciseId: 'squat', sets: [{ weight: 0, reps: 0 }] }] }
+  ]);
+  assert.strictEqual(Object.keys(prMap).length, 0); // 全 0 动作不产生 PR
 });
 
 console.log('exercises 动作库稳定性:');

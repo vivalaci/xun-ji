@@ -98,6 +98,21 @@ function buildPRMap(workouts) {
   return map;
 }
 
+// 某次训练在一组动作（ids）上的当日数据点：取各匹配动作主力工作组重量的最大值。
+// 用于硬拉等"变式聚合"曲线（硬拉/罗马尼亚硬拉/直腿硬拉，当日通常只练其一，多则取最大）。
+// 单 id 传 [id] 退化为原单动作行为。无匹配/无有效重量返回 null（断线不补零）。
+function dayLiftValue(workout, ids) {
+  if (!workout || !ids || !ids.length) return null;
+  let max = null;
+  (workout.exercises || []).forEach((ex) => {
+    if (ids.indexOf(ex.exerciseId) < 0) return;
+    const mww = mainWorkingWeight(ex.sets);
+    if (mww == null) return;
+    if (max == null || mww > max) max = mww;
+  });
+  return max;
+}
+
 // 时间范围起始时间戳：'1M' | '3M' | '6M' | 'ALL'
 function rangeStartTs(range) {
   if (range === 'ALL') return 0;
@@ -116,5 +131,6 @@ module.exports = {
   totalVolume,
   totalSets,
   buildPRMap,
+  dayLiftValue,
   rangeStartTs
 };

@@ -63,7 +63,7 @@
 1. **所有云数据读写走 `utils/db.js`**，页面不直接 `wx.cloud.database()`。
    - 读：先 `db.getCache(coll)` 同步渲染首屏，再 `db.refresh(coll)` 异步更新。
    - 写：一律 `saveLocalFirst / updateLocalFirst / removeLocalFirst`（本地先落 + 失败重试队列）。
-2. **重量数值只在边界换算**：落库恒为 kg、完整精度、不提前 round；显示/录入必须过 `unit.toDisplay / unit.toStore`。加新的重量展示点时全仓搜一遍，别裸读数字。
+2. **重量数值只在边界换算**：落库恒为 kg（kg 完整精度不 round；lb 录入取整到 0.5kg）；显示/录入必须过 `unit.js`——训练组重量用 `unit.toDisplayWeight`（量化到 0.5），体重等用 `unit.toDisplay`（保留 0.1）。加新的重量展示点时全仓搜一遍，别裸读数字。
 3. **动作身份靠 `exerciseId`，不靠名字**：曲线、PR、历史聚合全部按 id；展示名通过 `utils/exerciseLib.js` 合并表查（内置 + 自建，含被删动作占位回退）。
 4. **PR 是读取侧现算**（`util.buildPRMap`），不落库字段。编辑/删除历史后自动重算，别试图缓存成数据库字段。
 5. **图表只用 `utils/chart.js`**（Canvas 2D，无第三方库）；缺值断线不补零。

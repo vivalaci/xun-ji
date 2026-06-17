@@ -4,6 +4,7 @@ const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
 const chart = require('../../utils/chart.js');
 const lib = require('../../utils/exerciseLib.js');
+const curveConfig = require('../../utils/curveConfig.js');
 
 const LIFT_COLOR = { bench: '#1D4ED8', squat: '#7C3AED', deadlift: '#0891B2' };
 
@@ -22,6 +23,7 @@ Page({
 
   onLoad(options) {
     this.exerciseId = options.id;
+    this.ids = curveConfig.familyFor(options.id); // 硬拉锚点 → 家族三变式；其余 → [id]
     this.loadType = (lib.getExercise(options.id) || {}).loadType || 'weighted';
     this.color = LIFT_COLOR[options.id] || '#1D4ED8';
     wx.setNavigationBarTitle({ title: lib.getName(options.id) });
@@ -49,35 +51,41 @@ Page({
     const all = db.getCache(db.COLL.WORKOUTS);
     const prMap = util.buildPRMap(all);
     const start = util.rangeStartTs(this.data.range);
+    const ids = this.ids;
+    const isFamily = ids.length > 1; // 硬拉家族：聚合 + 历史标注变式
 
-    // 该动作的所有训练（含该动作）
-    const entries = [];
+    // 曲线点：每次训练取家族当日主力工作组重量最大值（与首页硬拉曲线同口径）
+    const points = [];
+    // 历史条目：家族内每个变式各一条
+    const hist = [];
     all.forEach((w) => {
-      const ex = (w.exercises || []).find((x) => x.exerciseId === this.exerciseId);
-      if (!ex) return;
-      const mww = util.mainWorkingWeight(ex.sets);
-      entries.push({
-        date: w.date,
-        ts: new Date(w.date).getTime(),
-        mww,
-        sets: ex.sets || [],
-        isPR: !!(prMap[w._id] && prMap[w._id].has(this.exerciseId))
+      const ts = new Date(w.date).getTime();
+      const dayVal = util.dayLiftValue(w, ids);
+      if (dayVal != null && ts >= start) points.push({ x: w.date, y: unit.toDisplay(dayVal) });
+      (w.exercises || []).forEach((ex) => {
+        if (ids.indexOf(ex.exerciseId) < 0) return;
+        hist.push({
+          key: w._id + '_' + ex.exerciseId,
+          ts,
+          date: w.date,
+          variant: isFamily ? (ex.name || lib.getName(ex.exerciseId)) : '',
+          loadType: (lib.getExercise(ex.exerciseId) || {}).loadType || 'weighted',
+          sets: ex.sets || [],
+          isPR: !!(prMap[w._id] && prMap[w._id].has(ex.exerciseId))
+        });
       });
     });
 
-    // 曲线点（范围内、有主力工作组重量）升序
-    const points = entries
-      .filter((e) => e.ts >= start && e.mww != null)
-      .map((e) => ({ x: e.date, y: unit.toDisplay(e.mww) }))
-      .sort((a, b) => new Date(a.x) - new Date(b.x));
+    points.sort((a, b) => new Date(a.x) - new Date(b.x));
     this._points = points;
 
-    // 历史列表（全部）倒序
-    const history = entries
+    const history = hist
       .sort((a, b) => b.ts - a.ts)
       .map((e) => ({
+        key: e.key,
         dateLabel: `${util.formatMonthDay(e.date)} ${util.weekDay(e.date)}`,
-        setsText: e.sets.map((s) => `${util.formatLoad(unit.toDisplay(s.weight), this.loadType)}×${s.reps}`).join('  '),
+        variant: e.variant,
+        setsText: e.sets.map((s) => `${util.formatLoad(unit.toDisplayWeight(s.weight, unit.currentUnit()), e.loadType)}×${s.reps}`).join('  '),
         isPR: e.isPR
       }));
 

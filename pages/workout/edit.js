@@ -80,7 +80,7 @@ Page({
       name: ex.name,
       loadType: (lib.getExercise(ex.exerciseId) || {}).loadType || 'weighted',
       unit: mainUnit,
-      sets: (ex.sets || []).map((s) => ({ weight: unit.toDisplayIn(s.weight, mainUnit), reps: s.reps }))
+      sets: (ex.sets || []).map((s) => ({ weight: unit.toDisplayWeight(s.weight, mainUnit), reps: s.reps }))
     }));
     this.setData({
       id, date: w.date, templateId: w.templateId || '', name: w.name || '', note: w.note || '',
@@ -122,7 +122,7 @@ Page({
       if (lastSame) {
         const prev = (lastSame.exercises || []).find((x) => x.exerciseId === te.exerciseId);
         if (prev && prev.sets && prev.sets.length) {
-          sets = prev.sets.map((s) => ({ weight: unit.toDisplayIn(s.weight, mainUnit), reps: s.reps }));
+          sets = prev.sets.map((s) => ({ weight: unit.toDisplayWeight(s.weight, mainUnit), reps: s.reps }));
         }
       }
       if (!sets) {
@@ -176,7 +176,7 @@ Page({
     const old = ex.unit;
     ex.sets = ex.sets.map((s) => {
       if (s.weight === '' || s.weight == null) return { weight: s.weight, reps: s.reps };
-      return { weight: unit.toDisplayIn(unit.toStoreFrom(s.weight, old), newUnit), reps: s.reps };
+      return { weight: unit.toDisplayWeight(unit.toStoreFrom(s.weight, old), newUnit), reps: s.reps };
     });
     ex.unit = newUnit;
     this.setData({ exercises });
@@ -289,21 +289,31 @@ Page({
         })
         .filter((o) => o.duration > 0 || o.distance > 0 || o.floors > 0);
     } else {
-      exercises = this.data.exercises
-        .map((ex) => ({
-          exerciseId: ex.exerciseId,
-          name: ex.name,
-          sets: ex.sets
-            .filter((s) => s.weight !== '' || s.reps !== '')
-            .map((s) => ({ weight: unit.toStoreFrom(s.weight, ex.unit), reps: Number(s.reps) || 0 }))
+      // 保留页面铺出的全部动作与组，未填的重量/次数落 0（0 重量天然不入主力组/PR/容量）
+      exercises = this.data.exercises.map((ex) => ({
+        exerciseId: ex.exerciseId,
+        name: ex.name,
+        sets: ex.sets.map((s) => ({
+          weight: (s.weight === '' || s.weight == null) ? 0 : unit.toStoreFrom(s.weight, ex.unit),
+          reps: Number(s.reps) || 0
         }))
-        .filter((ex) => ex.sets.length > 0);
+      }));
     }
 
-    if (exercises.length === 0) {
-      this.setData({ saving: false });
-      wx.showToast({ title: this.data.workoutType === 'cardio' ? '请填写时长或距离' : '请填写组数据', icon: 'none' });
-      return;
+    if (this.data.workoutType === 'cardio') {
+      if (exercises.length === 0) {
+        this.setData({ saving: false });
+        wx.showToast({ title: '请填写时长或距离', icon: 'none' });
+        return;
+      }
+    } else {
+      // 整训练至少一组填了重量或次数，否则拦截（防误存全 0 空训练）
+      const anyFilled = exercises.some((ex) => ex.sets.some((s) => s.weight > 0 || s.reps > 0));
+      if (!anyFilled) {
+        this.setData({ saving: false });
+        wx.showToast({ title: '请填写组数据', icon: 'none' });
+        return;
+      }
     }
 
     const payload = {

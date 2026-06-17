@@ -25,7 +25,7 @@
 ## 二、架构铁律（改代码前必读，详见 [CLAUDE.md](../CLAUDE.md)）
 
 1. **云读写只走 `utils/db.js`**：读 = `getCache` 先渲染 + `refresh` 异步更新；写 = `saveLocalFirst/updateLocalFirst/removeLocalFirst`（本地先落 + 队列重试，弱网兜底）。页面禁止直连 `wx.cloud.database()`。
-2. **重量恒以 kg 落库、完整精度、不提前 round**；显示/录入过 `utils/unit.js`（换算只在这一层）。
+2. **重量恒以 kg 落库**（kg 完整精度；lb 录入取整到 0.5kg）；换算只在 `utils/unit.js`。训练组重量显示用 `toDisplayWeight`（量化到 0.5），体重等用 `toDisplay`（保留 0.1）。
 3. **动作身份靠 `exerciseId`**（曲线/PR/历史聚合都按 id，不靠名字）；展示名经 `utils/exerciseLib.js`（内置+自建合并，含被删占位回退）。
 4. **PR 读取侧现算**（`util.buildPRMap`），不落库。
 5. **图表只用 `utils/chart.js`**（Canvas 2D，无第三方库），缺值断线不补零。

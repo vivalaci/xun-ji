@@ -5,11 +5,20 @@
 
 const exerciseLib = require('./exerciseLib.js');
 
+// 硬拉家族：固定「硬拉」曲线与其详情都聚合这三个变式（通常每次只练其一）。
+// 单一来源——首页曲线（FIXED_CHARTS.ids）与动作详情（familyFor）共用。
+const DEADLIFT_FAMILY = ['deadlift', 'rdl', 'stiff_leg_deadlift'];
+
+// 给定动作 id 解析其聚合家族：仅「硬拉」锚点展开为家族，其它（含 rdl/直腿单独曲线）保持单一。
+function familyFor(exerciseId) {
+  return exerciseId === 'deadlift' ? DEADLIFT_FAMILY.slice() : [exerciseId];
+}
+
 // 固定 4 项（不可删，仅可排序）：三大项 + 身体趋势合并图。颜色见 docs/05
 const FIXED_CHARTS = [
   { key: 'bench',    type: 'lift', id: 'bench',    name: '卧推', unit: 'kg', color: '#1D4ED8', fixed: true },
   { key: 'squat',    type: 'lift', id: 'squat',    name: '深蹲', unit: 'kg', color: '#7C3AED', fixed: true },
-  { key: 'deadlift', type: 'lift', id: 'deadlift', name: '硬拉', unit: 'kg', color: '#0891B2', fixed: true },
+  { key: 'deadlift', type: 'lift', id: 'deadlift', ids: DEADLIFT_FAMILY, name: '硬拉', unit: 'kg', color: '#0891B2', fixed: true },
   {
     key: 'body', type: 'bodyCombined', name: '身体趋势', color: '#111827', fixed: true,
     series: [
@@ -104,6 +113,8 @@ function removeCustom(prefs, key) {
 
 module.exports = {
   FIXED_CHARTS,
+  DEADLIFT_FAMILY,
+  familyFor,
   CUSTOM_PALETTE,
   MAX_CUSTOM,
   customKey,
