@@ -45,7 +45,11 @@
 
 迭代七（代码完成 + 真机通过）：
 
-- ✅ 日历分化配色升级：色相编码「系统」——三分化=蓝族（推靛蓝/拉正蓝/蹲天蓝）、二分化=绿族（上肢深草绿/下肢黄绿）、有氧=橙、其他=灰，族内区分单日；日历下方新增按系统分组图例（色值单一真源 `calendar.LEGEND_GROUPS`）。纯展示层换色，不动数据（change `calendar-split-palette`）
+- ✅ 日历分化配色升级：色相编码「系统」——三分化=蓝族（推靛蓝/拉正蓝/蹲天蓝）、二分化=绿族（上肢深草绿/下肢黄绿）、有氧=橙、其他=灰，族内区分单日。纯展示层换色，不动数据（change `calendar-split-palette`）
+
+迭代八（代码完成 + 真机通过）：
+
+- ✅ 选模板行内分化色点：每个模板行右侧标该训练日在日历上的颜色（取色收敛为 `calendar.typeOf`，与日历同源），空白训练为黑点；同时移除日历下方图例——颜色含义改在「选模板」场景内传达（change `template-picker-split-dots`）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。
