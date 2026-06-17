@@ -10,7 +10,7 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一~八全部完成、真机通过并归档（六=预设循证升级+目标组次 preset-program-upgrade；七=日历分化配色 calendar-split-palette；八=选模板行内色点 template-picker-split-dots） |
+| ⑦ | 开发实现 | ✅ 迭代一~九全部完成、真机通过并归档（六=预设循证升级+目标组次 preset-program-upgrade；七=日历分化配色 calendar-split-palette；八=选模板行内色点 template-picker-split-dots；九=应用内使用说明 in-app-usermanual） |
 | ⑧ | 测试上线 | 🔄 进行中（备案 / 隐私指引 / 类目 / 提审待办） |
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
@@ -22,6 +22,8 @@
 > 迭代七 `calendar-split-palette`（代码完成 + 真机通过）：日历配色改为「色相编码系统」——三分化=蓝族、二分化=绿族、有氧=橙、其他=灰，族内区分单日。纯展示层换色（`utils/calendar.js` `TYPES`），不动数据、不新增字段。修改主 spec `training-calendar`。
 >
 > 迭代八 `template-picker-split-dots`（代码完成 + 真机通过）：把"颜色钥匙"从日历图例移到选模板行——每个模板行右侧显示该训练日的分化色点（取色收敛 `calendar.typeOf`，与日历同源），空白训练为黑点；移除日历图例。修改主 spec `training-calendar`（撤图例）、`template-management`（加选模板色点）。
+>
+> 迭代九 `in-app-usermanual`（代码完成 + 真机通过）：「我的」页设置下方加「使用说明」入口，进独立页按节渲染用户手册（段落/要点/问答）；内容固化为 `config/manual.js`，与 `docs/usermanual.md` 同源。新增主 spec `in-app-usermanual`（共 12 个），纯展示不动集合。
 
 ## 文档索引
 

@@ -6,7 +6,7 @@
 
 ---
 
-## 当前进度（迭代一 ~ 八全部代码完成并真机通过；阶段⑧测试上线进行中）
+## 当前进度（迭代一 ~ 九全部代码完成并真机通过；阶段⑧测试上线进行中）
 
 迭代一核心闭环：
 
@@ -55,6 +55,10 @@
 迭代八（代码完成 + 真机通过）：
 
 - ✅ 选模板行内分化色点：每个模板行右侧标该训练日在日历上的颜色（取色收敛为 `calendar.typeOf`，与日历同源），空白训练为黑点；同时移除日历下方图例——颜色含义改在「选模板」场景内传达（change `template-picker-split-dots`）
+
+迭代九（代码完成 + 真机通过）：
+
+- ✅ 应用内使用说明：「我的」页「设置」下方加「使用说明」入口，进 `pages/manual/manual` 按节渲染用户手册（段落/要点/问答三类块）；内容固化为 `config/manual.js`，与 `docs/usermanual.md` 同源维护（小程序运行时读不了 `.md`）（change `in-app-usermanual`）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。

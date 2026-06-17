@@ -13,6 +13,10 @@
       <text>设置</text>
       <text class="muted">›</text>
     </view>
+    <view class="menu-item row between" bindtap="goManual">
+      <text>使用说明</text>
+      <text class="muted">›</text>
+    </view>
     <view class="menu-item row between" bindtap="about">
       <text>关于训记</text>
       <text class="muted">›</text>

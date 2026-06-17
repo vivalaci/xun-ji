@@ -4,6 +4,7 @@ Page({
   goTemplates() { wx.navigateTo({ url: '/pages/template/manage' }); },
   goLibrary() { wx.navigateTo({ url: '/pages/exercise/library' }); },
   goSettings() { wx.navigateTo({ url: '/pages/settings/settings' }); },
+  goManual() { wx.navigateTo({ url: '/pages/manual/manual' }); },
   about() {
     wx.showModal({
       title: '关于训记',

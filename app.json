@@ -11,7 +11,8 @@
     "pages/template/edit",
     "pages/exercise/library",
     "pages/exercise/detail",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/manual/manual"
   ],
   "window": {
     "backgroundTextStyle": "dark",

@@ -1,0 +1,27 @@
+/* pages/manual/manual.wxss */
+.intro { font-size: 26rpx; line-height: 1.7; margin-bottom: 32rpx; }
+
+.sec { margin-bottom: 36rpx; }
+.sec-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16rpx;
+}
+
+.p { font-size: 28rpx; line-height: 1.8; margin-bottom: 12rpx; }
+
+.li {
+  display: flex;
+  font-size: 28rpx;
+  line-height: 1.8;
+  margin-bottom: 10rpx;
+}
+.dot { color: var(--accent); margin-right: 12rpx; }
+.li-text { flex: 1; }
+
+.qa { margin-bottom: 20rpx; }
+.q { font-size: 28rpx; font-weight: 600; line-height: 1.7; }
+.a { font-size: 26rpx; line-height: 1.7; margin-top: 6rpx; }
+
+.tip { text-align: center; font-size: 24rpx; margin-top: 20rpx; }

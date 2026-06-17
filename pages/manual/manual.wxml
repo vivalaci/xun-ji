@@ -1,0 +1,21 @@
+<!-- pages/manual/manual.wxml -->
+<view class="container">
+  <view class="intro muted">{{intro}}</view>
+
+  <view wx:for="{{sections}}" wx:for-item="sec" wx:key="title" class="sec">
+    <view class="sec-title">{{sec.title}}</view>
+    <view wx:for="{{sec.blocks}}" wx:for-item="b" wx:key="*this" wx:for-index="bi">
+      <view wx:if="{{b.type === 'p'}}" class="p">{{b.text}}</view>
+      <view wx:elif="{{b.type === 'li'}}" class="li">
+        <text class="dot">·</text>
+        <text class="li-text">{{b.text}}</text>
+      </view>
+      <view wx:elif="{{b.type === 'qa'}}" class="qa">
+        <view class="q">Q：{{b.q}}</view>
+        <view class="a muted">{{b.a}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tip muted">本说明随版本更新。如有问题，请通过「我的 → 关于训记」了解更多。</view>
+</view>
