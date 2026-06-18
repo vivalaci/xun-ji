@@ -11,3 +11,6 @@ miniprogram_npm/
 
 # 个人配置（含 AppID 等，勿提交）
 project.private.config.json
+
+# 动作插画的姿势参考图（真人照片，仅作 AI 产出的中间输入，约 12M，不入库）
+assets/pose-ref/
