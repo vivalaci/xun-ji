@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-20（迭代一~十二全部归档，无活跃 change）。
+> 其余文档为细节，本文是入口。最后更新：2026-06-20（迭代一~十三全部归档，无活跃 change）。
 
 ---
 
@@ -12,11 +12,11 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑦开发 **全部完成**；⑧测试上线 **进行中** |
-| 开发 | 迭代一~十二全部代码完成、真机通过并归档；**无活跃 change** |
-| 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、12 个能力规格 |
-| 质量 | 85 个算法单测全过；全 js `node --check` 通过 |
+| 开发 | 迭代一~十三全部代码完成、真机通过并归档；**无活跃 change** |
+| 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、13 个能力规格 |
+| 质量 | 86 个算法单测全过；全 js `node --check` 通过 |
 | 上线 | 未发布。卡点：**ICP 备案**（未办）、隐私指引、服务类目、提审 |
-| git | 干净；tag 见 `git tag`（最新 `in-app-usermanual`/`record-and-deadlift-fixes`）；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `workout-flow-and-trend-fixes`/`highlight-today-workout`）；最新 commit 见 `git log` |
 
 > 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。下一步是阶段⑧上线，见第八节。
 
@@ -34,7 +34,7 @@
 
 ---
 
-## 三、当前能力清单（`openspec/specs/` 12 个，权威"App 现在做什么"）
+## 三、当前能力清单（`openspec/specs/` 13 个，权威"App 现在做什么"）
 
 | 能力 | 是什么 | 主要页面 |
 |------|--------|---------|
@@ -50,6 +50,7 @@
 | `data-pagination` | 全量分页拉取（绕过客户端 100 上限）+ 列表增量渲染 | db.js、各列表页 |
 | `cardio-tracking` | 有氧大类：7 活动、时长+距离/层数、`workouts.type` 区分 | workout/edit、list、calendar |
 | `in-app-usermanual` | 应用内使用说明：我的页入口 + 独立页按节渲染手册，内容源 `config/manual.js`（与 docs/usermanual.md 同源）| profile/、manual/ |
+| `workout-list` | 训练记录列表展示规则：今日记录左侧强调色竖条高亮（`util.isToday`，渲染层判定）| workout/list |
 
 ---
 
@@ -67,6 +68,7 @@
 - **迭代十**（tag `record-and-deadlift-fixes`）：记录/曲线三修——保存力量训练保留全部动作（未填落 0）；训练组重量统一量化到 0.5（`unit.roundHalfKg`/`toDisplayWeight`，lb 落库取整 0.5kg、体重保 0.1）；硬拉曲线与详情聚合家族（硬拉/罗马尼亚硬拉/直腿硬拉，`util.dayLiftValue`/`curveConfig.familyFor`）。
 - **迭代十一**（tag `record-to-template`，首个走 PR 分支流程）：训练记录一键存为「我的模板」（`templateLib.recordToTemplatePayload`）；「我的模板」分组置顶；预设 App 托管不可删除（`templateLib.isPresetGroup` + 删除入口仅我的模板渲染）。
 - **迭代十二**（tag `workout-flow-and-trend-fixes`）：①选模板拆为独立页 `pages/workout/pick`（返回导航修正，保存新建退 2 层回列表）；②训练编辑页动作上移/下移（力量+有氧）；③身体趋势图体重线渲染修复（`chart.computeBand` 最小尺度 + 近平线像素错位）。
+- **迭代十三**（tag `highlight-today-workout`）：训练列表高亮今日记录（`util.isToday` + 卡片左侧强调色竖条，渲染层判定不落库）。新增 capability `workout-list`。
 
 ---
 
@@ -106,7 +108,7 @@ pages/exercise/       动作库管理 / 动作详情
 pages/template/       模板管理 / 编辑
 pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
-tests/algo.test.js    85 个纯函数单测
+tests/algo.test.js    86 个纯函数单测
 ```
 
 ---
@@ -141,7 +143,7 @@ node tests/algo.test.js
 ✅ 图标（assets/）、上线文案、边界测试清单 已就绪
 ```
 
-开发侧迭代一~十二均已归档打 tag，无遗留 change。
+开发侧迭代一~十三均已归档打 tag，无遗留 change。
 
 ---
 

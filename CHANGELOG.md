@@ -71,3 +71,7 @@
   - **选模板拆为独立页** `pages/workout/pick`：新建流程改为 列表→选模板→编辑，左上角返回从编辑页天然退回选模板页（修复原同页 stage 返回直接退到列表）；保存新建训练后跨过选模板页直接回列表（退 2 层），编辑既有退 1 层。
   - **训练编辑页动作上移/下移**：力量与有氧通用，组/时长数据随动作整体移动（复用模板页 `moveUp`/`moveDown`）。
   - **身体趋势图体重线渲染修复**：`utils/chart.js` 抽纯函数 `computeBand(ys,minSpan)`——跨度<minSpan 按 minSpan 居中扩展（微小波动不再被放大成大斜线），近平线按序号像素级垂直错开（体重线不被腰围盖住）；体重阈值在 lb 下经 `unit` 换算。
+
+## 迭代十三
+
+- 训练列表高亮今日记录：`date` 为今天（`util.isToday`）的记录卡片左侧加强调色竖条，进训练页一眼定位今日训练；多条全标、无则不标。纯展示（`list.decorate` 打 `isToday`），不动排序/分页/字段（change `highlight-today-workout`，新 capability `workout-list`）

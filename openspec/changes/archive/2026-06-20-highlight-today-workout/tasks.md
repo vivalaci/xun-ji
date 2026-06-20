@@ -12,11 +12,11 @@
 
 - [x] 3.1 语法检查：改动 js `node --check` 通过
 - [x] 3.2 算法单测：`node tests/algo.test.js` 全绿（86 测）
-- [ ] 3.3 模拟器走查：当天有 1 条→竖条；当天多条→均有竖条；当天无记录→无竖条；排序/分页不变
+- [x] 3.3 模拟器走查（用户真机通过）：当天有 1 条→竖条；当天多条→均有竖条；当天无记录→无竖条；排序/分页不变
 
 ## 4. 文档与归档
 
-- [ ] 4.1 `docs/usermanual.md`：训练列表说明里点明"今日训练高亮"
-- [ ] 4.2 更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表
-- [ ] 4.3 `/opsx:sync`：delta spec 落地 `openspec/specs/workout-list/spec.md`
-- [ ] 4.4 `/opsx:archive`：归档并打 tag
+- [x] 4.1 `docs/usermanual.md` + `config/manual.js`（同源）：训练列表"今日训练高亮"说明
+- [x] 4.2 `CHANGELOG.md` 迭代十三 + `docs/00-overview.md` 阶段表 + `docs/10` 交接
+- [x] 4.3 `/opsx:sync`：新建 `openspec/specs/workout-list/spec.md`（新 capability）
+- [x] 4.4 `/opsx:archive`：归档；tag 合并后打
