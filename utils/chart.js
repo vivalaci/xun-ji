@@ -78,8 +78,25 @@ function drawLineChart({ canvas, ctx, width, height, dpr, points, color, yDecima
   });
 }
 
+// 由数据 ys 与最小尺度 minSpan 求 y 轴缩放区间 {lo,hi}（纯函数，便于单测）。
+// 实际跨度 ≥ minSpan：按数据跨度缩放（含 18% 边距）；< minSpan：按 minSpan 居中扩展，
+// 使极小波动呈近平稳而非被放大成贯穿全图的大斜线。单点/全等且无 minSpan：退化为 ±1。
+function computeBand(ys, minSpan) {
+  if (!ys || !ys.length) return { lo: 0, hi: 1 };
+  const mn = Math.min.apply(null, ys);
+  const mx = Math.max.apply(null, ys);
+  const span = mx - mn;
+  const eff = Math.max(span, minSpan || 0);
+  if (eff === 0) return { lo: mn - 1, hi: mx + 1 }; // 单点/全等且无 minSpan
+  const center = (mn + mx) / 2;
+  const pad = eff * 0.18;
+  return { lo: center - eff / 2 - pad, hi: center + eff / 2 + pad };
+}
+
 // 多线图：每条线按自身 min/max 独立缩放（只看趋势），X 轴按日期对齐，无共用 Y 轴。
-// series: [{ points:[{x:'YYYY-MM-DD', y}], color }]
+// series: [{ points:[{x:'YYYY-MM-DD', y}], color, minSpan? }]
+// minSpan（显示单位计）：见 computeBand。近平线按序号做像素级垂直错位，避免多条平线
+// 在各自 band 中心精确重合相互遮挡（如体重线落腰围之下被盖住）。
 function drawMultiLine({ canvas, ctx, width, height, dpr, series }) {
   canvas.width = width * dpr;
   canvas.height = height * dpr;
@@ -107,15 +124,28 @@ function drawMultiLine({ canvas, ctx, width, height, dpr, series }) {
   const spanX = tsMax - tsMin;
   const px = (x) => (spanX ? pad.l + (new Date(x).getTime() - tsMin) / spanX * (width - pad.l - pad.r) : width / 2);
 
-  active.forEach((s) => {
+  // 每条线的缩放区间，并标记近平线（垂直占比极小者）
+  const bands = active.map((s) => {
     const ys = s.points.map((p) => p.y);
-    let mn = Math.min(...ys);
-    let mx = Math.max(...ys);
-    if (mn === mx) { mn -= 1; mx += 1; }
-    const rng = mx - mn;
-    const lo = mn - rng * 0.18;
-    const hi = mx + rng * 0.18;
-    const py = (v) => pad.t + (1 - (v - lo) / (hi - lo)) * (height - pad.t - pad.b);
+    const band = computeBand(ys, s.minSpan);
+    const span = Math.max.apply(null, ys) - Math.min.apply(null, ys);
+    const h = band.hi - band.lo;
+    return { band, flat: h > 0 ? span / h < 0.15 : true };
+  });
+  // 近平线按出现序号围绕中心扇形错开（像素级）
+  const FLAT_STEP = 6;
+  const flatIdx = [];
+  bands.forEach((b, i) => { if (b.flat) flatIdx.push(i); });
+  const offsets = {};
+  flatIdx.forEach((i, k) => { offsets[i] = (k - (flatIdx.length - 1) / 2) * FLAT_STEP; });
+
+  active.forEach((s, idx) => {
+    const { lo, hi } = bands[idx].band;
+    const off = offsets[idx] || 0;
+    const py = (v) => {
+      const y = pad.t + (1 - (v - lo) / (hi - lo)) * (height - pad.t - pad.b) + off;
+      return Math.max(pad.t, Math.min(height - pad.b, y)); // 夹取在绘图区内
+    };
 
     ctx.strokeStyle = s.color;
     ctx.lineWidth = 2;
@@ -137,4 +167,4 @@ function drawMultiLine({ canvas, ctx, width, height, dpr, series }) {
   });
 }
 
-module.exports = { drawLineChart, drawMultiLine };
+module.exports = { drawLineChart, drawMultiLine, computeBand };

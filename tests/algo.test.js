@@ -15,6 +15,7 @@ const store = require('../utils/store.js');
 const templateLib = require('../utils/templateLib.js');
 const PRESETS = require('../config/templates.js');
 const curveConfig = require('../utils/curveConfig.js');
+const chart = require('../utils/chart.js');
 const calendar = require('../utils/calendar.js');
 const exercises = require('../config/exercises.js');
 const exerciseLib = require('../utils/exerciseLib.js');
@@ -579,6 +580,33 @@ test('预设 order 唯一递增', () => {
 test('分组循证说明含二分化/三分化', () => {
   assert.ok(templateLib.GROUP_NOTES['二分化'] && templateLib.GROUP_NOTES['二分化'].length > 10);
   assert.ok(templateLib.GROUP_NOTES['三分化'] && templateLib.GROUP_NOTES['三分化'].length > 10);
+});
+
+console.log('chart.computeBand（workout-flow-and-trend-fixes 身体趋势）:');
+test('跨度 ≥ minSpan：按数据缩放（含 18% 边距）', () => {
+  const b = chart.computeBand([60, 100], 5); // span 40 ≥ 5
+  assert.ok(b.lo < 60 && b.hi > 100);
+  assert.ok(Math.abs((b.lo + b.hi) / 2 - 80) < 1e-9); // 居中
+  assert.ok(Math.abs((b.hi - b.lo) - 40 * 1.36) < 1e-6); // eff 40 + 上下各 18%
+});
+test('跨度 < minSpan：按 minSpan 居中扩展（微小波动不被放大）', () => {
+  const b = chart.computeBand([70.0, 70.1], 5); // span 0.1 < 5 → eff 5
+  assert.ok(Math.abs((b.lo + b.hi) / 2 - 70.05) < 1e-9);
+  assert.ok(Math.abs((b.hi - b.lo) - 5 * 1.36) < 1e-6);
+  // 0.1 波动在 ~6.8 跨度里占比极小 → 近平
+  assert.ok(0.1 / (b.hi - b.lo) < 0.02);
+});
+test('单点/全等且无 minSpan：退化 ±1', () => {
+  assert.deepStrictEqual(chart.computeBand([70], 0), { lo: 69, hi: 71 });
+  assert.deepStrictEqual(chart.computeBand([70, 70]), { lo: 69, hi: 71 });
+});
+test('单点 + minSpan：按 minSpan 居中', () => {
+  const b = chart.computeBand([70], 5);
+  assert.ok(Math.abs((b.lo + b.hi) / 2 - 70) < 1e-9);
+  assert.ok(b.hi - b.lo > 5); // minSpan + 边距
+});
+test('空数组兜底不抛错', () => {
+  assert.deepStrictEqual(chart.computeBand([], 5), { lo: 0, hi: 1 });
 });
 
 console.log(`\nAll ${passed} tests passed ✓`);
