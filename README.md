@@ -6,7 +6,7 @@
 
 ---
 
-## 当前进度（迭代一 ~ 十全部代码完成并真机通过；阶段⑧测试上线进行中）
+## 当前进度（迭代一 ~ 十一全部代码完成并真机通过；阶段⑧测试上线进行中）
 
 迭代一核心闭环：
 
@@ -63,6 +63,10 @@
 迭代十（代码完成 + 真机通过）：
 
 - ✅ 记录/曲线三修：① 保存力量训练保留全部动作、未填落 0（不再丢空动作）；② 训练组重量统一量化到 0.5（`unit.toDisplayWeight`，只现整数或 .5，覆盖历史脏值），lb 录入落库取整到 0.5kg（`roundHalfKg`），体重等仍保留 0.1；③ 硬拉曲线聚合家族（硬拉/罗马尼亚硬拉/直腿硬拉，`util.dayLiftValue` 当日取主力组最大），详情页同步聚合并在历史标注变式（change `record-and-deadlift-fixes`）
+
+迭代十一（代码完成 + 真机通过）：
+
+- ✅ 训练记录一键存为模板：编辑已有记录时顶部【保存模板】→ 确认即存为「我的模板」（`templateLib.recordToTemplatePayload`：力量取 exerciseId+组数 targetSets、不含重量次数；有氧 type:cardio；名称加「（我的）」后缀）；「我的模板」分组由垫底改**置顶**；预设模板（App 托管）**不可删除**（`isPresetGroup`，删除入口仅对我的模板渲染 + 兜底拦截）（change `record-to-template`）
 
 > 用 OpenSpec 管理：`openspec/changes/`，进度查 `openspec status --change <name>`。
 > 算法单测：`node tests/algo.test.js`。

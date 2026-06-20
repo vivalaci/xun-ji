@@ -77,13 +77,20 @@ test('lb 模式：输入 lb 落库 kg 取整到 0.5（见 record-and-deadlift-fi
 });
 
 console.log('templateLib.groupTemplates:');
-test('预设组在前、我的模板垫底、空桶剔除', () => {
+test('我的模板置顶、预设组随后、空桶剔除（record-to-template）', () => {
   const groups = templateLib.groupTemplates([
     { _id: 'a', name: '自建', group: '', order: 9 },
     { _id: 'b', name: '上肢', group: '二分化', order: 3 },
     { _id: 'c', name: '推日', group: '三分化', order: 0 }
   ]);
-  assert.deepStrictEqual(groups.map((g) => g.name), ['三分化', '二分化', '我的模板']);
+  assert.deepStrictEqual(groups.map((g) => g.name), ['我的模板', '三分化', '二分化']);
+});
+test('无自建模板时预设自然占顶（我的模板不输出）', () => {
+  const groups = templateLib.groupTemplates([
+    { _id: 'b', name: '上肢', group: '二分化', order: 3 },
+    { _id: 'c', name: '推日', group: '三分化', order: 0 }
+  ]);
+  assert.deepStrictEqual(groups.map((g) => g.name), ['三分化', '二分化']);
 });
 test('缺 group 字段也归我的模板', () => {
   const groups = templateLib.groupTemplates([{ _id: 'x', name: '旧模板', order: 0 }]);
@@ -96,6 +103,45 @@ test('桶内按 order 升序', () => {
     { _id: 'a', name: '推日', group: '三分化', order: 0 }
   ]);
   assert.deepStrictEqual(groups[0].items.map((t) => t.name), ['推日', '拉日']);
+});
+
+console.log('templateLib.recordToTemplatePayload（记录→模板）:');
+test('力量记录：每动作取 exerciseId + 组数 targetSets，不含重量/次数', () => {
+  const p = templateLib.recordToTemplatePayload({
+    name: '上肢A', type: 'strength',
+    exercises: [
+      { exerciseId: 'bench', name: '卧推', sets: [{ weight: 60, reps: 5 }, { weight: 60, reps: 5 }, { weight: 62.5, reps: 4 }, { weight: 62.5, reps: 4 }] },
+      { exerciseId: 'db_row', name: '划船', sets: [{ weight: 30, reps: 10 }] }
+    ]
+  });
+  assert.strictEqual(p.name, '上肢A（我的）');
+  assert.strictEqual(p.group, '');
+  assert.strictEqual(p.type, undefined); // 力量不写 type
+  assert.deepStrictEqual(p.exercises, [
+    { exerciseId: 'bench', targetSets: 4 },
+    { exerciseId: 'db_row', targetSets: 1 }
+  ]);
+});
+test('有氧记录：type:cardio，动作仅 exerciseId、无组次', () => {
+  const p = templateLib.recordToTemplatePayload({
+    name: '有氧', type: 'cardio',
+    exercises: [{ exerciseId: 'run_outdoor', duration: 30, distance: 5 }]
+  });
+  assert.strictEqual(p.name, '有氧（我的）');
+  assert.strictEqual(p.type, 'cardio');
+  assert.deepStrictEqual(p.exercises, [{ exerciseId: 'run_outdoor' }]);
+});
+test('缺名/空动作不报错', () => {
+  const p = templateLib.recordToTemplatePayload({});
+  assert.strictEqual(p.name, '训练（我的）');
+  assert.deepStrictEqual(p.exercises, []);
+});
+test('isPresetGroup：预设组不可删、我的模板（空 group）可删', () => {
+  assert.strictEqual(templateLib.isPresetGroup('三分化'), true);
+  assert.strictEqual(templateLib.isPresetGroup('二分化'), true);
+  assert.strictEqual(templateLib.isPresetGroup('有氧'), true);
+  assert.strictEqual(templateLib.isPresetGroup(''), false);
+  assert.strictEqual(templateLib.isPresetGroup(undefined), false);
 });
 
 console.log('templateLib.planTemplateMigration:');
