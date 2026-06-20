@@ -17,11 +17,11 @@
 
 ## 3. 身体趋势渲染修复（③）
 
-- [ ] 3.1 `utils/chart.js` 抽纯函数 `computeBand(ys, minSpan)`：实际跨度≥阈值按数据缩放、<阈值按 `minSpan` 居中扩展、单点/全等退化兜底
-- [ ] 3.2 `drawMultiLine` 接入 `minSpan`（每条线一份，显示单位计）并改用 `computeBand`
-- [ ] 3.3 `drawMultiLine` 平线按序号做像素级垂直错位（步长默认 6px，padding 内夹取），非平线不偏移；体重落腰围之下
-- [ ] 3.4 `pages/curve/curve.js` 按指标供给 `minSpan`（体重 5kg 在 `lb` 下经 `unit` 换算、体脂 5%、腰围 5cm，默认值可调）传入 `drawMultiLine`
-- [ ] 3.5 `tests/algo.test.js` 补 `computeBand` 用例（大于/小于阈值、单点、全等）及平线偏移序号分配逻辑
+- [x] 3.1 `utils/chart.js` 抽纯函数 `computeBand(ys, minSpan)`：实际跨度≥阈值按数据缩放、<阈值按 `minSpan` 居中扩展、单点/全等退化兜底
+- [x] 3.2 `drawMultiLine` 接入 `minSpan`（每条线一份，显示单位计）并改用 `computeBand`
+- [x] 3.3 `drawMultiLine` 近平线按序号做像素级垂直错位（步长 6px、padding 内夹取，扇形围绕中心），非平线不偏移
+- [x] 3.4 `pages/curve/curve.js` 按指标供给 `minSpan`（体重 5、体脂 5、腰围 5，体重 convert 经 `unit.toDisplay` 换 lb）传入 `drawMultiLine`
+- [x] 3.5 `tests/algo.test.js` 补 `computeBand` 用例（大于/小于阈值、单点±minSpan、全等、空数组兜底）
 - [ ] 3.6 真机/模拟器走查：两条平线（体重+腰围）不重合遮挡、0.1kg 波动呈近平稳、显著变化照常缩放、`lb` 单位下一致
 
 ## 4. 验证与收尾

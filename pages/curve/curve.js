@@ -207,7 +207,12 @@ Page({
           if (c.type === 'bodyCombined') {
             const built = this._series[c.key] || [];
             chart.drawMultiLine(Object.assign(dim, {
-              series: built.map((b) => ({ points: b.points, color: b.def.color }))
+              // minSpan 取显示单位：体重（convert）在 lb 模式下经 unit.toDisplay 线性换算
+              series: built.map((b) => ({
+                points: b.points,
+                color: b.def.color,
+                minSpan: b.def.convert ? unit.toDisplay(b.def.minSpan) : b.def.minSpan
+              }))
             }));
           } else {
             chart.drawLineChart(Object.assign(dim, {

@@ -22,9 +22,11 @@ const FIXED_CHARTS = [
   {
     key: 'body', type: 'bodyCombined', name: '身体趋势', color: '#111827', fixed: true,
     series: [
-      { field: 'weight',  name: '体重', unit: 'kg', color: '#111827', convert: true },
-      { field: 'bodyFat', name: '体脂', unit: '%',  color: '#6B7280' },
-      { field: 'waist',   name: '腰围', unit: 'cm', color: '#D97706' }
+      // minSpan：该指标允许的最小取值跨度（显示单位计；体重在 lb 下由 curve.js 经 unit 换算），
+      // 小于它的波动按它居中扩展，避免微小变化被放大成大斜线（见 chart.computeBand）。
+      { field: 'weight',  name: '体重', unit: 'kg', color: '#111827', convert: true, minSpan: 5 },
+      { field: 'bodyFat', name: '体脂', unit: '%',  color: '#6B7280', minSpan: 5 },
+      { field: 'waist',   name: '腰围', unit: 'cm', color: '#D97706', minSpan: 5 }
     ]
   }
 ];
