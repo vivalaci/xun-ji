@@ -242,6 +242,21 @@ Page({
     exercises.splice(i, 1);
     this.setData({ exercises });
   },
+  // 动作/活动调序（力量与有氧共用同一 exercises 数组；组/时长数据随动作整体移动）
+  moveUp(e) {
+    const i = e.currentTarget.dataset.i;
+    if (i <= 0) return;
+    const exercises = this.data.exercises.slice();
+    [exercises[i - 1], exercises[i]] = [exercises[i], exercises[i - 1]];
+    this.setData({ exercises });
+  },
+  moveDown(e) {
+    const i = e.currentTarget.dataset.i;
+    const exercises = this.data.exercises.slice();
+    if (i >= exercises.length - 1) return;
+    [exercises[i + 1], exercises[i]] = [exercises[i], exercises[i + 1]];
+    this.setData({ exercises });
+  },
 
   // ---- 动作选择 ----
   // 按 workoutType 过滤分类：cardio 仅「有氧」；strength 排除「有氧」

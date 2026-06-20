@@ -88,6 +88,9 @@
 }
 .ex-name { font-size: 32rpx; }
 .ex-remove { color: var(--danger); font-size: 24rpx; }
+.ex-ops { gap: 28rpx; }
+.ex-move { font-size: 34rpx; color: var(--accent); line-height: 1; }
+.ex-move.disabled { color: var(--disabled); }
 
 .set-head {
   font-size: 22rpx;

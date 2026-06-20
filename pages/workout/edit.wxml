@@ -62,7 +62,11 @@
                 catchtap="onSwitchExerciseUnit" data-i="{{i}}" data-unit="{{u}}">{{u}}</view>
         </view>
       </view>
-      <view class="ex-remove" bindtap="removeExercise" data-i="{{i}}">移除</view>
+      <view class="row ex-ops">
+        <text class="ex-move {{i === 0 ? 'disabled' : ''}}" catchtap="moveUp" data-i="{{i}}">↑</text>
+        <text class="ex-move {{i === exercises.length - 1 ? 'disabled' : ''}}" catchtap="moveDown" data-i="{{i}}">↓</text>
+        <text class="ex-remove" bindtap="removeExercise" data-i="{{i}}">移除</text>
+      </view>
     </view>
 
     <!-- 有氧：时长 + 距离/层数 -->

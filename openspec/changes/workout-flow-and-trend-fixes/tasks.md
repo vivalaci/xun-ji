@@ -10,9 +10,9 @@
 
 ## 2. 训练编辑页动作调序（②）
 
-- [ ] 2.1 `pages/workout/edit.js` 增 `moveUp`/`moveDown`（复用模板页逻辑），力量与有氧共用同一 `exercises` 数组
-- [ ] 2.2 `pages/workout/edit.wxml` 力量动作行与有氧活动行各加 ↑/↓ 按钮，首行禁上移、末行禁下移
-- [ ] 2.3 `pages/workout/edit.wxss` 补按钮样式（与模板编辑页一致观感）
+- [x] 2.1 `pages/workout/edit.js` 增 `moveUp`/`moveDown`（复用模板页逻辑），力量与有氧共用同一 `exercises` 数组
+- [x] 2.2 `pages/workout/edit.wxml` 动作/活动行的共用 ex-head 加 ↑/↓ 按钮（覆盖力量+有氧），首行 ↑、末行 ↓ 置灰
+- [x] 2.3 `pages/workout/edit.wxss` 补 `.ex-ops`/`.ex-move` 样式
 - [ ] 2.4 走查：上移/下移交换位置、组/时长数据随动作整体移动、保存后重开顺序保持
 
 ## 3. 身体趋势渲染修复（③）
