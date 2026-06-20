@@ -2,6 +2,7 @@
   "pages": [
     "pages/curve/curve",
     "pages/workout/list",
+    "pages/workout/pick",
     "pages/workout/edit",
     "pages/body/body",
     "pages/body/edit",

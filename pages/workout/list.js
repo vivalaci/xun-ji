@@ -83,7 +83,7 @@ Page({
     });
   },
 
-  goNew() { wx.navigateTo({ url: '/pages/workout/edit' }); },
+  goNew() { wx.navigateTo({ url: '/pages/workout/pick' }); },
   goEdit(e) { wx.navigateTo({ url: `/pages/workout/edit?id=${e.currentTarget.dataset.id}` }); },
 
   async onDelete(e) {

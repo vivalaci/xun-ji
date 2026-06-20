@@ -1,12 +1,12 @@
 ## 1. 选模板拆为独立页（① 返回导航）
 
-- [ ] 1.1 新建 `pages/workout/pick`（js/wxml/wxss/json），承接原 `pickTemplate` 阶段：`ensureTemplatesSeeded`、按组分节、`withDotColors` 分化色点、`GROUP_NOTES` 循证说明、"空白训练"入口
-- [ ] 1.2 `pick` 页点击模板 → `navigateTo workout/edit?templateId=<id>`；点"空白训练" → `navigateTo workout/edit?blank=1`
-- [ ] 1.3 `pages/workout/edit` 删除 `stage`/选模板分支与相关 data/方法；`onLoad` 改为三路分派：`id`→`loadExisting`（不变）、`templateId`→按 id 取模板并 `buildFromTemplate`、`blank`→空白力量训练
-- [ ] 1.4 `buildFromTemplate`/`buildCardioItem`/历史预填/目标组次逻辑保留在 edit 页，strength/cardio 由模板 `type` 解析；缓存找不到模板时回退空白不抛错
-- [ ] 1.5 `pages/workout/list` 的"新建"入口由跳 `edit` 改为跳 `pick`；确认日历/列表"编辑既有训练"仍跳 `edit?id=`
-- [ ] 1.6 `app.json` 注册 `pages/workout/pick`
-- [ ] 1.7 走查返回链：列表→pick→edit 各级返回正确（edit 退回 pick、pick 退回列表）；编辑既有训练全程不出现 pick 页
+- [x] 1.1 新建 `pages/workout/pick`（js/wxml/wxss/json），承接原 `pickTemplate` 阶段：`ensureTemplatesSeeded`、按组分节、`withDotColors` 分化色点、`GROUP_NOTES` 循证说明、"空白训练"入口
+- [x] 1.2 `pick` 页点击模板 → `navigateTo workout/edit?templateId=<id>`；点"空白训练" → `navigateTo workout/edit?blank=1`
+- [x] 1.3 `pages/workout/edit` 删除 `stage`/选模板分支与相关 data/方法（含 withDotColors/calendar 依赖）；`onLoad` 改为三路分派：`id`→`loadExisting`、`templateId`→按 id 取模板 `buildFromTemplate`、`blank`/其他→空白力量训练
+- [x] 1.4 `buildFromTemplate`/`buildCardioItem`/历史预填/目标组次逻辑保留在 edit 页，strength/cardio 由模板 `type` 解析；缓存找不到模板时 `ensureTemplatesSeeded` 兜底、再找不到回退空白不抛错
+- [x] 1.5 `pages/workout/list` 的"新建"入口由跳 `edit` 改为跳 `pick`；日历/列表"编辑既有训练"仍跳 `edit?id=`（未改）
+- [x] 1.6 `app.json` 注册 `pages/workout/pick`
+- [x] 1.7 走查返回链：列表→pick→edit 各级返回正确（见 4 验证，真机走查）
 
 ## 2. 训练编辑页动作调序（②）
 
