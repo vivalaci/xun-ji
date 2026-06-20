@@ -64,3 +64,10 @@
 ## 迭代十一
 
 - 训练记录一键存为模板：编辑已有记录时顶部【保存模板】→ 确认即存为「我的模板」（`templateLib.recordToTemplatePayload`：力量取 exerciseId+组数 targetSets、不含重量次数；有氧 type:cardio；名称加「（我的）」后缀）；「我的模板」分组由垫底改**置顶**；预设模板（App 托管）**不可删除**（`isPresetGroup`，删除入口仅对我的模板渲染 + 兜底拦截）（change `record-to-template`）
+
+## 迭代十二
+
+- 三个用户反馈修复（change `workout-flow-and-trend-fixes`）：
+  - **选模板拆为独立页** `pages/workout/pick`：新建流程改为 列表→选模板→编辑，左上角返回从编辑页天然退回选模板页（修复原同页 stage 返回直接退到列表）；保存新建训练后跨过选模板页直接回列表（退 2 层），编辑既有退 1 层。
+  - **训练编辑页动作上移/下移**：力量与有氧通用，组/时长数据随动作整体移动（复用模板页 `moveUp`/`moveDown`）。
+  - **身体趋势图体重线渲染修复**：`utils/chart.js` 抽纯函数 `computeBand(ys,minSpan)`——跨度<minSpan 按 minSpan 居中扩展（微小波动不再被放大成大斜线），近平线按序号像素级垂直错开（体重线不被腰围盖住）；体重阈值在 lb 下经 `unit` 换算。
