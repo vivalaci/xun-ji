@@ -31,13 +31,32 @@ function groupTemplates(templates) {
     }
     buckets[key].push(t);
   });
-  const orderedNames = PRESET_GROUPS.filter((g) => buckets[g])
-    .concat(otherOrder)
-    .concat(buckets[MY_GROUP_LABEL] ? [MY_GROUP_LABEL] : []);
+  // 「我的模板」置顶（若存在）→ 预设组（三分化/二分化/有氧）→ 其余具名组
+  const orderedNames = (buckets[MY_GROUP_LABEL] ? [MY_GROUP_LABEL] : [])
+    .concat(PRESET_GROUPS.filter((g) => buckets[g]))
+    .concat(otherOrder);
   return orderedNames.map((name) => ({
     name,
     items: buckets[name].slice().sort((a, b) => (a.order || 0) - (b.order || 0))
   }));
+}
+
+// 训练记录 → 「我的模板」payload（纯函数，供 edit.saveAsTemplate 与单测用）。
+// 力量：每动作 { exerciseId, targetSets: 组数 }；有氧：{ exerciseId } 且模板 type:'cardio'。
+// 名称加「（我的）」后缀、group 空；order 由调用方补末位（依赖现有模板，不在纯函数内）。
+function recordToTemplatePayload(record) {
+  const isCardio = (record && record.type) === 'cardio';
+  const exercises = ((record && record.exercises) || []).map((ex) => (
+    isCardio ? { exerciseId: ex.exerciseId }
+             : { exerciseId: ex.exerciseId, targetSets: (ex.sets || []).length }
+  ));
+  const payload = {
+    name: ((record && record.name) || '训练') + '（我的）',
+    group: '',
+    exercises
+  };
+  if (isCardio) payload.type = 'cardio';
+  return payload;
 }
 
 // 迁移计划：找出缺 group 字段的存量模板，给出更新与补种清单。
@@ -61,4 +80,4 @@ function planTemplateMigration(templates) {
   return { needed: true, updates };
 }
 
-module.exports = { groupTemplates, planTemplateMigration, MY_GROUP_LABEL, GROUP_NOTES };
+module.exports = { groupTemplates, planTemplateMigration, recordToTemplatePayload, MY_GROUP_LABEL, GROUP_NOTES };

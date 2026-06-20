@@ -155,6 +155,31 @@ Page({
     };
   },
 
+  // 把当前（已有）记录的动作组合一键存为「我的模板」——仅编辑态入口
+  onSaveAsTemplate() {
+    wx.showModal({
+      title: '保存为我的模板？',
+      content: '把当前动作组合存为「我的模板」，只留动作与组数，不含重量/次数。',
+      success: (res) => {
+        if (!res.confirm) return;
+        const payload = templateLib.recordToTemplatePayload({
+          name: this.data.name,
+          type: this.data.workoutType,
+          exercises: this.data.exercises
+        });
+        const templates = db.getCache(db.COLL.TEMPLATES);
+        payload.order = templates.reduce((m, t) => Math.max(m, t.order || 0), 0) + 1;
+        try {
+          db.saveLocalFirst(db.COLL.TEMPLATES, payload);
+          wx.showToast({ title: '已存为我的模板', icon: 'success' });
+        } catch (e) {
+          console.error(e);
+          wx.showToast({ title: '保存失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
   onDateChange(e) { this.setData({ date: e.detail.value }); },
   onNameInput(e) { this.setData({ name: e.detail.value }); },
   onNoteInput(e) { this.setData({ note: e.detail.value }); },

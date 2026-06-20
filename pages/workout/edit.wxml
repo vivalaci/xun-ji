@@ -30,6 +30,9 @@
 
 <!-- 阶段二：录入 -->
 <view wx:else class="container edit-page">
+  <view wx:if="{{id}}" class="tpl-bar">
+    <view class="tpl-save-btn" bindtap="onSaveAsTemplate">保存模板</view>
+  </view>
   <view class="card">
     <view class="form-item">
       <view class="muted">日期</view>
