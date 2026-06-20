@@ -26,8 +26,8 @@
 
 ## 4. 验证与收尾
 
-- [ ] 4.1 语法校验：`Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }`
-- [ ] 4.2 算法单测：`node tests/algo.test.js` 全绿
-- [ ] 4.3 同步 `docs/usermanual.md`：新建训练选模板流程、训练动作调序
+- [x] 4.1 语法校验：全量 `node --check` 通过
+- [x] 4.2 算法单测：`node tests/algo.test.js` 全绿（85 测）
+- [x] 4.3 同步 `docs/usermanual.md` + `config/manual.js`（同源）：选模板独立页/返回、训练动作调序
 - [ ] 4.4 更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表
 - [ ] 4.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
