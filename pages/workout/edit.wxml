@@ -1,35 +1,5 @@
-<!-- pages/workout/edit.wxml -->
-
-<!-- 阶段一：选择模板（按组分节） -->
-<view wx:if="{{stage === 'pickTemplate'}}" class="container">
-  <view class="pick-title title">选择训练模板</view>
-
-  <block wx:for="{{templateGroups}}" wx:key="name" wx:for-item="grp">
-    <view class="group-title">{{grp.name}}</view>
-    <view wx:if="{{groupNotes[grp.name]}}" class="group-note muted">{{groupNotes[grp.name]}}</view>
-    <view
-      wx:for="{{grp.items}}" wx:key="_id"
-      class="tpl-card row between" bindtap="pickTemplate" data-id="{{item._id}}"
-    >
-      <view class="tpl-info">
-        <view class="bold">{{item.name}}</view>
-        <view class="muted tpl-meta">{{item.exercises.length}} 个动作</view>
-      </view>
-      <view class="tpl-dot" style="background: {{item.dotColor}}"></view>
-    </view>
-  </block>
-
-  <view class="tpl-card blank row between" bindtap="pickBlank">
-    <view class="tpl-info">
-      <view class="bold">空白训练</view>
-      <view class="muted tpl-meta">不用模板，手动添加动作</view>
-    </view>
-    <view class="tpl-dot" style="background: #111827"></view>
-  </view>
-</view>
-
-<!-- 阶段二：录入 -->
-<view wx:else class="container edit-page">
+<!-- pages/workout/edit.wxml —— 录入（选模板已拆到 pages/workout/pick） -->
+<view class="container edit-page">
   <view wx:if="{{id}}" class="tpl-bar">
     <view class="tpl-save-btn" bindtap="onSaveAsTemplate">保存模板</view>
   </view>

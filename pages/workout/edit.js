@@ -4,14 +4,6 @@ const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
 const lib = require('../../utils/exerciseLib.js');
 const templateLib = require('../../utils/templateLib.js');
-const calendar = require('../../utils/calendar.js');
-
-// 给每个模板行附分化色点（与日历同源取色）。
-function withDotColors(groups) {
-  return (groups || []).map((g) => Object.assign({}, g, {
-    items: (g.items || []).map((it) => Object.assign({}, it, { dotColor: calendar.typeOf(it).color }))
-  }));
-}
 
 Page({
   data: {
@@ -22,12 +14,6 @@ Page({
     note: '',
     workoutType: 'strength', // strength | cardio
     exercises: [],           // strength: {exerciseId,name,loadType,unit,sets[]}；cardio: {exerciseId,name,kind,metric2,label2,duration,secondVal}
-
-    // 模板选择
-    stage: 'pickTemplate',
-    templates: [],
-    templateGroups: [],
-    groupNotes: templateLib.GROUP_NOTES, // 分组循证说明（选模板界面展示）
 
     // 动作选择面板
     pickerVisible: false,
@@ -43,20 +29,36 @@ Page({
     saving: false
   },
 
+  // 三路分派：id=编辑既有；templateId=按模板新建；blank/其他=空白力量训练。
+  // 选模板由独立页 pages/workout/pick 承担，本页不再有选模板阶段。
   async onLoad(options) {
-    this.refreshLib();
     if (options.id) {
       wx.setNavigationBarTitle({ title: '编辑训练' });
       this.loadExisting(options.id);
-    } else {
-      wx.setNavigationBarTitle({ title: '新建训练' });
-      try {
-        const templates = await db.ensureTemplatesSeeded();
-        this.setData({ templates, templateGroups: withDotColors(templateLib.groupTemplates(templates)) });
-      } catch (e) {
-        this.setData({ templates: [], templateGroups: [] });
-      }
+      this.refreshLib();
+      return;
     }
+    wx.setNavigationBarTitle({ title: '新建训练' });
+    if (options.templateId) {
+      let tpl = db.getCache(db.COLL.TEMPLATES).find((t) => t._id === options.templateId);
+      if (!tpl) { // 缓存未就绪兜底
+        try { await db.ensureTemplatesSeeded(); } catch (e) {}
+        tpl = db.getCache(db.COLL.TEMPLATES).find((t) => t._id === options.templateId);
+      }
+      if (tpl) {
+        this.data.workoutType = tpl.type === 'cardio' ? 'cardio' : 'strength';
+        this.setData({
+          templateId: tpl._id, name: tpl.name,
+          workoutType: this.data.workoutType, exercises: this.buildFromTemplate(tpl)
+        });
+        this.refreshLib();
+        return;
+      }
+      // 找不到模板 → 回退空白，不抛错
+    }
+    this.data.workoutType = 'strength';
+    this.setData({ name: '训练', workoutType: 'strength', exercises: [] });
+    this.refreshLib();
   },
 
   loadExisting(id) {
@@ -68,7 +70,7 @@ Page({
       const exercises = (w.exercises || []).map((ex) => this.buildCardioItem(ex.exerciseId, ex));
       this.setData({
         id, date: w.date, templateId: w.templateId || '', name: w.name || '', note: w.note || '',
-        workoutType: 'cardio', exercises, stage: 'editing'
+        workoutType: 'cardio', exercises
       });
       this.refreshLib();
       return;
@@ -84,23 +86,8 @@ Page({
     }));
     this.setData({
       id, date: w.date, templateId: w.templateId || '', name: w.name || '', note: w.note || '',
-      workoutType: 'strength', exercises, stage: 'editing'
+      workoutType: 'strength', exercises
     });
-  },
-
-  // ---- 选模板 ----
-  pickTemplate(e) {
-    const tpl = this.data.templates.find((t) => t._id === e.currentTarget.dataset.id);
-    if (!tpl) return;
-    this.data.workoutType = tpl.type === 'cardio' ? 'cardio' : 'strength';
-    const exercises = this.buildFromTemplate(tpl);
-    this.setData({ templateId: tpl._id, name: tpl.name, workoutType: this.data.workoutType, exercises, stage: 'editing' });
-    this.refreshLib();
-  },
-  pickBlank() {
-    this.data.workoutType = 'strength';
-    this.setData({ templateId: '', name: '训练', workoutType: 'strength', exercises: [], stage: 'editing' });
-    this.refreshLib();
   },
 
   buildFromTemplate(tpl) {
@@ -369,7 +356,12 @@ Page({
       if (this.data.id) db.updateLocalFirst(db.COLL.WORKOUTS, this.data.id, payload);
       else db.saveLocalFirst(db.COLL.WORKOUTS, payload);
       wx.showToast({ title: '已保存', icon: 'success' });
-      setTimeout(() => wx.navigateBack(), 500);
+      // 新建经 列表→选模板(pick)→编辑，保存后回列表需退 2 层；编辑既有（无 pick）退 1 层。
+      setTimeout(() => {
+        const delta = this.data.id ? 1 : 2;
+        const pages = getCurrentPages();
+        wx.navigateBack({ delta: Math.min(delta, pages.length - 1) });
+      }, 500);
     } catch (e) {
       console.error(e);
       this.setData({ saving: false });
