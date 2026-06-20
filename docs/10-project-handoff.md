@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-17（迭代一~十全部归档，无活跃 change）。
+> 其余文档为细节，本文是入口。最后更新：2026-06-20（迭代一~十一全部归档；本组无活跃 change，迭代十二由另一组进行中）。
 
 ---
 
@@ -12,9 +12,9 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑦开发 **全部完成**；⑧测试上线 **进行中** |
-| 开发 | 迭代一~十全部代码完成、真机通过并归档；**无活跃 change** |
+| 开发 | 迭代一~十一全部代码完成、真机通过并归档；本组无活跃 change（迭代十二另一组进行中）|
 | 代码量 | 100 个动作（含 7 有氧）、8 套预设、13 页面、12 个能力规格 |
-| 质量 | 75 个算法单测全过；全 js `node --check` 通过 |
+| 质量 | 80 个算法单测全过；全 js `node --check` 通过 |
 | 上线 | 未发布。卡点：**ICP 备案**（未办）、隐私指引、服务类目、提审 |
 | git | 干净；tag 见 `git tag`（最新 `in-app-usermanual`/`record-and-deadlift-fixes`）；最新 commit 见 `git log` |
 
@@ -65,6 +65,7 @@
 - **迭代八**（tag `template-picker-split-dots`）：选模板行内分化色点（与日历同源），移除日历图例。
 - **迭代九**（tag `in-app-usermanual`）：应用内使用说明（我的页入口 + 独立说明页，内容固化 `config/manual.js` 与 docs/usermanual.md 同源）。
 - **迭代十**（tag `record-and-deadlift-fixes`）：记录/曲线三修——保存力量训练保留全部动作（未填落 0）；训练组重量统一量化到 0.5（`unit.roundHalfKg`/`toDisplayWeight`，lb 落库取整 0.5kg、体重保 0.1）；硬拉曲线与详情聚合家族（硬拉/罗马尼亚硬拉/直腿硬拉，`util.dayLiftValue`/`curveConfig.familyFor`）。
+- **迭代十一**（tag `record-to-template`，首个走 PR 分支流程）：训练记录一键存为「我的模板」（`templateLib.recordToTemplatePayload`）；「我的模板」分组置顶；预设 App 托管不可删除（`templateLib.isPresetGroup` + 删除入口仅我的模板渲染）。
 
 ---
 
@@ -104,7 +105,7 @@ pages/exercise/       动作库管理 / 动作详情
 pages/template/       模板管理 / 编辑
 pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
-tests/algo.test.js    75 个纯函数单测
+tests/algo.test.js    80 个纯函数单测
 ```
 
 ---
@@ -139,7 +140,7 @@ node tests/algo.test.js
 ✅ 图标（assets/）、上线文案、边界测试清单 已就绪
 ```
 
-开发侧所有迭代（一~十）均已归档打 tag，无遗留 change。
+开发侧迭代一~十一均已归档打 tag（迭代十二由另一组进行中，见 openspec/changes/workout-flow-and-trend-fixes）。
 
 ---
 
