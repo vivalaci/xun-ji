@@ -45,6 +45,21 @@
 - **WHEN** 存在无 `group` 字段或为空的模板
 - **THEN** 这些模板展示在置顶的"我的模板"节下，排在预设组之前
 
+### Requirement: 新建与删除模板
+用户 SHALL 能新建空模板。删除 SHALL 仅对「我的模板」（自建、`group` 为空）开放；**预设模板（`group` ∈ 三分化/二分化/有氧，App 托管）SHALL NOT 提供删除入口，且即便删除被触发也 SHALL 拒绝**。新建的模板 `group` 为空、归入"我的模板"。预设要个性化时复制为「我的模板」再改（预设经版本重刷更新）。
+
+#### Scenario: 新建
+- **WHEN** 用户点击「新建模板」并命名
+- **THEN** 系统经 `db.saveLocalFirst('workout_templates', ...)` 创建该模板，`order` 取末位，`group` 为空
+
+#### Scenario: 删除我的模板
+- **WHEN** 用户删除一条「我的模板」并确认
+- **THEN** 系统经 `db.removeLocalFirst` 移除该模板，已有训练记录不受影响（记录存的是 exerciseId 快照）
+
+#### Scenario: 预设不可删除
+- **WHEN** 用户在模板管理页查看预设模板（三分化/二分化/有氧）
+- **THEN** 该行不显示删除入口；调用删除也被拒绝（toast「预设模板不可删除」）
+
 ### Requirement: 新建训练按组选模板
 新建训练的选模板界面 SHALL 按组分节展示模板（**我的模板置顶（若存在）、三分化、二分化、有氧**），并 SHALL 保留"空白训练"入口。选择「有氧训练」SHALL 开一条 `type:'cardio'` 训练。
 

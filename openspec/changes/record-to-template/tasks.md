@@ -15,11 +15,18 @@
 - [x] 3.2 `pages/workout/edit.wxss`：按钮条样式（`.tpl-bar`/`.tpl-save-btn`，accent 风格）
 - [x] 3.3 `pages/workout/edit.js`：按钮 `bindtap=onSaveAsTemplate` → `wx.showModal`「保存为我的模板？」→ 确定调映射保存
 
+## 3b. 预设不可删除（真机走查新发现）
+
+- [x] 3b.1 `utils/templateLib.js`：新增纯函数 `isPresetGroup(group)`（与 `PRESET_GROUPS` 同源）+ 单测
+- [x] 3b.2 `pages/template/manage.js`：`decorate` 加 `deletable=!isPresetGroup(group)`；`onDelete` 兜底拒绝预设（toast）
+- [x] 3b.3 `pages/template/manage.wxml`：删除按钮 `wx:if="{{item.deletable}}"`（仅我的模板显示）
+
 ## 4. 验证
 
 - [x] 4.1 语法检查：改动 js `node --check` 通过
-- [x] 4.2 算法单测：`node tests/algo.test.js` 全绿（79 测）
-- [ ] 4.3 模拟器走查：编辑力量记录→存为模板→选模板页「我的模板」置顶且含新模板；编辑有氧记录→存为模板→为 cardio；新建训练页无【保存模板】按钮；模板管理页「我的模板」置顶且可删除
+- [x] 4.2 算法单测：`node tests/algo.test.js` 全绿（80 测）
+- [x] 4.3 模拟器走查（用户真机通过）：编辑力量记录→存为模板→选模板页「我的模板」置顶且含新模板；编辑有氧记录→存为模板→为 cardio；新建训练页无【保存模板】按钮；模板管理页「我的模板」置顶且可删除
+- [ ] 4.4 复验（预设不可删）：模板管理页预设（三分化/二分化/有氧）行无「删除」、我的模板行有「删除」
 
 ## 5. 文档与归档前同步
 

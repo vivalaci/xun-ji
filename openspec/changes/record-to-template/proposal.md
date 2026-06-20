@@ -12,7 +12,8 @@
   - 力量记录存 `type` 缺省（力量），有氧记录存 `type:'cardio'`，走同一套映射。
   - **不去重**：同一记录多次保存会生成多条同名模板（确定即存的最简心智）。
 - 选模板界面与模板管理页把「我的模板」分组**置顶**（排在三分化之前），样式与其余分组一致。
-- 存出的模板即普通自建模板：整体删除（模板管理页现有删除）、模板内动作增删改序（模板编辑页现有能力）均**复用现状**，不新增代码，仅在文档点明。
+- 存出的模板即普通自建模板：整体删除（模板管理页现有删除）、模板内动作增删改序（模板编辑页现有能力）均**复用现状**。
+- **预设模板不可删除**：模板管理页对预设（`group` ∈ 三分化/二分化/有氧，App 托管）不再显示删除入口、删除被拒绝；删除仅对「我的模板」开放（真机走查发现：原先所有模板都带删除，预设也能删，不符预期）。
 
 ## Capabilities
 
@@ -25,7 +26,8 @@
 ## Impact
 
 - `pages/workout/edit.js` / `edit.wxml` / `edit.wxss`：顶部按钮条（仅 `id` 存在时渲染）、确认弹窗、`saveAsTemplate()` 映射 + `db.saveLocalFirst`。
-- `utils/templateLib.js`：`groupTemplates` 把 `MY_GROUP_LABEL` 由末位改为首位拼接。
+- `utils/templateLib.js`：`groupTemplates` 把 `MY_GROUP_LABEL` 由末位改为首位拼接；新增 `isPresetGroup(group)` 判定。
+- `pages/template/manage.js` / `manage.wxml`：删除按钮仅对可删（非预设）项渲染（`decorate` 加 `deletable`），`onDelete` 兜底拒绝预设。
 - `tests/algo.test.js`：补「我的模板」置顶顺序、记录→模板映射（含 `targetSets`、有氧 `type:'cardio'`）用例。
 - `openspec/specs/template-management/spec.md`：经 sync 落地新/改需求。
 - `docs/usermanual.md`：补"把记录存为模板"操作说明。

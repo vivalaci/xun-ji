@@ -36,6 +36,7 @@ Page({
       group: t.group,
       order: t.order,
       count: (t.exercises || []).length,
+      deletable: !templateLib.isPresetGroup(t.group), // 预设不可删，仅「我的模板」可删
       pending: !!t._pending
     }));
   },
@@ -56,6 +57,11 @@ Page({
 
   async onDelete(e) {
     const id = e.currentTarget.dataset.id;
+    const t = db.getCache(db.COLL.TEMPLATES).find((x) => x._id === id);
+    if (t && templateLib.isPresetGroup(t.group)) {
+      wx.showToast({ title: '预设模板不可删除', icon: 'none' });
+      return;
+    }
     const res = await wx.showModal({ title: '删除模板', content: '确定删除该模板吗？历史训练记录不受影响。' });
     if (!res.confirm) return;
     db.removeLocalFirst(db.COLL.TEMPLATES, id);

@@ -13,7 +13,7 @@
       </view>
       <view class="row tpl-right">
         <text wx:if="{{item.pending}}" class="tag pending-tag">待同步</text>
-        <text class="del-btn" catchtap="onDelete" data-id="{{item._id}}">删除</text>
+        <text wx:if="{{item.deletable}}" class="del-btn" catchtap="onDelete" data-id="{{item._id}}">删除</text>
         <text class="muted">›</text>
       </view>
     </view>

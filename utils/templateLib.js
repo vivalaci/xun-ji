@@ -4,6 +4,11 @@
 const PRESET_GROUPS = ['三分化', '二分化', '有氧'];
 const MY_GROUP_LABEL = '我的模板';
 
+// 是否预设组模板（App 托管，不可删除；删除仅对「我的模板」开放）
+function isPresetGroup(group) {
+  return PRESET_GROUPS.indexOf(group) >= 0;
+}
+
 // 分组的循证说明（选模板界面展示，让用户理解设计逻辑；来源 docs/09）
 const GROUP_NOTES = {
   '二分化': '上/下分化，4 练/周。多数中级训练者最优——天然每肌群 2×/周、容量好分摊。A 日偏力量·横向推拉，B 日偏肥大·垂直推拉，错开重复疲劳。',
@@ -80,4 +85,4 @@ function planTemplateMigration(templates) {
   return { needed: true, updates };
 }
 
-module.exports = { groupTemplates, planTemplateMigration, recordToTemplatePayload, MY_GROUP_LABEL, GROUP_NOTES };
+module.exports = { groupTemplates, planTemplateMigration, recordToTemplatePayload, isPresetGroup, MY_GROUP_LABEL, GROUP_NOTES };

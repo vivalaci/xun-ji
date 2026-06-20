@@ -136,6 +136,13 @@ test('缺名/空动作不报错', () => {
   assert.strictEqual(p.name, '训练（我的）');
   assert.deepStrictEqual(p.exercises, []);
 });
+test('isPresetGroup：预设组不可删、我的模板（空 group）可删', () => {
+  assert.strictEqual(templateLib.isPresetGroup('三分化'), true);
+  assert.strictEqual(templateLib.isPresetGroup('二分化'), true);
+  assert.strictEqual(templateLib.isPresetGroup('有氧'), true);
+  assert.strictEqual(templateLib.isPresetGroup(''), false);
+  assert.strictEqual(templateLib.isPresetGroup(undefined), false);
+});
 
 console.log('templateLib.planTemplateMigration:');
 test('旧三件套归三分化且腿日改名蹲日（迁移只补 group，不补种）', () => {
