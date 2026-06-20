@@ -65,6 +65,7 @@ Page({
         name: w.name || '训练',
         dateLabel: `${util.formatMonthDay(w.date)} ${util.weekDay(w.date)}`,
         cardio: w.type === 'cardio',
+        isToday: util.isToday(w.date), // 今日记录高亮（渲染层判定，不落库）
         pending: !!w._pending
       };
       if (w.type === 'cardio') {
