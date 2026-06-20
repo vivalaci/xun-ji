@@ -7,6 +7,7 @@
 - [x] 1.5 `pages/workout/list` 的"新建"入口由跳 `edit` 改为跳 `pick`；日历/列表"编辑既有训练"仍跳 `edit?id=`（未改）
 - [x] 1.6 `app.json` 注册 `pages/workout/pick`
 - [x] 1.7 走查返回链：列表→pick→edit 各级返回正确（见 4 验证，真机走查）
+- [x] 1.8 保存返回层数（拆页连带回归）：`onSave` 新建退 2 层（跨过 pick 回列表）、编辑既有退 1 层；`getCurrentPages` 夹取防越界
 
 ## 2. 训练编辑页动作调序（②）
 

@@ -356,7 +356,12 @@ Page({
       if (this.data.id) db.updateLocalFirst(db.COLL.WORKOUTS, this.data.id, payload);
       else db.saveLocalFirst(db.COLL.WORKOUTS, payload);
       wx.showToast({ title: '已保存', icon: 'success' });
-      setTimeout(() => wx.navigateBack(), 500);
+      // 新建经 列表→选模板(pick)→编辑，保存后回列表需退 2 层；编辑既有（无 pick）退 1 层。
+      setTimeout(() => {
+        const delta = this.data.id ? 1 : 2;
+        const pages = getCurrentPages();
+        wx.navigateBack({ delta: Math.min(delta, pages.length - 1) });
+      }, 500);
     } catch (e) {
       console.error(e);
       this.setData({ saving: false });
