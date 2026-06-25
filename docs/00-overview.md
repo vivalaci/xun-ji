@@ -10,7 +10,7 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一~十三全部完成、真机通过并归档（…十二=选模板拆页/动作调序/趋势图修复 workout-flow-and-trend-fixes；十三=训练列表高亮今日记录 highlight-today-workout） |
+| ⑦ | 开发实现 | ✅ 迭代一~十四全部完成、真机通过并归档（…十三=训练列表高亮今日记录 highlight-today-workout；十四=模板命名去重+纯自重趋势按次数+选模板页删除 template-naming-and-bodyweight-trend） |
 | ⑧ | 测试上线 | 🔄 进行中（备案 / 隐私指引 / 类目 / 提审待办） |
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
@@ -32,6 +32,8 @@
 > 迭代十二 `workout-flow-and-trend-fixes`（代码完成 + 真机通过）：①选模板拆为独立页 `pages/workout/pick`（返回导航正确，保存新建退 2 层回列表）；②训练编辑页动作上移/下移（力量+有氧）；③身体趋势图体重线渲染修复（`chart.computeBand` 最小尺度 + 近平线错位）。改 3 主 spec（template-management/cardio-tracking/curve-customization），不新增集合。
 >
 > 迭代十三 `highlight-today-workout`（代码完成 + 真机通过）：训练列表对今天（`util.isToday`）的记录卡片左侧加强调色竖条，一眼定位今日训练；纯展示（`list.decorate` 打 `isToday`），不动排序/分页/字段。新增主 spec `workout-list`（共 13 个）。
+>
+> 迭代十四 `template-naming-and-bodyweight-trend`（代码完成 + 真机通过）：①模板命名后缀幂等去重 + 重名编号 + 保存确认窗可编辑（`templateLib.baseTemplateName`/`recordToTemplatePayload`）；②纯自重动作趋势按当日最大次数（`util.dayRepsValue`，曲线/详情整条统一口径）；③选模板页 `pages/workout/pick` 加删除「我的模板」（预设不可删）。改 3 主 spec（template-management/curve-customization/exercise-detail），不新增集合。
 
 ## 文档索引
 

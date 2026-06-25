@@ -34,5 +34,7 @@
 - [x] 5.1 语法校验：全量 `node --check` 通过
 - [x] 5.2 算法单测：`node tests/algo.test.js` 全绿（95 测）
 - [x] 5.3 同步 `docs/usermanual.md` + `config/manual.js`（同源）：命名去重/编号、保存可改名/留空回退、事后改名、自重曲线看次数
-- [ ] 5.4 更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表
-- [ ] 5.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
+- [x] 5.4 迭代历史在 `CHANGELOG.md`（补迭代十四）+ `docs/00-overview.md` 阶段表 + `docs/10` 交接
+- [x] 5.5 `openspec validate` 通过；`/opsx:sync`（3 delta 落主 spec）+ `/opsx:archive`；真机三块（命名/自重曲线/选模板删除）已通过；tag 合并后打
+
+> 注：本 change tasks 未单列真机走查项；用户已真机验证命名、纯自重曲线、选模板页删除三块通过。

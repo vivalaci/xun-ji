@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-20（迭代一~十三全部归档，无活跃 change）。
+> 其余文档为细节，本文是入口。最后更新：2026-06-25（迭代一~十四全部归档，无活跃 change）。
 
 ---
 
@@ -12,11 +12,11 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑦开发 **全部完成**；⑧测试上线 **进行中** |
-| 开发 | 迭代一~十三全部代码完成、真机通过并归档；**无活跃 change** |
+| 开发 | 迭代一~十四全部代码完成、真机通过并归档；**无活跃 change** |
 | 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、13 个能力规格 |
-| 质量 | 86 个算法单测全过；全 js `node --check` 通过 |
+| 质量 | 95 个算法单测全过；全 js `node --check` 通过 |
 | 上线 | 未发布。卡点：**ICP 备案**（未办）、隐私指引、服务类目、提审 |
-| git | 干净；tag 见 `git tag`（最新 `workout-flow-and-trend-fixes`/`highlight-today-workout`）；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `highlight-today-workout`/`template-naming-and-bodyweight-trend`）；最新 commit 见 `git log` |
 
 > 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。下一步是阶段⑧上线，见第八节。
 
@@ -69,6 +69,7 @@
 - **迭代十一**（tag `record-to-template`，首个走 PR 分支流程）：训练记录一键存为「我的模板」（`templateLib.recordToTemplatePayload`）；「我的模板」分组置顶；预设 App 托管不可删除（`templateLib.isPresetGroup` + 删除入口仅我的模板渲染）。
 - **迭代十二**（tag `workout-flow-and-trend-fixes`）：①选模板拆为独立页 `pages/workout/pick`（返回导航修正，保存新建退 2 层回列表）；②训练编辑页动作上移/下移（力量+有氧）；③身体趋势图体重线渲染修复（`chart.computeBand` 最小尺度 + 近平线像素错位）。
 - **迭代十三**（tag `highlight-today-workout`）：训练列表高亮今日记录（`util.isToday` + 卡片左侧强调色竖条，渲染层判定不落库）。新增 capability `workout-list`。
+- **迭代十四**（tag `template-naming-and-bodyweight-trend`）：①模板命名后缀幂等去重 + 重名编号 + 保存确认窗可编辑（`templateLib.baseTemplateName`/`recordToTemplatePayload`）；②纯自重动作趋势按当日最大次数（`util.dayRepsValue`，曲线/详情整条统一口径）；③选模板页（`pages/workout/pick`）加删除「我的模板」（预设不可删）。
 
 ---
 
@@ -108,7 +109,7 @@ pages/exercise/       动作库管理 / 动作详情
 pages/template/       模板管理 / 编辑
 pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
-tests/algo.test.js    86 个纯函数单测
+tests/algo.test.js    95 个纯函数单测
 ```
 
 ---
@@ -143,7 +144,7 @@ node tests/algo.test.js
 ✅ 图标（assets/）、上线文案、边界测试清单 已就绪
 ```
 
-开发侧迭代一~十三均已归档打 tag，无遗留 change。
+开发侧迭代一~十四均已归档打 tag，无遗留 change。
 
 ---
 
