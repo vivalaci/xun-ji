@@ -24,6 +24,11 @@
 - [x] 4.3 `dayRepsValue` 用例：多组取最大次数；纯自重 0 重量仍出值；无次数/空组返回 null；多 id 聚合取最大
 - [~] 4.4 口径判定（纯自重→次数/含负重→重量）：判定逻辑在页面层（curve/detail），由真机走查覆盖；纯函数 `dayRepsValue`/`dayLiftValue` 已各自单测
 
+## 4b. 选模板页删除我的模板（用户反馈并入）
+
+- [x] 4b.1 `pages/workout/pick.js`：`withDotColors` 给 item 加 `deletable=!isPresetGroup(group)`；`onDeleteTemplate`（确认窗 + `removeLocalFirst` + 兜底拒绝预设 + 就地 `render`）；`onShow` 重渲染
+- [x] 4b.2 `pages/workout/pick.wxml`：我的模板行加「删除」（`catchtap` 防冒泡，仅 `deletable` 渲染）；`pick.wxss` 加 `.tpl-del`/`.tpl-right`
+
 ## 5. 验证与收尾
 
 - [x] 5.1 语法校验：全量 `node --check` 通过

@@ -1,3 +1,21 @@
+## ADDED Requirements
+
+### Requirement: 选模板页删除我的模板
+
+新建训练的选模板页（`pages/workout/pick`）SHALL 对「我的模板」（自建、`group` 为空）的每行提供删除入口；点击删除 SHALL 弹确认窗，确认后经 `db.removeLocalFirst` 移除该模板并就地刷新列表。预设模板（`group` ∈ 三分化/二分化/有氧，App 托管）SHALL NOT 显示删除入口、且即便触发也 SHALL 拒绝（与模板管理页一致，复用 `templateLib.isPresetGroup`）。删除入口 SHALL NOT 干扰"点选模板进入录入"的主操作（删除以 `catchtap` 阻止冒泡）。
+
+#### Scenario: 我的模板可在选模板页删除
+- **WHEN** 用户在选模板页「我的模板」分组中的某模板点删除并确认
+- **THEN** 该模板被移除、列表就地刷新；历史训练记录不受影响
+
+#### Scenario: 预设在选模板页不可删除
+- **WHEN** 用户在选模板页查看预设模板（三分化/二分化/有氧）
+- **THEN** 该行不显示删除入口
+
+#### Scenario: 点选不被删除入口干扰
+- **WHEN** 用户点模板行（非删除区域）
+- **THEN** 照常进入该模板的训练录入
+
 ## MODIFIED Requirements
 
 ### Requirement: 训练记录存为模板
