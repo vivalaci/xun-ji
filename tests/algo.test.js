@@ -137,6 +137,34 @@ test('缺名/空动作不报错', () => {
   assert.strictEqual(p.name, '训练（我的）');
   assert.deepStrictEqual(p.exercises, []);
 });
+
+console.log('template-naming-and-bodyweight-trend（①命名）:');
+test('baseTemplateName：剥除后缀及序号归一为基名', () => {
+  assert.strictEqual(templateLib.baseTemplateName('上肢A'), '上肢A');
+  assert.strictEqual(templateLib.baseTemplateName('上肢A（我的）'), '上肢A');
+  assert.strictEqual(templateLib.baseTemplateName('上肢A（我的）（我的）'), '上肢A');
+  assert.strictEqual(templateLib.baseTemplateName('上肢A（我的）2'), '上肢A');
+  assert.strictEqual(templateLib.baseTemplateName('上肢A（我的）（我的）3'), '上肢A');
+  assert.strictEqual(templateLib.baseTemplateName(''), '训练');
+  assert.strictEqual(templateLib.baseTemplateName('（我的）'), '训练');
+});
+test('命名：无重名 → 基名+单一后缀', () => {
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A' }, []).name, '上肢A（我的）');
+});
+test('命名：后缀不叠加（继承名归一）', () => {
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A（我的）' }, []).name, '上肢A（我的）');
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A（我的）（我的）' }, []).name, '上肢A（我的）');
+});
+test('命名：重名追加最小序号', () => {
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A' }, ['上肢A（我的）']).name, '上肢A（我的）2');
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A' }, ['上肢A（我的）', '上肢A（我的）2']).name, '上肢A（我的）3');
+});
+test('命名：带序号记录名再保存归一后再编号', () => {
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A（我的）2' }, ['上肢A（我的）']).name, '上肢A（我的）2');
+});
+test('命名：existingNames 缺省退化为不编号', () => {
+  assert.strictEqual(templateLib.recordToTemplatePayload({ name: '上肢A' }).name, '上肢A（我的）');
+});
 test('isPresetGroup：预设组不可删、我的模板（空 group）可删', () => {
   assert.strictEqual(templateLib.isPresetGroup('三分化'), true);
   assert.strictEqual(templateLib.isPresetGroup('二分化'), true);
@@ -388,6 +416,23 @@ test('familyFor：硬拉锚点展开家族，其余（含 rdl/直腿）保持单
   assert.deepStrictEqual(curveConfig.familyFor('rdl'), ['rdl']);
   assert.deepStrictEqual(curveConfig.familyFor('stiff_leg_deadlift'), ['stiff_leg_deadlift']);
   assert.deepStrictEqual(curveConfig.familyFor('bench'), ['bench']);
+});
+
+console.log('template-naming-and-bodyweight-trend（②自重趋势 dayRepsValue）:');
+test('dayRepsValue：当日各组取最大次数（纯自重 0 重量仍出值）', () => {
+  const w = { exercises: [{ exerciseId: 'pullup', sets: [{ weight: 0, reps: 8 }, { weight: 0, reps: 12 }, { weight: 0, reps: 10 }] }] };
+  assert.strictEqual(util.dayRepsValue(w, ['pullup']), 12);
+});
+test('dayRepsValue：无匹配/无有效次数返回 null', () => {
+  assert.strictEqual(util.dayRepsValue({ exercises: [{ exerciseId: 'bench', sets: [{ weight: 60, reps: 5 }] }] }, ['pullup']), null);
+  assert.strictEqual(util.dayRepsValue({ exercises: [{ exerciseId: 'pullup', sets: [{ weight: 0, reps: 0 }] }] }, ['pullup']), null);
+});
+test('dayRepsValue：多 id 聚合取最大', () => {
+  const w = { exercises: [
+    { exerciseId: 'pullup', sets: [{ weight: 0, reps: 8 }] },
+    { exerciseId: 'chinup', sets: [{ weight: 0, reps: 11 }] }
+  ] };
+  assert.strictEqual(util.dayRepsValue(w, ['pullup', 'chinup']), 11);
 });
 
 console.log('record-and-deadlift-fixes（问题1 0 重量组不污染聚合）:');

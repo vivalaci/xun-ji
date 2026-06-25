@@ -118,6 +118,23 @@ function dayLiftValue(workout, ids) {
   return max;
 }
 
+// 某次训练在一组动作（ids）上的当日最大次数：扫各匹配动作各组 reps 取最大。
+// 用于纯自重动作（weight=0、mainWorkingWeight 恒 null）的趋势曲线，进步看次数。
+// 无匹配/无有效次数返回 null（断线不补零）。与 dayLiftValue 对称。
+function dayRepsValue(workout, ids) {
+  if (!workout || !ids || !ids.length) return null;
+  let max = null;
+  (workout.exercises || []).forEach((ex) => {
+    if (ids.indexOf(ex.exerciseId) < 0) return;
+    (ex.sets || []).forEach((s) => {
+      const r = Number(s.reps);
+      if (!r) return;
+      if (max == null || r > max) max = r;
+    });
+  });
+  return max;
+}
+
 // 时间范围起始时间戳：'1M' | '3M' | '6M' | 'ALL'
 function rangeStartTs(range) {
   if (range === 'ALL') return 0;
@@ -138,5 +155,6 @@ module.exports = {
   totalSets,
   buildPRMap,
   dayLiftValue,
+  dayRepsValue,
   rangeStartTs
 };

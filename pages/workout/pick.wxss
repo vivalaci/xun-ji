@@ -23,4 +23,6 @@
   background: transparent;
 }
 .tpl-meta { font-size: 24rpx; margin-top: 8rpx; }
+.tpl-right { gap: 4rpx; }
+.tpl-del { color: var(--danger); font-size: 24rpx; padding: 8rpx 12rpx; }
 .tpl-dot { width: 20rpx; height: 20rpx; border-radius: 50%; flex: none; margin-left: 24rpx; }

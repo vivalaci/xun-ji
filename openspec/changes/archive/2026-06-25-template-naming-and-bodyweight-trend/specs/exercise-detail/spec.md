@@ -1,10 +1,4 @@
-# exercise-detail Specification
-
-## Purpose
-
-单动作详情页——历史记录与主力工作组重量曲线。按 `exerciseId` 聚合 `workouts`，复用 `util.js` 主力工作组重量算法，可从曲线首页或动作库进入。
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: 动作详情页
 用户 SHALL 能从曲线首页或动作库进入某动作的详情页，查看该动作的历史记录与趋势曲线。趋势曲线的取值口径 SHALL 整体（非逐日）判定，与曲线首页一致：仅当动作 `loadType === 'bodyweight'` **且**当前范围内无任何带负重的训练组（无 `weight > 0`）时，按当日训练组中的**最大次数**绘制（单位「次」、不做重量换算），使纯自重动作（重量恒为 0）的曲线不再为空，与页面"纯自重，进步看次数"提示一致；否则（负重自重含负重、或 `weighted`）按主力工作组重量（kg）绘制。

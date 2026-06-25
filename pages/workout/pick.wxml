@@ -13,7 +13,10 @@
         <view class="bold">{{item.name}}</view>
         <view class="muted tpl-meta">{{item.exercises.length}} 个动作</view>
       </view>
-      <view class="tpl-dot" style="background: {{item.dotColor}}"></view>
+      <view class="row tpl-right">
+        <text wx:if="{{item.deletable}}" class="tpl-del" catchtap="onDeleteTemplate" data-id="{{item._id}}">删除</text>
+        <view class="tpl-dot" style="background: {{item.dotColor}}"></view>
+      </view>
     </view>
   </block>
 

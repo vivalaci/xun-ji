@@ -8,7 +8,7 @@
   </view>
 
   <view class="card chart-card">
-    <view class="muted chart-cap">主力工作组重量（{{unitLabel}}）</view>
+    <view class="muted chart-cap">{{metricCap}}</view>
     <canvas wx:if="{{hasData}}" id="detailChart" type="2d" class="chart"></canvas>
     <view wx:else class="chart-empty muted">{{chartHint}}</view>
   </view>

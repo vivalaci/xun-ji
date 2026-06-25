@@ -75,3 +75,10 @@
 ## 迭代十三
 
 - 训练列表高亮今日记录：`date` 为今天（`util.isToday`）的记录卡片左侧加强调色竖条，进训练页一眼定位今日训练；多条全标、无则不标。纯展示（`list.decorate` 打 `isToday`），不动排序/分页/字段（change `highlight-today-workout`，新 capability `workout-list`）
+
+## 迭代十四
+
+- 模板命名去重：「存为我的模板」名称由"无条件加（我的）、不去重"改为**后缀幂等归一**（不再「（我的）（我的）…」叠加）+ **重名自动编号**；保存确认窗改**可编辑**，默认名预填、可改写、留空回退（`templateLib.baseTemplateName`/`recordToTemplatePayload(record, existingNames)`）。
+- 纯自重动作趋势按次数：纯自重（全程无负重）动作的首页曲线与详情页改用**当日最大次数**取值（单位「次」、不换算），不再因 0 重量而空白；负重自重/负重动作仍按主力工作组重量（`util.dayRepsValue`，曲线整条统一口径判定）。
+- 选模板页删除「我的模板」：`pages/workout/pick` 给自建模板加删除入口（预设不可删，复用 `isPresetGroup`），与模板管理页一致（用户反馈并入）。
+- （change `template-naming-and-bodyweight-trend`）
