@@ -470,6 +470,14 @@ test('未知 id getName 回退占位', () => {
   assert.strictEqual(exerciseLib.getExercise('cus_gone'), null);
 });
 
+console.log('util.isToday（highlight-today-workout）:');
+test('今天的日期字符串 → true，其它 → false', () => {
+  assert.strictEqual(util.isToday(util.formatDate()), true);
+  assert.strictEqual(util.isToday('2000-01-01'), false);
+  assert.strictEqual(util.isToday(''), false);
+  assert.strictEqual(util.isToday(undefined), false);
+});
+
 console.log('util.formatLoad:');
 test('weighted 返回数值字符串，空透传', () => {
   assert.strictEqual(util.formatLoad(50, 'weighted'), '50');

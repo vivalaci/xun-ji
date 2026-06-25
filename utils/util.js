@@ -9,6 +9,11 @@ function formatDate(date) {
   return `${y}-${m}-${day}`;
 }
 
+// 是否「今天」：与落库同源用 formatDate 的本地 YYYY-MM-DD 字符串等值比较。
+function isToday(date) {
+  return date === formatDate();
+}
+
 // → M月D日
 function formatMonthDay(date) {
   const d = new Date(date);
@@ -124,6 +129,7 @@ function rangeStartTs(range) {
 
 module.exports = {
   formatDate,
+  isToday,
   formatMonthDay,
   weekDay,
   mainWorkingWeight,

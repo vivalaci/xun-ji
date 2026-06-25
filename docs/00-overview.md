@@ -10,7 +10,7 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一~十二全部完成、真机通过并归档（…十一=记录存为模板/我的模板置顶/预设不可删 record-to-template；十二=选模板拆页/动作调序/趋势图修复 workout-flow-and-trend-fixes） |
+| ⑦ | 开发实现 | ✅ 迭代一~十三全部完成、真机通过并归档（…十二=选模板拆页/动作调序/趋势图修复 workout-flow-and-trend-fixes；十三=训练列表高亮今日记录 highlight-today-workout） |
 | ⑧ | 测试上线 | 🔄 进行中（备案 / 隐私指引 / 类目 / 提审待办） |
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
@@ -30,6 +30,8 @@
 > 迭代十一 `record-to-template`（代码完成 + 真机通过）：编辑已有记录顶部【保存模板】一键存为「我的模板」（`templateLib.recordToTemplatePayload`：力量取 exerciseId+组数、有氧 type:cardio、名称加「（我的）」）；「我的模板」分组置顶；预设模板 App 托管不可删除（`isPresetGroup` + 删除入口仅我的模板渲染）。改主 spec `template-management`，不新增集合。首个走 PR 分支流程的迭代。
 >
 > 迭代十二 `workout-flow-and-trend-fixes`（代码完成 + 真机通过）：①选模板拆为独立页 `pages/workout/pick`（返回导航正确，保存新建退 2 层回列表）；②训练编辑页动作上移/下移（力量+有氧）；③身体趋势图体重线渲染修复（`chart.computeBand` 最小尺度 + 近平线错位）。改 3 主 spec（template-management/cardio-tracking/curve-customization），不新增集合。
+>
+> 迭代十三 `highlight-today-workout`（代码完成 + 真机通过）：训练列表对今天（`util.isToday`）的记录卡片左侧加强调色竖条，一眼定位今日训练；纯展示（`list.decorate` 打 `isToday`），不动排序/分页/字段。新增主 spec `workout-list`（共 13 个）。
 
 ## 文档索引
 
