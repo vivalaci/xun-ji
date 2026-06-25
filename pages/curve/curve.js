@@ -167,11 +167,18 @@ Page({
 
       // lift 单线（c.ids 为变式聚合，如硬拉；无则单 id）
       const ids = c.ids || [c.id];
-      const points = workouts
-        .filter((w) => new Date(w.date).getTime() >= start)
+      const inRange = workouts.filter((w) => new Date(w.date).getTime() >= start);
+      // 纯自重判定（整条曲线统一口径）：loadType 为 bodyweight 且范围内匹配组无任何负重
+      const isBw = (exerciseLib.getExercise(c.id) || {}).loadType === 'bodyweight';
+      const hasLoad = inRange.some((w) => (w.exercises || []).some(
+        (ex) => ids.indexOf(ex.exerciseId) >= 0 && (ex.sets || []).some((s) => Number(s.weight) > 0)
+      ));
+      const reps = isBw && !hasLoad; // 纯自重 → 按当日最大次数（单位「次」，不换算）
+      const points = inRange
         .map((w) => {
-          const mw = util.dayLiftValue(w, ids);
-          return mw == null ? null : { x: w.date, y: unit.toDisplay(mw) };
+          const v = reps ? util.dayRepsValue(w, ids) : util.dayLiftValue(w, ids);
+          if (v == null) return null;
+          return { x: w.date, y: reps ? v : unit.toDisplay(v) };
         })
         .filter(Boolean)
         .sort((a, b) => new Date(a.x) - new Date(b.x));
@@ -180,12 +187,12 @@ Page({
       return {
         key: c.key,
         name: c.name,
-        unit: unit.label(),
+        unit: reps ? '次' : unit.label(),
         color: c.color,
         fixed: c.fixed,
         type: c.type,
         hasData: points.length > 0,
-        latest: lastY == null ? null : Math.round(lastY) // lift 取整
+        latest: lastY == null ? null : Math.round(lastY) // lift 取整 / 次数本就整数
       };
     });
 

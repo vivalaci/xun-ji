@@ -46,20 +46,34 @@ function groupTemplates(templates) {
   }));
 }
 
+// 归一基名：反复剥除记录名尾部「（我的）」及其可选序号（如「（我的）」「（我的）2」），
+// 使「上肢A（我的）」「上肢A（我的）（我的）」「上肢A（我的）2」都归一为「上肢A」；空则「训练」。
+function baseTemplateName(name) {
+  let base = (name || '').trim();
+  let prev;
+  do { prev = base; base = base.replace(/（我的）\d*$/, '').trim(); } while (base !== prev);
+  return base || '训练';
+}
+
 // 训练记录 → 「我的模板」payload（纯函数，供 edit.saveAsTemplate 与单测用）。
 // 力量：每动作 { exerciseId, targetSets: 组数 }；有氧：{ exerciseId } 且模板 type:'cardio'。
-// 名称加「（我的）」后缀、group 空；order 由调用方补末位（依赖现有模板，不在纯函数内）。
-function recordToTemplatePayload(record) {
+// 名称 = 归一基名 + 单一「（我的）」；若与 existingNames 重名则追加最小序号（2、3…）至唯一。
+// existingNames 缺省 [] 时退化为「加一个后缀、不编号」。order 由调用方补末位。
+function recordToTemplatePayload(record, existingNames) {
   const isCardio = (record && record.type) === 'cardio';
   const exercises = ((record && record.exercises) || []).map((ex) => (
     isCardio ? { exerciseId: ex.exerciseId }
              : { exerciseId: ex.exerciseId, targetSets: (ex.sets || []).length }
   ));
-  const payload = {
-    name: ((record && record.name) || '训练') + '（我的）',
-    group: '',
-    exercises
-  };
+  const names = existingNames || [];
+  const base = baseTemplateName(record && record.name);
+  let name = base + '（我的）';
+  if (names.indexOf(name) >= 0) {
+    let n = 2;
+    while (names.indexOf(base + '（我的）' + n) >= 0) n++;
+    name = base + '（我的）' + n;
+  }
+  const payload = { name, group: '', exercises };
   if (isCardio) payload.type = 'cardio';
   return payload;
 }
@@ -85,4 +99,4 @@ function planTemplateMigration(templates) {
   return { needed: true, updates };
 }
 
-module.exports = { groupTemplates, planTemplateMigration, recordToTemplatePayload, isPresetGroup, MY_GROUP_LABEL, GROUP_NOTES };
+module.exports = { groupTemplates, planTemplateMigration, recordToTemplatePayload, baseTemplateName, isPresetGroup, MY_GROUP_LABEL, GROUP_NOTES };

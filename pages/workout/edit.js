@@ -143,18 +143,24 @@ Page({
   },
 
   // 把当前（已有）记录的动作组合一键存为「我的模板」——仅编辑态入口
+  // 默认名按命名规则生成（后缀幂等 + 重名编号），确认窗可编辑，用户可改写或留空回退默认
   onSaveAsTemplate() {
+    const templates = db.getCache(db.COLL.TEMPLATES);
+    const existingNames = templates.map((t) => t.name).filter(Boolean);
+    const payload = templateLib.recordToTemplatePayload({
+      name: this.data.name,
+      type: this.data.workoutType,
+      exercises: this.data.exercises
+    }, existingNames);
+    const defaultName = payload.name;
     wx.showModal({
-      title: '保存为我的模板？',
-      content: '把当前动作组合存为「我的模板」，只留动作与组数，不含重量/次数。',
+      title: '保存为我的模板',
+      editable: true,
+      content: defaultName,
+      placeholderText: '模板名称',
       success: (res) => {
         if (!res.confirm) return;
-        const payload = templateLib.recordToTemplatePayload({
-          name: this.data.name,
-          type: this.data.workoutType,
-          exercises: this.data.exercises
-        });
-        const templates = db.getCache(db.COLL.TEMPLATES);
+        payload.name = (res.content || '').trim() || defaultName; // 留空回退默认名
         payload.order = templates.reduce((m, t) => Math.max(m, t.order || 0), 0) + 1;
         try {
           db.saveLocalFirst(db.COLL.TEMPLATES, payload);

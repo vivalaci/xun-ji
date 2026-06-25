@@ -18,7 +18,8 @@ Page({
     history: [],     // [{ dateLabel, setsText, isPR }]
     hasData: false,
     isBodyweight: false,
-    chartHint: '暂无数据'
+    chartHint: '暂无数据',
+    metricCap: '主力工作组重量（kg）'
   },
 
   onLoad(options) {
@@ -54,14 +55,23 @@ Page({
     const ids = this.ids;
     const isFamily = ids.length > 1; // 硬拉家族：聚合 + 历史标注变式
 
-    // 曲线点：每次训练取家族当日主力工作组重量最大值（与首页硬拉曲线同口径）
+    // 纯自重判定（整条曲线统一口径，与首页一致）：bodyweight 且范围内匹配组无任何负重 → 看最大次数
+    const inRange = all.filter((w) => new Date(w.date).getTime() >= start);
+    const hasLoad = inRange.some((w) => (w.exercises || []).some(
+      (ex) => ids.indexOf(ex.exerciseId) >= 0 && (ex.sets || []).some((s) => Number(s.weight) > 0)
+    ));
+    const reps = this.loadType === 'bodyweight' && !hasLoad;
+
+    // 曲线点：纯自重按当日最大次数（不换算）；否则取家族当日主力工作组重量（与首页同口径）
     const points = [];
     // 历史条目：家族内每个变式各一条
     const hist = [];
     all.forEach((w) => {
       const ts = new Date(w.date).getTime();
-      const dayVal = util.dayLiftValue(w, ids);
-      if (dayVal != null && ts >= start) points.push({ x: w.date, y: unit.toDisplay(dayVal) });
+      if (ts >= start) {
+        const v = reps ? util.dayRepsValue(w, ids) : util.dayLiftValue(w, ids);
+        if (v != null) points.push({ x: w.date, y: reps ? v : unit.toDisplay(v) });
+      }
       (w.exercises || []).forEach((ex) => {
         if (ids.indexOf(ex.exerciseId) < 0) return;
         hist.push({
@@ -89,7 +99,11 @@ Page({
         isPR: e.isPR
       }));
 
-    this.setData({ history, hasData: points.length > 0 }, () => this.draw());
+    this.setData({
+      history,
+      hasData: points.length > 0,
+      metricCap: reps ? '最大次数（次）' : ('主力工作组重量（' + unit.label() + '）')
+    }, () => this.draw());
   },
 
   draw() {
