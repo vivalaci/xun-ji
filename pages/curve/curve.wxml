@@ -48,24 +48,10 @@
             bindtap="switchRange" data-range="{{item}}">{{item}}</view>
     </view>
 
-    <!-- 曲线卡片（长按进入编辑模式） -->
+    <!-- 曲线卡片（长按进入编辑模式）：三大项 + 自定义，均为单线 -->
     <view wx:for="{{charts}}" wx:key="key" class="card chart-card"
           bindtap="goDetail" bindlongpress="enterEdit" data-key="{{item.key}}">
-
-      <!-- 身体趋势：三线合并 + 图例 -->
-      <block wx:if="{{item.type === 'bodyCombined'}}">
-        <view class="chart-head"><text class="bold">{{item.name}}</text></view>
-        <view class="legend row">
-          <view wx:for="{{item.legend}}" wx:for-item="lg" wx:key="name" class="legend-item row">
-            <view class="dot" style="background: {{lg.color}}"></view>
-            <text class="legend-name muted">{{lg.name}}</text>
-            <text class="legend-val">{{lg.latest === null ? '—' : lg.latest}}{{lg.latest === null ? '' : ' ' + lg.unit}}</text>
-          </view>
-        </view>
-      </block>
-
-      <!-- 单线（三大项/自定义） -->
-      <view wx:else class="row between chart-head">
+      <view class="row between chart-head">
         <view class="row">
           <view class="dot" style="background: {{item.color}}"></view>
           <text class="bold">{{item.name}}</text>

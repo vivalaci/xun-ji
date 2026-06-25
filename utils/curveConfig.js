@@ -14,21 +14,20 @@ function familyFor(exerciseId) {
   return exerciseId === 'deadlift' ? DEADLIFT_FAMILY.slice() : [exerciseId];
 }
 
-// 固定 4 项（不可删，仅可排序）：三大项 + 身体趋势合并图。颜色见 docs/05
+// 身体趋势三线配置——已从首页迁至「身体」页（见 change move-body-trend-to-body-page）。
+// minSpan：该指标允许的最小取值跨度（显示单位计；体重在 lb 下由调用方经 unit 换算），
+// 小于它的波动按它居中扩展，避免微小变化被放大成大斜线（见 chart.computeBand）。
+const BODY_SERIES = [
+  { field: 'weight',  name: '体重', unit: 'kg', color: '#111827', convert: true, minSpan: 5 },
+  { field: 'bodyFat', name: '体脂', unit: '%',  color: '#6B7280', minSpan: 5 },
+  { field: 'waist',   name: '腰围', unit: 'cm', color: '#D97706', minSpan: 5 }
+];
+
+// 固定 3 项（不可删，仅可排序）：三大项。身体趋势已迁至「身体」页。颜色见 docs/05
 const FIXED_CHARTS = [
   { key: 'bench',    type: 'lift', id: 'bench',    name: '卧推', unit: 'kg', color: '#1D4ED8', fixed: true },
   { key: 'squat',    type: 'lift', id: 'squat',    name: '深蹲', unit: 'kg', color: '#7C3AED', fixed: true },
-  { key: 'deadlift', type: 'lift', id: 'deadlift', ids: DEADLIFT_FAMILY, name: '硬拉', unit: 'kg', color: '#0891B2', fixed: true },
-  {
-    key: 'body', type: 'bodyCombined', name: '身体趋势', color: '#111827', fixed: true,
-    series: [
-      // minSpan：该指标允许的最小取值跨度（显示单位计；体重在 lb 下由 curve.js 经 unit 换算），
-      // 小于它的波动按它居中扩展，避免微小变化被放大成大斜线（见 chart.computeBand）。
-      { field: 'weight',  name: '体重', unit: 'kg', color: '#111827', convert: true, minSpan: 5 },
-      { field: 'bodyFat', name: '体脂', unit: '%',  color: '#6B7280', minSpan: 5 },
-      { field: 'waist',   name: '腰围', unit: 'cm', color: '#D97706', minSpan: 5 }
-    ]
-  }
+  { key: 'deadlift', type: 'lift', id: 'deadlift', ids: DEADLIFT_FAMILY, name: '硬拉', unit: 'kg', color: '#0891B2', fixed: true }
 ];
 
 // 自定义曲线按槽位配色（上限 2 条）；避开腰围琥珀(#D97706)与下肢玫红(#DB2777)
@@ -115,6 +114,7 @@ function removeCustom(prefs, key) {
 
 module.exports = {
   FIXED_CHARTS,
+  BODY_SERIES,
   DEADLIFT_FAMILY,
   familyFor,
   CUSTOM_PALETTE,

@@ -136,36 +136,10 @@ Page({
 
     const start = util.rangeStartTs(this.data.range);
     const workouts = db.getCache(db.COLL.WORKOUTS);
-    const body = db.getCache(db.COLL.BODY);
 
-    this._series = {}; // key -> points（升序）或 bodyCombined 的 [{def, points}]
+    this._series = {}; // key -> points（升序）
     const meta = composed.map((c) => {
-      // 身体趋势：三线合并（体重/体脂/腰围），每线独立缩放
-      if (c.type === 'bodyCombined') {
-        const built = c.series.map((sd) => {
-          const pts = body
-            .filter((r) => new Date(r.date).getTime() >= start && typeof r[sd.field] === 'number')
-            .map((r) => ({ x: r.date, y: sd.convert ? unit.toDisplay(r[sd.field]) : r[sd.field] }))
-            .sort((a, b) => new Date(a.x) - new Date(b.x));
-          return { def: sd, points: pts };
-        });
-        this._series[c.key] = built;
-        return {
-          key: c.key,
-          name: c.name,
-          type: 'bodyCombined',
-          fixed: c.fixed,
-          hasData: built.some((b) => b.points.length > 0),
-          legend: built.map((b) => ({
-            name: b.def.name,
-            color: b.def.color,
-            unit: b.def.unit === 'kg' ? unit.label() : b.def.unit,
-            latest: b.points.length ? b.points[b.points.length - 1].y : null
-          }))
-        };
-      }
-
-      // lift 单线（c.ids 为变式聚合，如硬拉；无则单 id）
+      // lift 单线（c.ids 为变式聚合，如硬拉；无则单 id）。身体趋势已迁至「身体」页
       const ids = c.ids || [c.id];
       const inRange = workouts.filter((w) => new Date(w.date).getTime() >= start);
       // 纯自重判定（整条曲线统一口径）：loadType 为 bodyweight 且范围内匹配组无任何负重
@@ -211,23 +185,11 @@ Page({
           const canvas = res[0].node;
           const ctx = canvas.getContext('2d');
           const dim = { canvas, ctx, width: res[0].width, height: res[0].height, dpr };
-          if (c.type === 'bodyCombined') {
-            const built = this._series[c.key] || [];
-            chart.drawMultiLine(Object.assign(dim, {
-              // minSpan 取显示单位：体重（convert）在 lb 模式下经 unit.toDisplay 线性换算
-              series: built.map((b) => ({
-                points: b.points,
-                color: b.def.color,
-                minSpan: b.def.convert ? unit.toDisplay(b.def.minSpan) : b.def.minSpan
-              }))
-            }));
-          } else {
-            chart.drawLineChart(Object.assign(dim, {
-              points: this._series[c.key],
-              color: c.color,
-              yDecimals: 0 // lift 取整
-            }));
-          }
+          chart.drawLineChart(Object.assign(dim, {
+            points: this._series[c.key],
+            color: c.color,
+            yDecimals: 0 // lift 取整 / 次数本就整数
+          }));
         });
     });
   },
@@ -235,12 +197,7 @@ Page({
   goDetail(e) {
     const key = e.currentTarget.dataset.key;
     const c = (this._composed || []).find((x) => x.key === key);
-    if (c && c.type === 'lift') {
-      wx.navigateTo({ url: `/pages/exercise/detail?id=${c.id}` });
-    } else {
-      // 体重/体脂：跳身体 Tab 查看明细
-      wx.switchTab({ url: '/pages/body/body' });
-    }
+    if (c) wx.navigateTo({ url: `/pages/exercise/detail?id=${c.id}` }); // 均为 lift（身体趋势已迁出）
   },
 
   // ---- 编辑模式（长按进入；↑/↓ 排序；⊝ 删自定义；完成时一次性持久化） ----
