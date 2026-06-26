@@ -3,6 +3,25 @@
 
   <view wx:if="{{pending}}" class="sync-tip muted">部分记录待联网同步</view>
 
+  <!-- 身体趋势合并图（无标题，页面语境已表明）；有数据才显示 -->
+  <block wx:if="{{records.length > 0}}">
+    <view class="range-bar">
+      <view wx:for="{{ranges}}" wx:key="*this"
+            class="range-item {{range === item ? 'active' : ''}}"
+            bindtap="switchRange" data-range="{{item}}">{{item}}</view>
+    </view>
+    <view class="card chart-card">
+      <view class="legend row">
+        <view wx:for="{{legend}}" wx:for-item="lg" wx:key="name" class="legend-item row">
+          <view class="dot" style="background: {{lg.color}}"></view>
+          <text class="legend-name muted">{{lg.name}}</text>
+          <text class="legend-val">{{lg.latest === null ? '—' : lg.latest}}{{lg.latest === null ? '' : ' ' + lg.unit}}</text>
+        </view>
+      </view>
+      <canvas id="bodyTrend" type="2d" class="chart"></canvas>
+    </view>
+  </block>
+
   <view wx:if="{{loaded && records.length === 0}}" class="empty">还没有身体数据
 点右下角 + 记录体重 / 体脂</view>
 

@@ -22,7 +22,7 @@ module.exports = {
         { type: 'li', text: '标题显示「本月训练 N 天」，‹ › 切换月份。' },
         { type: 'li', text: '点某天可查看当天训练详情。' },
         { type: 'p', text: '下方·进步曲线：' },
-        { type: 'li', text: '默认展示卧推 / 深蹲 / 硬拉主力重量 + 身体趋势（体重/体脂/腰围）。' },
+        { type: 'li', text: '默认展示卧推 / 深蹲 / 硬拉主力重量（身体趋势图已移到「身体」页）。' },
         { type: 'li', text: '硬拉曲线合并硬拉家族：硬拉 / 罗马尼亚硬拉 / 直腿硬拉（通常每次只练其一）；当日做了多个变式，取其中主力工作组重量的最大值。点硬拉曲线进硬拉详情，详情同样汇总三个变式，历史里标注每次是哪个变式。' },
         { type: 'li', text: '时间范围：右上角切换 1M（近 1 个月）/ 3M（近 3 个月）/ 6M（近 6 个月）/ ALL（全部历史）。' },
         { type: 'li', text: '长按曲线卡片进入编辑模式，可调整顺序或删除；底部「+ 添加曲线」可追加任意动作的进步曲线（最多 2 条）。' },
@@ -55,7 +55,8 @@ module.exports = {
       title: '五、记录身体数据',
       blocks: [
         { type: 'p', text: '身体 → 右下角「+」。' },
-        { type: 'p', text: '体重必填；体脂率、腰围选填。数据汇入首页身体趋势图。每条记录可查看、编辑、删除。' },
+        { type: 'p', text: '体重必填；体脂率、腰围选填。每条记录可查看、编辑、删除。' },
+        { type: 'li', text: '页面上方是身体趋势图：体重/体脂/腰围三线合并（每线各自缩放看趋势），右上角可切 1M/3M/6M/ALL；下方是记录列表。' },
       ],
     },
     {
@@ -91,6 +92,16 @@ module.exports = {
         { type: 'qa', q: '换手机后数据还在吗？', a: '数据存微信云，同一微信登录即恢复。' },
         { type: 'qa', q: '怎么加自定义曲线？', a: '首页底部「+ 添加曲线」，选动作即可，最多 2 条。' },
         { type: 'qa', q: '能删除某组数据吗？', a: '进训练详情编辑，可修改或删除任意组，保存生效。' },
+      ],
+    },
+    {
+      title: '十一、参考资料',
+      blocks: [
+        { type: 'p', text: '训记的训练模板与分组（三分化/二分化、容量与频率）是循证设计，依据以下资料：' },
+        { type: 'li', text: 'Schoenfeld 等 · 抗阻训练剂量反应 meta 回归（容量与频率），PubMed 2025 — pubmed.ncbi.nlm.nih.gov/41343037' },
+        { type: 'li', text: 'Schoenfeld 等 · 训练频率与肥大 meta 分析，PubMed 2019 — pubmed.ncbi.nlm.nih.gov/30558493' },
+        { type: 'li', text: 'SportRxiv 预印本 · Dose-Response Meta-Regressions — sportrxiv.org/index.php/server/preprint/view/460' },
+        { type: 'li', text: 'RP Strength · 训练容量地标 MEV/MAV/MRV — rpstrength.com/blogs/articles/training-volume-landmarks-muscle-growth' },
       ],
     },
   ],

@@ -82,3 +82,9 @@
 - 纯自重动作趋势按次数：纯自重（全程无负重）动作的首页曲线与详情页改用**当日最大次数**取值（单位「次」、不换算），不再因 0 重量而空白；负重自重/负重动作仍按主力工作组重量（`util.dayRepsValue`，曲线整条统一口径判定）。
 - 选模板页删除「我的模板」：`pages/workout/pick` 给自建模板加删除入口（预设不可删，复用 `isPresetGroup`），与模板管理页一致（用户反馈并入）。
 - （change `template-naming-and-bodyweight-trend`）
+
+## 迭代十五
+
+- 身体趋势图迁至「身体」页：体重/体脂/腰围三线合并图从曲线首页移到「身体」页上方（无标题、范围切换、独立缩放、平线错位+最小尺度复用 `drawMultiLine`），下接记录列表；曲线**首页固定项 4→3**（卧推/深蹲/硬拉），`curveConfig` 抽出 `BODY_SERIES`，存量旧 `body` 配置由 `composeCharts` 自愈剔除（无迁移）。
+- 用户手册新增「参考资料」：手册末尾（doc + 应用内同源）列出训练计划/分组设计所参考的论文与资料（docs/09 四条）。
+- （change `move-body-trend-to-body-page`）

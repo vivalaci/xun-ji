@@ -197,38 +197,36 @@ test('迁移幂等：全部有 group 后不再触发', () => {
   assert.strictEqual(plan.needed, false);
 });
 
-console.log('curveConfig.composeCharts:');
-test('无配置返回默认 4 项（三大项 + 身体趋势）', () => {
+console.log('curveConfig.composeCharts（move-body-trend：固定 3 项，body 已迁出）:');
+test('无配置返回默认 3 项（三大项，无身体趋势）', () => {
   const charts = curveConfig.composeCharts(null);
-  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift', 'body']);
+  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift']);
   assert.ok(charts.every((c) => c.fixed));
-  const body = charts.find((c) => c.key === 'body');
-  assert.strictEqual(body.type, 'bodyCombined');
-  assert.deepStrictEqual(body.series.map((s) => s.field), ['weight', 'bodyFat', 'waist']);
+  assert.ok(!charts.some((c) => c.key === 'body')); // 身体趋势已迁至「身体」页
 });
 test('按配置顺序渲染，缺失固定 key 自动追加', () => {
   const charts = curveConfig.composeCharts({ curveOrder: ['squat', 'bench'], customCurves: [] });
-  assert.deepStrictEqual(charts.map((c) => c.key), ['squat', 'bench', 'deadlift', 'body']);
+  assert.deepStrictEqual(charts.map((c) => c.key), ['squat', 'bench', 'deadlift']);
 });
-test('旧键 weight/bodyFat 自愈：剔除并补入 body', () => {
+test('旧键 weight/bodyFat/body 自愈剔除', () => {
   const charts = curveConfig.composeCharts({
-    curveOrder: ['bench', 'squat', 'deadlift', 'weight', 'bodyFat'],
+    curveOrder: ['bench', 'squat', 'deadlift', 'body', 'weight', 'bodyFat'],
     customCurves: []
   });
-  assert.ok(!charts.some((c) => c.key === 'weight' || c.key === 'bodyFat'));
-  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift', 'body']);
+  assert.ok(!charts.some((c) => c.key === 'weight' || c.key === 'bodyFat' || c.key === 'body'));
+  assert.deepStrictEqual(charts.map((c) => c.key), ['bench', 'squat', 'deadlift']);
 });
 test('未知 key 剔除', () => {
   const charts = curveConfig.composeCharts({
-    curveOrder: ['bench', 'ex_ghost', 'squat', 'deadlift', 'body'],
+    curveOrder: ['bench', 'ex_ghost', 'squat', 'deadlift'],
     customCurves: []
   });
   assert.ok(!charts.some((c) => c.key === 'ex_ghost'));
-  assert.strictEqual(charts.length, 4);
+  assert.strictEqual(charts.length, 3);
 });
 test('自定义曲线取名 + 槽位配色，已删自建动作回退占位名', () => {
   const charts = curveConfig.composeCharts({
-    curveOrder: ['bench', 'squat', 'deadlift', 'body', 'ex_lat_pulldown', 'ex_cus_gone'],
+    curveOrder: ['bench', 'squat', 'deadlift', 'ex_lat_pulldown', 'ex_cus_gone'],
     customCurves: [
       { key: 'ex_lat_pulldown', exerciseId: 'lat_pulldown', slot: 0 },
       { key: 'ex_cus_gone', exerciseId: 'cus_gone', slot: 1 }
