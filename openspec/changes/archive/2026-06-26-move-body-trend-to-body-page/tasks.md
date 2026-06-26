@@ -21,7 +21,7 @@
 
 ## 4. 验证与收尾
 
-- [ ] 4.1 语法校验：`Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }`
-- [ ] 4.2 算法单测：`node tests/algo.test.js` 全绿（缩放纯函数已有测，确认未回归）
-- [ ] 4.3 更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表
-- [ ] 4.4 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
+- [x] 4.1 语法校验：全量 `node --check` 通过
+- [x] 4.2 算法单测：`node tests/algo.test.js` 全绿（95 测，composeCharts 改 3 项 + body 自愈）
+- [x] 4.3 `CHANGELOG.md` 迭代十五 + `docs/00-overview.md` 阶段表 + `docs/10` 交接
+- [x] 4.4 `openspec validate` 通过；`/opsx:sync`（3 delta 落主 spec）+ `/opsx:archive`；真机三块（首页 3 项/身体页趋势图/参考资料）通过；tag 合并后打

@@ -1,22 +1,22 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-25（迭代一~十四全部归档，无活跃 change）。
+> 其余文档为细节，本文是入口。最后更新：2026-06-26（迭代一~十五全部归档，无活跃 change）。
 
 ---
 
 ## 一、一句话与当前状态
 
-**训记** —— 面向进阶训练者的微信小程序（原生 + 云开发，无 npm、无构建）。3 分钟记完一次训练，首页看三大项进步曲线、训练日历与身体趋势。
+**训记** —— 面向进阶训练者的微信小程序（原生 + 云开发，无 npm、无构建）。3 分钟记完一次训练，首页看三大项进步曲线与训练日历，身体趋势在「身体」页。
 
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑦开发 **全部完成**；⑧测试上线 **进行中** |
-| 开发 | 迭代一~十四全部代码完成、真机通过并归档；**无活跃 change** |
+| 开发 | 迭代一~十五全部代码完成、真机通过并归档；**无活跃 change** |
 | 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、13 个能力规格 |
 | 质量 | 95 个算法单测全过；全 js `node --check` 通过 |
 | 上线 | 未发布。卡点：**ICP 备案**（未办）、隐私指引、服务类目、提审 |
-| git | 干净；tag 见 `git tag`（最新 `highlight-today-workout`/`template-naming-and-bodyweight-trend`）；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `template-naming-and-bodyweight-trend`/`move-body-trend-to-body-page`）；最新 commit 见 `git log` |
 
 > 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。下一步是阶段⑧上线，见第八节。
 
@@ -44,7 +44,7 @@
 | `pr-tracking` | 主力工作组重量创新高自动标 🏆 | 列表、exercise/detail |
 | `exercise-detail` | 单动作进步曲线 + 历史 | exercise/detail |
 | `exercise-library-management` | 100 动作（内置+自建）分类/搜索/增删 | exercise/library |
-| `body-tracking` | 体重/体脂/腰围录入 + 首页身体三线合并图 | body/ |
+| `body-tracking` | 体重/体脂/腰围录入 + 「身体」页顶部三线合并趋势图（无标题） | body/ |
 | `unit-settings` | 主单位 kg/lb（全局显示+默认输入）| settings/ |
 | `per-entry-input-unit` | 录入时每个动作临时切 kg/lb，存仍 kg；显示去浮点长尾 | workout/edit |
 | `data-pagination` | 全量分页拉取（绕过客户端 100 上限）+ 列表增量渲染 | db.js、各列表页 |
@@ -70,6 +70,7 @@
 - **迭代十二**（tag `workout-flow-and-trend-fixes`）：①选模板拆为独立页 `pages/workout/pick`（返回导航修正，保存新建退 2 层回列表）；②训练编辑页动作上移/下移（力量+有氧）；③身体趋势图体重线渲染修复（`chart.computeBand` 最小尺度 + 近平线像素错位）。
 - **迭代十三**（tag `highlight-today-workout`）：训练列表高亮今日记录（`util.isToday` + 卡片左侧强调色竖条，渲染层判定不落库）。新增 capability `workout-list`。
 - **迭代十四**（tag `template-naming-and-bodyweight-trend`）：①模板命名后缀幂等去重 + 重名编号 + 保存确认窗可编辑（`templateLib.baseTemplateName`/`recordToTemplatePayload`）；②纯自重动作趋势按当日最大次数（`util.dayRepsValue`，曲线/详情整条统一口径）；③选模板页（`pages/workout/pick`）加删除「我的模板」（预设不可删）。
+- **迭代十五**（tag `move-body-trend-to-body-page`）：身体趋势三线合并图从曲线首页迁至「身体」页上方（无标题）、首页固定项 4→3（`curveConfig` 去 body、抽 `BODY_SERIES`，旧 body 配置自愈剔除）；手册新增「参考资料」节（docs/09 四条文献）。
 
 ---
 
@@ -144,7 +145,7 @@ node tests/algo.test.js
 ✅ 图标（assets/）、上线文案、边界测试清单 已就绪
 ```
 
-开发侧迭代一~十四均已归档打 tag，无遗留 change。
+开发侧迭代一~十五均已归档打 tag，无遗留 change。
 
 ---
 
