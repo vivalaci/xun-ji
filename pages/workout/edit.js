@@ -90,35 +90,22 @@ Page({
     });
   },
 
+  // 按模板新建：始终铺空组、不预填上次数值（避免未训练即存假数据）。
   buildFromTemplate(tpl) {
-    const workouts = db.getCache(db.COLL.WORKOUTS);
     if (tpl.type === 'cardio') {
-      const lastSame = workouts.find((w) => w.templateId === tpl._id && w.type === 'cardio');
-      return (tpl.exercises || []).map((te) => {
-        const prev = lastSame ? (lastSame.exercises || []).find((x) => x.exerciseId === te.exerciseId) : null;
-        return this.buildCardioItem(te.exerciseId, prev);
-      });
+      // 有氧各活动初始为空（不带上次时长/距离/层数）
+      return (tpl.exercises || []).map((te) => this.buildCardioItem(te.exerciseId, null));
     }
-    const lastSame = workouts.find((w) => w.templateId === tpl._id && w.type !== 'cardio');
     const mainUnit = unit.currentUnit();
     return (tpl.exercises || []).map((te) => {
       const ex = lib.getExercise(te.exerciseId);
-      const name = ex ? ex.name : te.exerciseId;
-      // 目标定组数（无历史）、历史定重量（有历史优先复用，渐进超负荷）
-      let sets = null;
-      if (lastSame) {
-        const prev = (lastSame.exercises || []).find((x) => x.exerciseId === te.exerciseId);
-        if (prev && prev.sets && prev.sets.length) {
-          sets = prev.sets.map((s) => ({ weight: unit.toDisplayWeight(s.weight, mainUnit), reps: s.reps }));
-        }
-      }
-      if (!sets) {
-        const n = te.targetSets || 1;
-        sets = [];
-        for (let k = 0; k < n; k++) sets.push({ weight: '', reps: '' });
-      }
+      // 按 targetSets（缺省 1）铺对应数量空组，保留次数区间提示
+      const n = te.targetSets || 1;
+      const sets = [];
+      for (let k = 0; k < n; k++) sets.push({ weight: '', reps: '' });
       return {
-        exerciseId: te.exerciseId, name,
+        exerciseId: te.exerciseId,
+        name: ex ? ex.name : te.exerciseId,
         loadType: (ex && ex.loadType) || 'weighted', unit: mainUnit,
         repLow: te.repLow, repHigh: te.repHigh, // 次数区间提示（可缺省）
         sets
