@@ -14,6 +14,6 @@
 
 - [x] 3.1 语法校验：全量 `node --check` 通过
 - [x] 3.2 算法单测：`node tests/algo.test.js` 全绿（95 测，无回归）
-- [ ] 3.3 模拟器/真机走查：选模板新建后**每个动作每一组的重量与次数都为空（清零）**，无任何上次数值残留；未填任何组保存被拦截；填部分保存只存真实值（未填补 0）；有氧模板新建时长/距离/层数均为空；编辑既有记录照常回显
-- [ ] 3.4 更新 `README.md`/`CHANGELOG.md` 进度 + `docs/00-overview.md` 阶段表
-- [ ] 3.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
+- [x] 3.3 真机走查（用户通过）：选模板新建各组重量/次数全空、无上次残留；未填保存被拦截；填部分只存真实值（未填补 0）；有氧新建时长/距离/层数空；编辑既有照常回显
+- [x] 3.4 `CHANGELOG.md` 迭代十六 + `docs/00-overview.md` 阶段表 + `docs/10` 交接
+- [x] 3.5 `openspec validate` 通过；`/opsx:sync`（2 delta 落主 spec）+ `/opsx:archive`；tag 合并后打
