@@ -62,6 +62,16 @@ Page({
     this.compute();
     this.renderCalendar();
     this.refresh();
+    wx.showShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] }); // 点亮「···」转发/朋友圈
+  },
+
+  // 转发到好友/群：落点首页，封面用中性品牌图（不带截图/个人数据）
+  onShareAppMessage() {
+    return { title: '训记 · 记录你的训练进步', path: '/pages/curve/curve', imageUrl: '/assets/share/cover-5x4.png' };
+  },
+  // 分享到朋友圈：朋友圈封面比例 1:1
+  onShareTimeline() {
+    return { title: '训记 · 记录你的训练进步', imageUrl: '/assets/share/cover-1x1.png' };
   },
 
   onPullDownRefresh() {

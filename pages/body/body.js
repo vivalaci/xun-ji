@@ -25,6 +25,16 @@ Page({
     this.setData({ unitLabel: unit.label() });
     this.renderFromCache();
     this.refresh();
+    wx.showShareMenu({ menus: ['shareAppMessage', 'shareTimeline'] }); // 点亮「···」转发/朋友圈
+  },
+
+  // 转发到好友/群：落点身体页；用中性品牌图避免截图把体重/体脂数字带进缩略图
+  onShareAppMessage() {
+    return { title: '训记 · 看见身体的变化', path: '/pages/body/body', imageUrl: '/assets/share/cover-5x4.png' };
+  },
+  // 分享到朋友圈：朋友圈封面比例 1:1
+  onShareTimeline() {
+    return { title: '训记 · 看见身体的变化', imageUrl: '/assets/share/cover-1x1.png' };
   },
 
   switchRange(e) {
