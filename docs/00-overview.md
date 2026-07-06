@@ -11,7 +11,7 @@
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
 | ⑦ | 开发实现 | ✅ 迭代一~十六全部完成、真机通过并归档（…十五=身体趋势图迁身体页+首页固定项4→3 move-body-trend-to-body-page；十六=按模板新建始终铺空组 template-new-blank-sets） |
-| ⑧ | 测试上线 | 🔄 进行中（备案 / 隐私指引 / 类目 / 提审待办） |
+| ⑧ | 测试上线 | ✅ 完成（ICP 备案通过、个人认证、审核通过，**已正式发布上线**）|
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
 >
