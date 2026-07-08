@@ -16,7 +16,7 @@
 ## 4. 验证与收尾
 
 - [x] 4.1 语法校验：`Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }`
-- [ ] 4.2 真机走查：首页/身体页「···」菜单转发与朋友圈均可用、落点正确、封面为品牌图；训练/我的页仍不可转发
+- [x] 4.2 真机走查：首页/身体页「···」菜单转发与朋友圈均可用、落点正确、封面为品牌图；训练/我的页仍不可转发
 - [x] 4.3 同步 `docs/usermanual.md` + `config/manual.js`：说明首页/身体页可转发分享
 - [x] 4.4 更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表
-- [ ] 4.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
+- [x] 4.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
