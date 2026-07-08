@@ -92,3 +92,8 @@
 ## 迭代十六
 
 - 按模板新建训练**始终铺空组、不预填上次数值**：`buildFromTemplate` 力量分支移除历史复用，按 `targetSets` 铺空组 + 保留次数区间提示；有氧分支不带上次时长/距离/层数。配合既有「未填补 0 + 完全空白拦截」，未训练点保存不再误存上次数据（"未练却有数据"）。编辑既有记录照常回显。（change `template-new-blank-sets`）
+
+## 迭代十七
+
+- **首页与身体页开放转发/朋友圈分享**：两页各加 `onShareAppMessage`（转发好友/群）+ `onShareTimeline`（朋友圈），`onShow` 内 `wx.showShareMenu` 点亮「···」两项入口，转发落点为各自页面路径；其它页面维持不可转发。
+- **分享卡片用固定品牌图**：`imageUrl` 指向 `assets/share/cover-5x4.png`（转发 5:4）/ `cover-1x1.png`（朋友圈 1:1），不用页面自动截图，避免身体页把体重/体脂数字带进缩略图。纯客户端、不涉及云数据。（change `enable-sharing-home-body`）
