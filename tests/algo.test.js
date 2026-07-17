@@ -754,6 +754,18 @@ test('自建动作 aliases/hidden 可缺省、编辑写入后语义与内置一�
   assert.ok(exerciseLib.byCategory({ includeHidden: true })['臀'].some((e) => e.id === 'cus_hip' && e.hidden));
   store.setCache('custom_exercises', []);
 });
+test('升格后状态：gbl_ 全体可见可搜，原 cus_ 隐藏但历史仍解析（D8）', () => {
+  // 模拟升格完成：exercise_overrides 里有全局版，custom_exercises 原文档 hidden
+  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
+  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', hidden: true }]);
+  const hip = exerciseLib.byCategory()['臀'];
+  assert.ok(hip.some((e) => e.id === 'gbl_hip' && e.global)); // 全局版对所有人可见
+  assert.ok(!hip.some((e) => e.id === 'cus_hip')); // 原自建不再重复出现
+  assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'gbl_hip'));
+  assert.strictEqual(exerciseLib.getName('cus_hip'), '臀推'); // 历史锚点仍解析
+  store.setCache(OVR, []);
+  store.setCache('custom_exercises', []);
+});
 test('缓存更新后合并 memo 失效（数据即时生效）', () => {
   store.setCache(OVR, []);
   assert.strictEqual(exerciseLib.getName('bench'), '卧推');

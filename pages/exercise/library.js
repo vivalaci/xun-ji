@@ -160,9 +160,9 @@ Page({
   },
 
   // ---------- 编辑动作（管理模式专属；普通用户对自建仅删除） ----------
-  // 内置/全局：写走云函数（铁律 1 例外），对所有用户生效。
-  // 自建（cus_）：custom_exercises 为每用户私有，写走 db.updateLocalFirst（铁律 1 正道），
-  // 编辑内容与内置一致（名称/分类/别名/隐藏），效果仅作用于管理员自己的数据。
+  // 内置/全局：编辑写走云函数 patch（铁律 1 例外），对所有用户生效。
+  // 自建（cus_）：「编辑」即「升格」——保存时经云函数新建 gbl_ 全局动作（所有用户可见），
+  // 原 cus_ 动作本地标记 hidden 作历史锚点（引用它的历史记录名称照常解析，见 design D8）。
 
   openEdit(e) {
     if (!this.data.adminMode) return;
@@ -202,6 +202,22 @@ Page({
   async onEditSave() {
     const t = this.data.editTarget;
     if (!t) return;
+
+    // 自建动作：保存 = 升格为全局动作（云写成功后才隐藏原自建，失败不动本地）
+    if (t.custom) {
+      const gname = (this.data.editName || '').trim();
+      if (!gname) { wx.showToast({ title: '请输入动作名称', icon: 'none' }); return; }
+      const gcat = this.data.editCats[this.data.editCatIndex];
+      const galiases = parseAliases(this.data.editAliases);
+      const docId = t.docId;
+      const ok = await this.adminCall(async () => {
+        await adminApi.addGlobalExercise({ id: lib.genGlobalId(), name: gname, category: gcat, aliases: galiases });
+        db.updateLocalFirst(lib.CUSTOM_COLL, docId, { hidden: true }); // 原 cus_ 转为历史锚点
+      }, '已升格为全局动作');
+      if (ok) this.setData({ editVisible: false });
+      return;
+    }
+
     const patch = {};
     const name = (this.data.editName || '').trim();
     if (name && name !== t.name) patch.name = name;
@@ -214,16 +230,16 @@ Page({
     if (aliases.join('') !== (t.aliases || []).join('')) patch.aliases = aliases;
     if (this.data.editHidden !== t.hidden) patch.hidden = this.data.editHidden;
     if (!Object.keys(patch).length) { this.setData({ editVisible: false }); return; }
-    if (t.custom) {
-      // 自己的数据：本地先写，立即生效
-      db.updateLocalFirst(lib.CUSTOM_COLL, t.docId, patch);
-      this.setData({ editVisible: false });
-      this.render();
-      wx.showToast({ title: '已保存', icon: 'none' });
-      return;
-    }
     const ok = await this.adminCall(() => adminApi.savePatch(t.id, patch));
     if (ok) this.setData({ editVisible: false });
+  },
+
+  // 升格后的自建动作（已隐藏）可恢复展示（如需撤销升格：先隐藏 gbl_ 版本）
+  onUnhideCustom(e) {
+    const docId = e.currentTarget.dataset.docid;
+    db.updateLocalFirst(lib.CUSTOM_COLL, docId, { hidden: false });
+    this.render();
+    wx.showToast({ title: '已恢复展示', icon: 'none' });
   },
 
   // ---------- 类别编排（管理模式；有氧固定末位，不参与排序） ----------
