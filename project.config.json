@@ -4,6 +4,7 @@
     "ignore": [
       { "type": "folder", "value": "docs" },
       { "type": "folder", "value": "openspec" },
+      { "type": "folder", "value": "cloudfunctions" },
       { "type": "folder", "value": "draft_archive" },
       { "type": "folder", "value": "tests" },
       { "type": "folder", "value": "assets/exercise-media" },
