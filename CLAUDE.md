@@ -1,6 +1,6 @@
 # 训记 · 微信小程序（健身数据记录）
 
-面向进阶训练者的训练记录工具。微信原生小程序 + 云开发，无 npm 依赖、无构建步骤。
+面向进阶训练者的训练记录工具。微信原生小程序 + 云开发，**小程序端**无 npm 依赖、无构建步骤（云函数在 `cloudfunctions/` 下各自带 `wx-server-sdk` 依赖，经开发者工具「上传并部署：云端安装依赖」部署，本地不装 node_modules）。
 
 **接手先读 [docs/10-project-handoff.md](docs/10-project-handoff.md)**（项目交接/入职速览：现状、能力清单、迭代史、代码地图）。开发必须遵循 [docs/07-development-guide.md](docs/07-development-guide.md)（流程与规范），技术背景见 [docs/06-technical-architecture.md](docs/06-technical-architecture.md)。下面是每次改代码都生效的硬约定。
 
@@ -14,7 +14,7 @@
 
 ## 架构铁律
 
-1. 云数据读写只走 `utils/db.js`（读：`getCache` 先渲染 + `refresh` 异步更新；写：`saveLocalFirst/updateLocalFirst/removeLocalFirst`），页面禁止直接 `wx.cloud.database()`。
+1. 云数据读写只走 `utils/db.js`（读：`getCache` 先渲染 + `refresh` 异步更新；写：`saveLocalFirst/updateLocalFirst/removeLocalFirst`），页面禁止直接 `wx.cloud.database()`。**既定例外（仅此一个）**：管理员对共享集合 `exercise_overrides` 的写入走 `utils/adminApi.js` 直调 `exerciseAdmin` 云函数（服务端权威内容，本地先写无意义，且集合权限禁止客户端写）——读仍走 db.js；此例外不构成其他场景绕过 db.js 的先例。
 2. 重量落库恒为 kg：kg 录入完整精度、不提前 round；**lb 录入换算落库取整到 0.5kg**（lb 本是近似量，唯一例外）。换算逻辑只许在 `utils/unit.js`。显示/录入必须过 unit.js——**训练组重量用 `toDisplayWeight` 量化到 0.5**（只现整数或 .5），体重等身体数据用 `toDisplay` 保留 0.1。
 3. 动作身份靠 `exerciseId`（曲线、PR、历史聚合都按 id）；展示名经 `utils/exerciseLib.js` 合并表查，含被删动作占位回退。
 4. PR 读取侧现算（`util.buildPRMap`），不落库字段。
@@ -25,7 +25,7 @@
 ## 每次改动后的验证
 
 ```powershell
-Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }   # 语法
+Get-ChildItem -Recurse -Filter *.js | Where-Object { $_.FullName -notmatch 'node_modules' } | ForEach-Object { node --check $_.FullName }   # 语法（排除云函数依赖）
 node tests/algo.test.js                                                             # 算法单测
 ```
 

@@ -9,7 +9,7 @@
   - `{ kind:'exercise', id:'gbl_xxx', name, category, aliases?, loadType?, ... }` — 新增**全局**动作（对所有用户可见，区别于每用户私有的 `custom_exercises`）
   - `{ kind:'categories', order:[...] }` — 自定义类别与顺序
 - 新增**项目首个云函数** `exerciseAdmin`：承担全部管理写入，函数内校验 `cloud.getWXContext().OPENID === ADMIN_OPENID`（微信注入，客户端伪造不了）。集合权限设「所有用户可读，仅管理端可写」——客户端**根本写不了**。
-- `utils/exerciseLib.js` 合并层扩展为：内置 → 套 patch → 拼全局新增 → 拼每用户自建。
+- `utils/exerciseLib.js` 合并层扩展为：（内置 + 拼全局新增）→ 套 patch（对内置与全局均生效）→ 拼每用户自建。
 - 「我的」→ 动作库页（`pages/exercise/library`）加管理模式：改名、改分类、改别名、隐藏、新增全局动作、编排类别顺序。管理入口经**隐藏手势**触发（避免每用户每启动调云函数产生调用开支），入口仅为 UI 便利、**不担安全职责**。
 - **隐藏（hidden）语义**：从动作库/选择面板/搜索中消失，但 `getExercise`/`getName` **仍须按 id 解析** —— 否则隐藏一个动作会让所有用户的历史记录变成「已删除动作」。
 - **三大项（`MAIN_LIFTS`：bench/squat/deadlift）禁止隐藏**——与首页曲线硬绑定。

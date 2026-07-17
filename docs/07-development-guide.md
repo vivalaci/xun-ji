@@ -17,9 +17,11 @@
 2. **安装微信开发者工具**：https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html
 3. **导入项目**：开发者工具 →「导入项目」→ 目录选 `E:\训记` → 填 AppID。
 4. **开通云开发**：工具顶栏「云开发」→ 开通免费基础版。项目用 `DYNAMIC_CURRENT_ENV`，一般无需改 `app.js`。
-5. **建 4 个集合**（云开发控制台 → 数据库，权限均选「仅创建者可读写」）：
-   `workouts`、`body_records`、`workout_templates`、`custom_exercises`。
-6. **本地工具链**：仅需 Node.js（跑单测和语法检查），无 npm 依赖、无构建步骤。
+5. **建集合**（云开发控制台 → 数据库）：
+   - 权限「仅创建者可读写」：`workouts`、`body_records`、`workout_templates`、`custom_exercises`、`user_prefs`。
+   - 权限「所有用户可读，仅管理端可写」：`exercise_overrides`（迭代十九，全局动作库覆盖层）。
+6. **部署云函数**（迭代十九起）：开发者工具 → 云开发面板 → 对 `cloudfunctions/exerciseAdmin` 右键「上传并部署：云端安装依赖」；再到云开发控制台 → 云函数 → exerciseAdmin → 配置，设环境变量 `ADMIN_OPENID`（首次不知道 openid：先部署、在 App 里动作库页底部计数连点 5 次触发一次调用，云函数日志/返回里回显 openid）。
+7. **本地工具链**：仅需 Node.js（跑单测和语法检查），**小程序端**无 npm 依赖、无构建步骤（云函数依赖 `wx-server-sdk` 由云端安装，本地不装）。
 
 ---
 
@@ -63,8 +65,9 @@
 1. **所有云数据读写走 `utils/db.js`**，页面不直接 `wx.cloud.database()`。
    - 读：先 `db.getCache(coll)` 同步渲染首屏，再 `db.refresh(coll)` 异步更新。
    - 写：一律 `saveLocalFirst / updateLocalFirst / removeLocalFirst`（本地先落 + 失败重试队列）。
+   - **既定例外（仅此一个，迭代十九）**：管理员写共享集合 `exercise_overrides` 走 `utils/adminApi.js` 直调 `exerciseAdmin` 云函数（真实 loading/失败态，不乐观、不排队）——服务端权威的共享内容本地先写无意义，且集合权限禁止客户端写。读仍走 db.js（`refreshOverrides`）。此例外不构成其他场景绕过 db.js 的先例。
 2. **重量数值只在边界换算**：落库恒为 kg（kg 完整精度不 round；lb 录入取整到 0.5kg）；显示/录入必须过 `unit.js`——训练组重量用 `unit.toDisplayWeight`（量化到 0.5），体重等用 `unit.toDisplay`（保留 0.1）。加新的重量展示点时全仓搜一遍，别裸读数字。
-3. **动作身份靠 `exerciseId`，不靠名字**：曲线、PR、历史聚合全部按 id；展示名通过 `utils/exerciseLib.js` 合并表查（内置 + 自建，含被删动作占位回退）。
+3. **动作身份靠 `exerciseId`，不靠名字**：曲线、PR、历史聚合全部按 id；展示名通过 `utils/exerciseLib.js` 合并表查（内置 + 全局覆盖层 + 自建，含被删动作占位回退；管理员隐藏的动作从列举/搜索消失但按 id 仍解析）。
 4. **PR 是读取侧现算**（`util.buildPRMap`），不落库字段。编辑/删除历史后自动重算，别试图缓存成数据库字段。
 5. **图表只用 `utils/chart.js`**（Canvas 2D，无第三方库）；缺值断线不补零。
 6. **不改 4 集合的 schema**。确需加字段时：新字段必须可缺省（老数据无感），并在 change 的 design.md 写迁移方案。
@@ -77,8 +80,8 @@
 ### 本地（无需微信环境，随手跑）
 
 ```powershell
-# 语法检查（全部 js）
-Get-ChildItem -Recurse -Filter *.js -Exclude node_modules | ForEach-Object { node --check $_.FullName }
+# 语法检查（全部 js，排除云函数 node_modules）
+Get-ChildItem -Recurse -Filter *.js | Where-Object { $_.FullName -notmatch 'node_modules' } | ForEach-Object { node --check $_.FullName }
 
 # 核心算法单测（主力工作组重量、PR 识别、lb 往返换算）
 node tests/algo.test.js

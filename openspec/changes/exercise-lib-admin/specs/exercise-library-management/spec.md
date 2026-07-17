@@ -3,7 +3,7 @@
 ### Requirement: 查看动作库
 用户 SHALL 能查看完整动作库，内置动作按分类分组，三大项有明显标记。分类集合可扩展（在原 胸/背/腿/肩/手臂/核心 基础上细化与新增），且对历史记录向后兼容：既有动作 `id` 与三大项 `MAIN_LIFTS` 保持不变。
 
-动作库 SHALL 由四层合并而成，顺序为：**内置 `config/exercises.js` → 套用 `exercise_overrides` 的 `kind:'patch'`（改名/改分类/改别名/隐藏）→ 拼接 `kind:'exercise'` 的全局动作（`gbl_` 前缀，对所有用户可见）→ 拼接每用户私有的 `custom_exercises`（`cus_` 前缀）**。`exercise_overrides` 的读取 SHALL 走 `utils/db.js` 缓存优先 + 异步刷新；无网或首次启动时 SHALL 安全回退到内置基线展示，不报错。
+动作库 SHALL 由四层合并而成，顺序为：**内置 `config/exercises.js` 拼接 `kind:'exercise'` 的全局动作（`gbl_` 前缀，对所有用户可见）→ 套用 `exercise_overrides` 的 `kind:'patch'`（改名/改分类/改别名/隐藏，对内置与全局动作均生效）→ 拼接每用户私有的 `custom_exercises`（`cus_` 前缀）**。`exercise_overrides` 的读取 SHALL 走 `utils/db.js` 缓存优先 + 异步刷新；无网或首次启动时 SHALL 安全回退到内置基线展示，不报错。
 
 被标记 `hidden` 的动作 MUST 从动作库列表与分类分组中排除，但 MUST 仍可按 id 解析（见 `getExercise`/`getName`），以保证历史记录展示不退化。
 
