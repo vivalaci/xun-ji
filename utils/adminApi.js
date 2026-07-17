@@ -25,6 +25,8 @@ module.exports = {
   savePatch: (targetId, patch) => call('patch', { targetId: targetId, patch: patch }),
   // 新增全局动作：{ id:'gbl_xxx', name, category, aliases? }
   addGlobalExercise: (exercise) => call('addExercise', { exercise: exercise }),
+  // 删除全局动作（仅 gbl_；调用方须先处理本人引用改指）
+  removeGlobalExercise: (id) => call('removeExercise', { id: id }),
   // 类别顺序（非有氧）
   setCategoryOrder: (order) => call('setCategories', { order: order })
 };

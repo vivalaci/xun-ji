@@ -32,6 +32,7 @@
 .lib-footer { text-align: center; font-size: 24rpx; padding: 24rpx 0 8rpx; }
 .field-note { font-size: 22rpx; margin-top: 6rpx; }
 .promote-note { font-size: 22rpx; line-height: 1.6; padding: 4rpx 0 20rpx; }
+.del-global { text-align: center; color: var(--danger); font-size: 26rpx; padding: 24rpx 0 8rpx; }
 
 /* 类别编排 */
 .cat-scroll { max-height: 480rpx; }

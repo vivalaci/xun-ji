@@ -6,9 +6,10 @@
 // 动作（event.action）：
 //   ping          验证管理员身份（隐藏手势入口用）；非管理员一律 FORBIDDEN，
 //                 但回显 openid —— 首次部署时管理员借此拿到自己的 openid 去配环境变量。
-//   patch         { targetId, patch:{name?,category?,aliases?,hidden?} } 改内置/全局动作（upsert）
-//   addExercise   { exercise:{id:'gbl_xxx',name,category,aliases?} } 新增全局动作
-//   setCategories { order:[...] } 类别顺序（upsert 单文档）
+//   patch          { targetId, patch:{name?,category?,aliases?,hidden?} } 改内置/全局动作（upsert）
+//   addExercise    { exercise:{id:'gbl_xxx',name,category,aliases?} } 新增全局动作
+//   removeExercise { id:'gbl_xxx' } 删除全局动作（连带清其 patch；内置不可删）
+//   setCategories  { order:[...] } 类别顺序（upsert 单文档）
 //
 // 函数保持极薄：校验逻辑全在 validate.js 纯函数（tests/algo.test.js 直接单测）。
 
@@ -58,6 +59,21 @@ exports.main = async (event) => {
     await coll.add({
       data: Object.assign({ kind: 'exercise', createTime: db.serverDate() }, r.doc)
     });
+    return { ok: true };
+  }
+
+  if (action === 'removeExercise') {
+    // 仅可删管理员自建的全局动作（gbl_）；内置动作没有对应文档、天然删不了
+    const id = String(event.id || '').trim();
+    if (!v.isGlobalId(id)) return { ok: false, code: 'INVALID', message: '仅可删除 gbl_ 全局动作' };
+    const existing = await coll.where({ kind: 'exercise', id: id }).get();
+    if (!existing.data.length) return { ok: false, code: 'INVALID', message: '动作不存在' };
+    await coll.doc(existing.data[0]._id).remove();
+    // 连带清掉针对它的 patch，避免孤儿文档
+    const patches = await coll.where({ kind: 'patch', targetId: id }).get();
+    for (const p of patches.data) {
+      await coll.doc(p._id).remove();
+    }
     return { ok: true };
   }
 

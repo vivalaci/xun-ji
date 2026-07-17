@@ -127,6 +127,8 @@
       <switch checked="{{editHidden}}" disabled="{{editTarget.isMainLift}}" bindchange="onEditHiddenChange" />
     </view>
     <button class="btn-primary" bindtap="onEditSave">{{editTarget.custom ? '升格并发布' : '保存'}}</button>
+    <!-- 全局动作可删除（升格错误的回退路径；本人引用自动改指同名动作） -->
+    <view wx:if="{{editTarget.global}}" class="del-global" bindtap="onDeleteGlobal">删除全局动作</view>
   </view>
 </view>
 

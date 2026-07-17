@@ -844,6 +844,13 @@ test('新增全局动作：gbl_ 前缀强制、id 查重、必填校验', () => 
   assert.strictEqual(adminValidate.validateNewExercise({ id: 'gbl_a', name: '', category: '胸' }, []).ok, false);
   assert.strictEqual(adminValidate.validateNewExercise({ id: 'gbl_a', name: 'X', category: '' }, []).ok, false);
 });
+test('isGlobalId：gbl_ 前缀合法，内置/cus_/空值拒绝（removeExercise 守卫）', () => {
+  assert.strictEqual(adminValidate.isGlobalId('gbl_123_45'), true);
+  assert.strictEqual(adminValidate.isGlobalId('bench'), false);
+  assert.strictEqual(adminValidate.isGlobalId('cus_1'), false);
+  assert.strictEqual(adminValidate.isGlobalId(''), false);
+  assert.strictEqual(adminValidate.isGlobalId(null), false);
+});
 test('类别顺序清洗：去重、剔除有氧与空项，空结果拒绝', () => {
   const r = adminValidate.sanitizeCategoryOrder(['背', '胸', '背', '有氧', ' ', '肩']);
   assert.strictEqual(r.ok, true);

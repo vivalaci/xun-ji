@@ -51,10 +51,15 @@ function validatePatch(targetId, patch) {
   return { ok: true, fields: fields, targetId: targetId.trim() };
 }
 
-// 校验新增全局动作：gbl_ 前缀强制（与内置/cus_ 命名空间隔离），existingIds 查重。
+// 全局动作 id 形态：gbl_ 前缀（与内置/cus_ 命名空间隔离）
+function isGlobalId(id) {
+  return typeof id === 'string' && /^gbl_[A-Za-z0-9_]+$/.test(id.trim());
+}
+
+// 校验新增全局动作：gbl_ 前缀强制，existingIds 查重。
 function validateNewExercise(exercise, existingIds) {
   if (!exercise || typeof exercise !== 'object') return { ok: false, message: '缺少动作内容' };
-  if (!isNonEmptyString(exercise.id) || !/^gbl_[A-Za-z0-9_]+$/.test(exercise.id.trim())) {
+  if (!isNonEmptyString(exercise.id) || !isGlobalId(exercise.id)) {
     return { ok: false, message: '全局动作 id 须为 gbl_ 前缀' };
   }
   const id = exercise.id.trim();
@@ -82,4 +87,4 @@ function sanitizeCategoryOrder(order) {
   return { ok: true, order: out };
 }
 
-module.exports = { MAIN_LIFTS, validatePatch, validateNewExercise, sanitizeCategoryOrder };
+module.exports = { MAIN_LIFTS, isGlobalId, validatePatch, validateNewExercise, sanitizeCategoryOrder };

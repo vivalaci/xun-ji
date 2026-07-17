@@ -72,7 +72,7 @@
 
 ### Requirement: 新增全局动作
 
-管理员 SHALL 能新增**全局**动作（对所有用户可见），经 `{ kind:'exercise', id:'gbl_xxx', name, category, aliases? }` 存入 `exercise_overrides`。全局动作 id MUST 使用 `gbl_` 前缀，与每用户私有自建动作的 `cus_` 前缀区分，MUST NOT 与既有 id 碰撞。全局动作 SHALL 可被所有用户在选择面板中选用，并 SHALL 支持定义别名。
+管理员 SHALL 能新增**全局**动作（对所有用户可见），经 `{ kind:'exercise', id:'gbl_xxx', name, category, aliases? }` 存入 `exercise_overrides`。全局动作 id MUST 使用 `gbl_` 前缀，与每用户私有自建动作的 `cus_` 前缀区分，MUST NOT 与既有 id 碰撞。全局动作 SHALL 可被所有用户在选择面板中选用，并 SHALL 支持定义别名。保存前 SHALL 按名称查重（内置+全局范围）：已有同名动作时 MUST NOT 新建（升格场景提供合并选项，见 exercise-library-management「自建动作升格为全局动作」）。
 
 #### Scenario: 新增后全体可见可选
 - **WHEN** 管理员新增一个全局动作并保存
@@ -85,6 +85,26 @@
 #### Scenario: 全局动作支持别名搜索
 - **WHEN** 管理员为全局动作定义了别名，用户按该别名搜索
 - **THEN** 命中该全局动作
+
+#### Scenario: 同名拦截
+- **WHEN** 管理员新增的全局动作名称与某内置或全局动作相同
+- **THEN** 系统拦截并提示已有同名动作，不产生写入
+
+### Requirement: 删除全局动作
+
+管理员 SHALL 能删除全局动作（仅 `gbl_`）：云函数 `removeExercise` MUST 校验 id 为 `gbl_` 前缀并连带删除针对它的 `kind:'patch'` 文档；内置动作无对应文档，天然 MUST NOT 可删。删除前，管理员本人引用该 id 的数据 SHALL 自动改指库中**同名**动作（先迁移后云删）；本人有引用且库中无同名动作可改指时，系统 SHALL 警告并建议改用隐藏。确认框 SHALL 说明对其他已引用用户的影响（其历史将显示「已删除动作」占位）。
+
+#### Scenario: 删除误升格的重复动作
+- **WHEN** 管理员误把与内置同名的自建动作升格产生重复条目，随后在编辑面板删除该全局动作
+- **THEN** 本人引用改指同名内置动作（历史与曲线连续），云端删除 `gbl_` 文档及其 patch，列表恢复单一条目
+
+#### Scenario: 无同名可改指时警告
+- **WHEN** 管理员删除一个本人有历史引用、且库中无同名动作的全局动作
+- **THEN** 系统警告删除将使这些记录显示「已删除动作」，建议改用隐藏；管理员仍可确认执行
+
+#### Scenario: 云删失败可重试
+- **WHEN** 删除时云函数失败
+- **THEN** 明确报错；已迁移的本人引用保持指向同名动作（无数据损坏），重复条目仍在，可重试删除
 
 ### Requirement: 自定义类别与顺序
 

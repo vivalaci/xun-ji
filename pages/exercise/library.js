@@ -86,6 +86,11 @@ Page({
     if (!name) { wx.showToast({ title: '请输入动作名称', icon: 'none' }); return; }
     const category = this.data.categories[this.data.catIndex];
     if (this.data.adminMode) {
+      // 查重：库里已有同名动作（内置/全局）就别再建一个（自建重名不拦，属用户自己的数据）
+      if (lib.allExercises().some((e) => !e.custom && e.name === name)) {
+        wx.showToast({ title: '已有同名动作「' + name + '」', icon: 'none' });
+        return;
+      }
       // 全局动作：走云函数（铁律 1 例外），真实 loading / 失败态
       await this.adminCall(() => adminApi.addGlobalExercise({
         id: lib.genGlobalId(),
@@ -160,6 +165,30 @@ Page({
     }
   },
 
+  // 把本人所有引用 fromId 的数据（训练/模板/曲线配置）改指 toId（本地先写，队列同步云端）
+  migrateRefs(fromId, toId) {
+    const plan = util.planExerciseIdMigration(
+      fromId, toId,
+      db.getCache(db.COLL.WORKOUTS),
+      db.getCache(db.COLL.TEMPLATES),
+      (db.getCache(db.COLL.PREFS) || [])[0]
+    );
+    plan.workoutUpdates.forEach((u) => db.updateLocalFirst(db.COLL.WORKOUTS, u.id, u.data));
+    plan.templateUpdates.forEach((u) => db.updateLocalFirst(db.COLL.TEMPLATES, u.id, u.data));
+    if (plan.prefsPatch) db.updatePrefs(plan.prefsPatch);
+  },
+
+  // 引用 fromId 的本人文档数（删除全局动作前探测用）
+  countRefs(fromId) {
+    const plan = util.planExerciseIdMigration(
+      fromId, fromId,
+      db.getCache(db.COLL.WORKOUTS),
+      db.getCache(db.COLL.TEMPLATES),
+      (db.getCache(db.COLL.PREFS) || [])[0]
+    );
+    return plan.workoutUpdates.length + plan.templateUpdates.length + (plan.prefsPatch ? 1 : 0);
+  },
+
   // ---------- 编辑动作（管理模式专属；普通用户对自建仅删除） ----------
   // 内置/全局：编辑写走云函数 patch（铁律 1 例外），对所有用户生效。
   // 自建（cus_）：「编辑」即「升格」——云端新建 gbl_ 全局动作（所有用户可见），
@@ -180,6 +209,7 @@ Page({
         id: ex.id,
         docId: ex._id || '', // 自建动作文档 id（本地写用）
         custom: !!ex.custom,
+        global: !!ex.global,
         name: ex.name,
         category: ex.category,
         aliases: ex.aliases || [],
@@ -214,18 +244,26 @@ Page({
       const galiases = parseAliases(this.data.editAliases);
       const fromId = t.id;
       const docId = t.docId;
+      // 查重：库里已有同名动作（内置/全局）→ 走合并而非新建，避免重复条目
+      const dup = lib.allExercises().find((e) => !e.custom && e.name === gname);
+      if (dup) {
+        const res = await wx.showModal({
+          title: '已有同名动作',
+          content: '库中已有「' + gname + '」。将合并：你的历史与模板改指它，原自建删除，不新建全局动作。',
+          confirmText: '合并'
+        });
+        if (!res.confirm) return;
+        this.migrateRefs(fromId, dup.id);
+        db.removeLocalFirst(lib.CUSTOM_COLL, docId);
+        this.setData({ editVisible: false });
+        this.render();
+        wx.showToast({ title: '已合并到「' + dup.name + '」', icon: 'none' });
+        return;
+      }
       const ok = await this.adminCall(async () => {
         const gid = lib.genGlobalId();
         await adminApi.addGlobalExercise({ id: gid, name: gname, category: gcat, aliases: galiases });
-        const plan = util.planExerciseIdMigration(
-          fromId, gid,
-          db.getCache(db.COLL.WORKOUTS),
-          db.getCache(db.COLL.TEMPLATES),
-          (db.getCache(db.COLL.PREFS) || [])[0]
-        );
-        plan.workoutUpdates.forEach((u) => db.updateLocalFirst(db.COLL.WORKOUTS, u.id, u.data));
-        plan.templateUpdates.forEach((u) => db.updateLocalFirst(db.COLL.TEMPLATES, u.id, u.data));
-        if (plan.prefsPatch) db.updatePrefs(plan.prefsPatch);
+        this.migrateRefs(fromId, gid);
         db.removeLocalFirst(lib.CUSTOM_COLL, docId); // 引用已全部改指 gbl_，原自建删除
       }, '已升格为全局动作');
       if (ok) this.setData({ editVisible: false });
@@ -245,6 +283,27 @@ Page({
     if (this.data.editHidden !== t.hidden) patch.hidden = this.data.editHidden;
     if (!Object.keys(patch).length) { this.setData({ editVisible: false }); return; }
     const ok = await this.adminCall(() => adminApi.savePatch(t.id, patch));
+    if (ok) this.setData({ editVisible: false });
+  },
+
+  // 删除全局动作（编辑面板内，仅 gbl_）：本人引用先改指同名动作（升格错了的回退路径）；
+  // 无同名可改指且本人有引用时给出明确警告。其他用户若已引用，其历史会退化为占位——
+  // 确认框写明，由管理员权衡（通常在升格后短窗口内回退，风险很小）。
+  async onDeleteGlobal() {
+    const t = this.data.editTarget;
+    if (!t || !t.global) return;
+    const dup = lib.allExercises().find((e) => !e.custom && e.id !== t.id && e.name === t.name);
+    const refs = this.countRefs(t.id);
+    let content;
+    if (refs && dup) content = '删除后所有用户不再看到它；你的 ' + refs + ' 处引用将改指已有的「' + dup.name + '」。';
+    else if (refs) content = '你的 ' + refs + ' 处历史引用了它且库中无同名动作可改指，删除后这些记录将显示「已删除动作」。建议改用「隐藏」。';
+    else content = '删除后所有用户不再看到它；若已有用户引用，其历史将显示「已删除动作」。';
+    const res = await wx.showModal({ title: '删除全局动作', content });
+    if (!res.confirm) return;
+    const ok = await this.adminCall(async () => {
+      if (refs && dup) this.migrateRefs(t.id, dup.id); // 先迁引用：云删失败时仅剩重复项，可重试
+      await adminApi.removeGlobalExercise(t.id);
+    }, '已删除全局动作');
     if (ok) this.setData({ editVisible: false });
   },
 
