@@ -14,7 +14,9 @@ const COLL = {
   BODY: 'body_records',
   TEMPLATES: 'workout_templates',
   CUSTOM_EXERCISES: 'custom_exercises',
-  PREFS: 'user_prefs'
+  PREFS: 'user_prefs',
+  // 跨用户共享（所有用户可读，仅管理端可写）：客户端只读，写入走 exerciseAdmin 云函数
+  EXERCISE_OVERRIDES: 'exercise_overrides'
 };
 
 function db() {
@@ -167,6 +169,12 @@ function hasPending() {
   return store.getQueue().length > 0;
 }
 
+// 全局动作库覆盖层刷新：读缓存优先（exerciseLib 直接取缓存），这里做后台拉取。
+// 无网/首启拉不到时保留既有缓存（可能为空），exerciseLib 自动回退内置基线，不报错。
+function refreshOverrides() {
+  return refresh(COLL.EXERCISE_OVERRIDES, { orderBy: 'createTime', order: 'asc' });
+}
+
 // ---------- 模板首次播种 / 分组迁移 ----------
 
 // 存量模板缺 group 字段时执行一次性迁移（见 change template-groups design D2）：
@@ -263,6 +271,7 @@ module.exports = {
   removeLocalFirst,
   flushQueue,
   hasPending,
+  refreshOverrides,
   ensureTemplatesSeeded,
   ensurePrefs,
   updatePrefs

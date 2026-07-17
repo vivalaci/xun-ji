@@ -25,6 +25,10 @@ App({
     // 增强项，失败不影响主流程（选模板页自身仍有加载/重试兜底）。
     db.ensureTemplatesSeeded().catch(() => {});
 
+    // 拉取全局动作库覆盖层（管理员改名/隐藏/全局动作/类别顺序）：
+    // 每次启动一次读；失败静默，exerciseLib 回退内置基线。
+    db.refreshOverrides().catch(() => {});
+
     // 联网恢复时也重试一次
     wx.onNetworkStatusChange((res) => {
       if (res.isConnected) db.flushQueue();
