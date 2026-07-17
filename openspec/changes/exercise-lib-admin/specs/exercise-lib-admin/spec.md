@@ -72,7 +72,7 @@
 
 ### Requirement: 新增全局动作
 
-管理员 SHALL 能新增**全局**动作（对所有用户可见），经 `{ kind:'exercise', id:'gbl_xxx', name, category, aliases? }` 存入 `exercise_overrides`。全局动作 id MUST 使用 `gbl_` 前缀，与每用户私有自建动作的 `cus_` 前缀区分，MUST NOT 与既有 id 碰撞。全局动作 SHALL 可被所有用户在选择面板中选用，并 SHALL 支持定义别名。保存前 SHALL 按名称查重（内置+全局范围）：已有同名动作时 MUST NOT 新建（升格场景提供合并选项，见 exercise-library-management「自建动作升格为全局动作」）。
+管理员 SHALL 能新增**全局**动作（对所有用户可见），经 `{ kind:'exercise', id:'gbl_xxx', name, category, aliases? }` 存入 `exercise_overrides`。全局动作 id MUST 使用 `gbl_` 前缀，与每用户私有自建动作的 `cus_` 前缀区分，MUST NOT 与既有 id 碰撞。全局动作 SHALL 可被所有用户在选择面板中选用，并 SHALL 支持定义别名。对普通用户，全局动作 MUST 与内置动作无差别展示（不显示「全局」等任何管理标识）；「全局」标识 SHALL 仅在管理模式下显示。保存前 SHALL 按名称查重（内置+全局范围）：已有同名动作时 MUST NOT 新建（升格场景提供合并选项，见 exercise-library-management「自建动作升格为全局动作」）。
 
 #### Scenario: 新增后全体可见可选
 - **WHEN** 管理员新增一个全局动作并保存
