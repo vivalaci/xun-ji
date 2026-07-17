@@ -15,6 +15,31 @@
 .del-btn { color: var(--danger); font-size: 24rpx; }
 .ex-cat { font-size: 22rpx; }
 
+/* 管理模式 */
+.admin-bar {
+  background: var(--accent-light); border-radius: 14rpx;
+  padding: 16rpx 24rpx; margin-bottom: 20rpx;
+}
+.admin-tag { color: var(--accent); font-size: 26rpx; font-weight: bold; }
+.admin-actions { gap: 32rpx; }
+.admin-link { color: var(--accent); font-size: 26rpx; }
+.edit-btn { color: var(--accent); font-size: 24rpx; }
+.hidden-badge {
+  font-size: 20rpx; color: var(--muted); background: var(--bg);
+  border: 1rpx solid var(--border); border-radius: 6rpx; padding: 2rpx 10rpx;
+}
+.lib-footer { text-align: center; font-size: 24rpx; padding: 24rpx 0 8rpx; }
+.field-note { font-size: 22rpx; margin-top: 6rpx; }
+
+/* 类别编排 */
+.cat-scroll { max-height: 480rpx; }
+.cat-item { padding: 20rpx 0; border-bottom: 1rpx solid var(--border); }
+.cat-ops { gap: 40rpx; }
+.cat-op { color: var(--accent); font-size: 32rpx; padding: 0 8rpx; }
+.cat-op.disabled { color: var(--border); }
+.cat-fixed { font-size: 22rpx; }
+.cat-new-input { text-align: left; margin-left: 0; margin-right: 24rpx; }
+
 /* 搜索 */
 .search-row { margin-bottom: 20rpx; }
 .search-input { flex: 1; background: var(--card); border-radius: 14rpx; padding: 18rpx 24rpx; font-size: 28rpx; }
