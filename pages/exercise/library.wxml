@@ -27,7 +27,7 @@
         <text class="ex-cat muted">{{ex.category}}</text>
       </view>
       <view class="row ex-actions">
-        <text wx:if="{{adminMode || ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
+        <text wx:if="{{adminMode}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
         <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
       </view>
     </view>
@@ -48,7 +48,7 @@
             <text wx:if="{{ex.hidden}}" class="hidden-badge">已隐藏</text>
           </view>
           <view class="row ex-actions">
-            <text wx:if="{{adminMode || ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
+            <text wx:if="{{adminMode}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
             <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
           </view>
         </view>
@@ -104,7 +104,7 @@
       <text class="label">别名</text>
       <input class="input" placeholder="逗号分隔，可留空" value="{{editAliases}}" bindinput="onEditAliasesInput" />
     </view>
-    <view class="field row between {{editTarget.custom ? 'no-border' : ''}}">
+    <view class="field row between">
       <text class="label">分类</text>
       <block wx:if="{{!editTarget.cardio}}">
         <picker range="{{editCats}}" value="{{editCatIndex}}" bindchange="onEditCatChange">
@@ -113,8 +113,7 @@
       </block>
       <text wx:else class="muted">有氧（固定）</text>
     </view>
-    <!-- 隐藏仅适用于内置/全局（自建动作要下架直接删除） -->
-    <view wx:if="{{!editTarget.custom}}" class="field row between no-border">
+    <view class="field row between no-border">
       <view>
         <text class="label">隐藏该动作</text>
         <view wx:if="{{editTarget.isMainLift}}" class="field-note muted">三大项与首页曲线绑定，不可隐藏</view>

@@ -159,15 +159,16 @@ Page({
     }
   },
 
-  // ---------- 编辑动作 ----------
-  // 内置/全局：管理模式专用，写走云函数（铁律 1 例外）。
-  // 自建（cus_）：所有用户可用，自己的私有数据，写走 db.updateLocalFirst（铁律 1 正道）。
+  // ---------- 编辑动作（管理模式专属；普通用户对自建仅删除） ----------
+  // 内置/全局：写走云函数（铁律 1 例外），对所有用户生效。
+  // 自建（cus_）：custom_exercises 为每用户私有，写走 db.updateLocalFirst（铁律 1 正道），
+  // 编辑内容与内置一致（名称/分类/别名/隐藏），效果仅作用于管理员自己的数据。
 
   openEdit(e) {
+    if (!this.data.adminMode) return;
     const id = e.currentTarget.dataset.id;
     const ex = lib.getExercise(id);
     if (!ex) return;
-    if (!ex.custom && !this.data.adminMode) return; // 内置/全局仅管理模式可编辑
     const cats = lib.listCategories();
     const cardio = ex.category === '有氧';
     let catIndex = cats.indexOf(ex.category);
@@ -211,10 +212,10 @@ Page({
     }
     const aliases = parseAliases(this.data.editAliases);
     if (aliases.join('') !== (t.aliases || []).join('')) patch.aliases = aliases;
-    if (!t.custom && this.data.editHidden !== t.hidden) patch.hidden = this.data.editHidden;
+    if (this.data.editHidden !== t.hidden) patch.hidden = this.data.editHidden;
     if (!Object.keys(patch).length) { this.setData({ editVisible: false }); return; }
     if (t.custom) {
-      // 自己的数据：本地先写，立即生效（隐藏不适用——自建动作要下架直接删除）
+      // 自己的数据：本地先写，立即生效
       db.updateLocalFirst(lib.CUSTOM_COLL, t.docId, patch);
       this.setData({ editVisible: false });
       this.render();

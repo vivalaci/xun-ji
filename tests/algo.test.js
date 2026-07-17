@@ -736,15 +736,22 @@ test('listCategories 含 order 里暂无动作的新类别（供归类），不�
   // 空类别不显示在分组里
   assert.ok(!Object.keys(exerciseLib.byCategory()).includes('前臂加强'));
 });
-test('自建动作 aliases 可缺省、编辑写入后参与搜索（D8）', () => {
+test('自建动作 aliases/hidden 可缺省、编辑写入后语义与内置一致（D8）', () => {
   store.setCache(OVR, []);
-  // 老数据无 aliases 字段：不报错、正常列举
+  // 老数据无 aliases/hidden 字段：不报错、正常列举
   store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀' }]);
   assert.deepStrictEqual(exerciseLib.getExercise('cus_hip').aliases, []);
-  // 编辑写入 aliases 后按别名可搜到
+  assert.ok(exerciseLib.allExercises().some((e) => e.id === 'cus_hip'));
+  // 写入 aliases 后按别名可搜到
   store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
   assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'cus_hip'));
   assert.ok(exerciseLib.byCategory()['臀'].some((e) => e.id === 'cus_hip' && e.custom));
+  // hidden 同内置语义：列举/搜索排除，按 id 仍解析，管理视图可见
+  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', hidden: true }]);
+  assert.ok(!exerciseLib.allExercises().some((e) => e.id === 'cus_hip'));
+  assert.ok(!exerciseLib.searchExercises('臀推').some((e) => e.id === 'cus_hip'));
+  assert.strictEqual(exerciseLib.getName('cus_hip'), '臀推');
+  assert.ok(exerciseLib.byCategory({ includeHidden: true })['臀'].some((e) => e.id === 'cus_hip' && e.hidden));
   store.setCache('custom_exercises', []);
 });
 test('缓存更新后合并 memo 失效（数据即时生效）', () => {
