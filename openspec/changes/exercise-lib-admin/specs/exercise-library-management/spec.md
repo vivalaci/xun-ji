@@ -1,3 +1,20 @@
+## ADDED Requirements
+
+### Requirement: 编辑自定义动作
+用户 SHALL 能编辑自己的自定义动作（`cus_`）的名称、分类与别名，经 `db.updateLocalFirst` 写 `custom_exercises`（本地先落，遵守铁律 1，不涉云函数、与管理模式无关）。动作 `id` MUST NOT 可改——按 id 的历史记录、曲线与 PR 聚合不受影响。分类选项 SHALL 取自当前合并后的类别列表（含管理员编排的新类别）。`aliases` 为可缺省新字段，无该字段的存量数据不受影响。
+
+#### Scenario: 改名与改分类
+- **WHEN** 用户把自建动作改名并改归到其它分类后保存
+- **THEN** 动作库与选择面板按新名称/新分类展示，该动作 id 的历史记录、曲线与 PR 聚合不变
+
+#### Scenario: 别名参与搜索
+- **WHEN** 用户给自建动作添加别名后按该别名搜索
+- **THEN** 命中该动作
+
+#### Scenario: 仅作用于本人
+- **WHEN** 用户编辑自定义动作
+- **THEN** 改动仅写入本人的 `custom_exercises` 数据，对其他用户不可见
+
 ## MODIFIED Requirements
 
 ### Requirement: 查看动作库

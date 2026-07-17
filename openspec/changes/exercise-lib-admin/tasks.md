@@ -1,9 +1,9 @@
 ## 1. 云环境准备（手工，开发者工具/控制台）
 
-- [ ] 1.1 云开发控制台新建集合 `exercise_overrides`，权限设为「所有用户可读，仅管理端可写」（客户端不可写）
+- [x] 1.1 云开发控制台新建集合 `exercise_overrides`，权限设为「所有用户可读，仅管理端可写」（客户端不可写）
 - [x] 1.2 建 `cloudfunctions/exerciseAdmin/`（`index.js` + `package.json`，依赖 `wx-server-sdk`）；确认 `project.config.json` 的 `cloudfunctionRoot` 已指向 `cloudfunctions/`
-- [ ] 1.3 取得管理员 openid：先部署一个回显 `cloud.getWXContext().OPENID` 的版本，本机调用一次拿到 openid（或云开发控制台查）
-- [ ] 1.4 在云函数配置中设环境变量 `ADMIN_OPENID`（不写进代码、不进 git）
+- [x] 1.3 取得管理员 openid：先部署一个回显 `cloud.getWXContext().OPENID` 的版本，本机调用一次拿到 openid（或云开发控制台查）
+- [x] 1.4 在云函数配置中设环境变量 `ADMIN_OPENID`（不写进代码、不进 git）
 
 ## 2. 云函数（权限门 + 写入）
 
@@ -33,6 +33,13 @@
 - [x] 5.3 管理模式：新增全局动作（名称/分类/别名）
 - [x] 5.4 管理模式：新增自定义类别 + 编排类别顺序（有氧固定末位、不可拖动）
 - [x] 5.5 失败态：云函数拒绝/网络失败时明确提示，不静默
+
+## 5b. 自定义动作编辑（实现期扩展，见 design D8）
+
+- [x] 5b.1 `utils/exerciseLib.js`：自建动作透传可缺省 `aliases` 字段（参与搜索）
+- [x] 5b.2 动作库页自建动作行加「编辑」（普通模式即可用）：改名/改分类/改别名，走 `db.updateLocalFirst`（id 不可改）
+- [x] 5b.3 `docs/usermanual.md` 第七节：自建动作可编辑（发版必需）
+- [x] 5b.4 单测：自建动作 aliases 搜索命中、缺字段不报错
 
 ## 6. 测试与验证
 

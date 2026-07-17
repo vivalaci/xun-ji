@@ -159,12 +159,15 @@ Page({
     }
   },
 
-  // ---------- 编辑内置/全局动作（管理模式） ----------
+  // ---------- 编辑动作 ----------
+  // 内置/全局：管理模式专用，写走云函数（铁律 1 例外）。
+  // 自建（cus_）：所有用户可用，自己的私有数据，写走 db.updateLocalFirst（铁律 1 正道）。
 
   openEdit(e) {
     const id = e.currentTarget.dataset.id;
     const ex = lib.getExercise(id);
-    if (!ex || ex.custom) return; // 自建动作归用户自己管，不在管理范围
+    if (!ex) return;
+    if (!ex.custom && !this.data.adminMode) return; // 内置/全局仅管理模式可编辑
     const cats = lib.listCategories();
     const cardio = ex.category === '有氧';
     let catIndex = cats.indexOf(ex.category);
@@ -173,6 +176,8 @@ Page({
       editVisible: true,
       editTarget: {
         id: ex.id,
+        docId: ex._id || '', // 自建动作文档 id（本地写用）
+        custom: !!ex.custom,
         name: ex.name,
         category: ex.category,
         aliases: ex.aliases || [],
@@ -206,8 +211,16 @@ Page({
     }
     const aliases = parseAliases(this.data.editAliases);
     if (aliases.join('') !== (t.aliases || []).join('')) patch.aliases = aliases;
-    if (this.data.editHidden !== t.hidden) patch.hidden = this.data.editHidden;
+    if (!t.custom && this.data.editHidden !== t.hidden) patch.hidden = this.data.editHidden;
     if (!Object.keys(patch).length) { this.setData({ editVisible: false }); return; }
+    if (t.custom) {
+      // 自己的数据：本地先写，立即生效（隐藏不适用——自建动作要下架直接删除）
+      db.updateLocalFirst(lib.CUSTOM_COLL, t.docId, patch);
+      this.setData({ editVisible: false });
+      this.render();
+      wx.showToast({ title: '已保存', icon: 'none' });
+      return;
+    }
     const ok = await this.adminCall(() => adminApi.savePatch(t.id, patch));
     if (ok) this.setData({ editVisible: false });
   },

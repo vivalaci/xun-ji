@@ -66,6 +66,7 @@ function merged() {
     id: c.id,
     name: c.name,
     category: c.category || '其他',
+    aliases: c.aliases || [], // 可缺省新字段（编辑自建动作时写入），参与搜索
     isMainLift: false,
     custom: true,
     _id: c._id
