@@ -213,14 +213,13 @@ async function ensureTemplatesSeeded() {
     const migrated = migrateTemplateGroups(res.data);
     return await ensurePresetVersion(migrated);
   }
-  // 云端也空：播种全部预设并置版本
-  const created = [];
-  for (const tpl of PRESET_TEMPLATES) {
-    const r = await db().collection(COLL.TEMPLATES).add({
+  // 云端也空：并发播种全部预设并置版本（顺序由 order 字段决定、与写入先后无关，故并发安全）。
+  // 任一失败即整体 reject，交由调用页进入可重试的错误态（不在 db 层吞错）。
+  const created = await Promise.all(PRESET_TEMPLATES.map((tpl) =>
+    db().collection(COLL.TEMPLATES).add({
       data: Object.assign({ createTime: db().serverDate() }, tpl)
-    });
-    created.push(Object.assign({ _id: r._id }, tpl));
-  }
+    }).then((r) => Object.assign({ _id: r._id }, tpl))
+  ));
   store.setCache(COLL.TEMPLATES, created);
   await ensurePrefs({});
   updatePrefs({ presetVersion: PRESET_VERSION });

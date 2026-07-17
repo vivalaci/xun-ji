@@ -2,6 +2,15 @@
 <view class="container">
   <view class="pick-title title">选择训练模板</view>
 
+  <!-- 加载态：首次播种/加载中，避免渲染空白 -->
+  <view wx:if="{{loading}}" class="pick-hint muted">加载模板中…</view>
+
+  <!-- 错误态：播种失败可重试 -->
+  <view wx:elif="{{loadError}}" class="pick-error">
+    <view class="muted">模板加载失败，请检查网络后重试。</view>
+    <button class="retry-btn" size="mini" bindtap="load">重试</button>
+  </view>
+
   <block wx:for="{{templateGroups}}" wx:key="name" wx:for-item="grp">
     <view class="group-title">{{grp.name}}</view>
     <view wx:if="{{groupNotes[grp.name]}}" class="group-note muted">{{groupNotes[grp.name]}}</view>

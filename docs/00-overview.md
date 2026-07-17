@@ -10,7 +10,7 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一~十七全部完成、真机通过并归档（…十六=按模板新建始终铺空组 template-new-blank-sets；十七=首页/身体页开放转发朋友圈分享 enable-sharing-home-body） |
+| ⑦ | 开发实现 | ✅ 迭代一~十八全部完成、真机通过并归档（…十七=首页/身体页开放转发朋友圈分享 enable-sharing-home-body；十八=修复选模板页首进空白 fix-template-picker-first-load） |
 | ⑧ | 测试上线 | ✅ 完成（ICP 备案通过、个人认证、审核通过，**已正式发布上线**）|
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
@@ -39,7 +39,9 @@
 >
 > 迭代十六 `template-new-blank-sets`（代码完成 + 真机通过）：按模板新建训练取消历史值预填、始终按 `targetSets` 铺空组（保留次数区间提示），有氧亦不预填；配合既有「未填补 0 + 完全空白拦截」杜绝"未练却存上次数据"。改 2 主 spec（template-management/cardio-tracking），仅 `buildFromTemplate` 取数层、不新增集合。
 >
-> 迭代十七 `enable-sharing-home-body`（代码完成 + 待真机）：首页（`pages/curve/curve`）与身体页（`pages/body/body`）开放转发好友/群 + 朋友圈分享——各加 `onShareAppMessage`/`onShareTimeline`，`onShow` 内 `wx.showShareMenu` 点亮「···」入口，落点各自页面；分享封面用固定品牌图（`assets/share/cover-5x4.png` + `cover-1x1.png`）而非页面截图，避免身体页把体重/体脂数字带进缩略图；其它页面维持不可转发。新增主 spec `page-sharing`，纯客户端不涉及云数据。
+> 迭代十七 `enable-sharing-home-body`（代码完成 + 真机通过）：首页（`pages/curve/curve`）与身体页（`pages/body/body`）开放转发好友/群 + 朋友圈分享——各加 `onShareAppMessage`/`onShareTimeline`，`onShow` 内 `wx.showShareMenu` 点亮「···」入口，落点各自页面；分享封面用固定品牌图（`assets/share/cover-5x4.png` + `cover-1x1.png`）而非页面截图，避免身体页把体重/体脂数字带进缩略图；其它页面维持不可转发。新增主 spec `page-sharing`，纯客户端不涉及云数据。
+>
+> 迭代十八 `fix-template-picker-first-load`（代码完成 + 待真机）：修复新用户选模板页首进空白、返回重进才有——① 选模板页（`pages/workout/pick`）加加载/错误态，`onLoad` 走 `load()` 不吞错、`onShow` 仅缓存有数据时刷新，不再渲染空白；② `db.ensureTemplatesSeeded` 云端为空播种由串行改 `Promise.all` 并发（`order` 字段定序、并发安全）；③ 播种失败进错误态可「重试」、`db` 层如实抛错；④ `app.js onLaunch` 预热播种。改主 spec `template-management`，不改集合字段、无迁移。
 
 ## 文档索引
 

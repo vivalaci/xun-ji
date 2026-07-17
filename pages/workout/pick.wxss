@@ -26,3 +26,6 @@
 .tpl-right { gap: 4rpx; }
 .tpl-del { color: var(--danger); font-size: 24rpx; padding: 8rpx 12rpx; }
 .tpl-dot { width: 20rpx; height: 20rpx; border-radius: 50%; flex: none; margin-left: 24rpx; }
+.pick-hint { padding: 40rpx 8rpx; font-size: 26rpx; }
+.pick-error { padding: 40rpx 8rpx; }
+.pick-error .retry-btn { margin: 20rpx 0 0; }

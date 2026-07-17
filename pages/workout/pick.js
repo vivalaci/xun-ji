@@ -17,14 +17,29 @@ function withDotColors(groups) {
 Page({
   data: {
     templateGroups: [],
-    groupNotes: templateLib.GROUP_NOTES // 分组循证说明
+    groupNotes: templateLib.GROUP_NOTES, // 分组循证说明
+    loading: true,   // 首次播种/加载中，未就绪不渲染空白
+    loadError: false // 播种失败，显示可重试错误态
   },
 
-  onShow() { this.render(); },
+  onLoad() { this.load(); },
 
-  async onLoad() {
-    try { await db.ensureTemplatesSeeded(); } catch (e) {}
-    this.render();
+  // onShow 不再无条件用空缓存覆盖：仅当缓存已有模板时刷新（回到本页时更新删除等状态），
+  // 否则保持 onLoad 的加载/错误态，避免抢在播种完成前渲染空白。
+  onShow() {
+    if (db.getCache(db.COLL.TEMPLATES).length) this.render();
+  },
+
+  // 加载流程：置加载态 → 确保预设已播种 → 成功渲染 / 失败进错误态。可由「重试」按钮复用。
+  async load() {
+    this.setData({ loading: true, loadError: false });
+    try {
+      await db.ensureTemplatesSeeded();
+      this.render();
+      this.setData({ loading: false });
+    } catch (e) {
+      this.setData({ loading: false, loadError: true });
+    }
   },
 
   render() {

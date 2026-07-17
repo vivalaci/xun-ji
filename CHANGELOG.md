@@ -97,3 +97,11 @@
 
 - **首页与身体页开放转发/朋友圈分享**：两页各加 `onShareAppMessage`（转发好友/群）+ `onShareTimeline`（朋友圈），`onShow` 内 `wx.showShareMenu` 点亮「···」两项入口，转发落点为各自页面路径；其它页面维持不可转发。
 - **分享卡片用固定品牌图**：`imageUrl` 指向 `assets/share/cover-5x4.png`（转发 5:4）/ `cover-1x1.png`（朋友圈 1:1），不用页面自动截图，避免身体页把体重/体脂数字带进缩略图。纯客户端、不涉及云数据。（change `enable-sharing-home-body`）
+
+## 迭代十八
+
+- **修复选模板页首进空白**：新用户首次点「+」进选模板页曾显示空白、需返回重进才有——三处根因一并修复。
+  - 选模板页（`pages/workout/pick`）加**加载/错误态**：未就绪显示「加载模板中…」，不再用空缓存渲染空白；`onLoad` 走 `load()` 不再吞错，`onShow` 仅缓存有数据时刷新，避免抢在播种前渲染。
+  - **首播种并发化**：`db.ensureTemplatesSeeded` 云端为空分支由 8 条串行 `await add` 改 `Promise.all` 并发（顺序由 `order` 字段决定、并发安全），数秒 → 约一次往返。
+  - **失败可重试**：播种失败不再静默，选模板页显示错误态 +「重试」按钮；`db` 层如实抛错。
+  - **启动预热**：`app.js onLaunch` 预热 `ensureTemplatesSeeded`（失败不影响主流程），点「+」前预设多已就绪。（change `fix-template-picker-first-load`）
