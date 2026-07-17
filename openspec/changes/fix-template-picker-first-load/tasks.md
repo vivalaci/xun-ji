@@ -19,6 +19,6 @@
 
 - [x] 4.1 语法校验：`Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }`
 - [x] 4.2 算法单测：`node tests/algo.test.js` 全绿（本次无纯函数变更，确认未回归）
-- [ ] 4.3 真机走查：**新账号**首次点「+」→ 显示加载态、秒级出模板、无需返回重进；断网/失败 → 错误态可重试
+- [x] 4.3 真机走查：**新账号**首次点「+」→ 显示加载态、秒级出模板、无需返回重进；断网/失败 → 错误态可重试
 - [x] 4.4 更新 `README.md` 进度区 + `docs/00-overview.md` 阶段表
-- [ ] 4.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
+- [x] 4.5 `openspec validate`，归档前 `/opsx:sync` + `/opsx:archive` 并打 tag
