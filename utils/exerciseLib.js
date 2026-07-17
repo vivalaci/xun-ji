@@ -62,21 +62,16 @@ function merged() {
   // 套 patch（内置与全局均可被改名/改类/改别名/隐藏）
   list = list.map((e) => (patchMap[e.id] ? applyPatch(e, patchMap[e.id]) : e));
   // 拼每用户自建
-  // aliases/hidden 为可缺省新字段（管理员编辑自建动作时写入）：
-  // 别名参与搜索；hidden 与内置同语义（列举/搜索排除，按 id 仍解析）
-  const customs = customList().map((c) => {
-    const out = {
-      id: c.id,
-      name: c.name,
-      category: c.category || '其他',
-      aliases: c.aliases || [],
-      isMainLift: false,
-      custom: true,
-      _id: c._id
-    };
-    if (c.hidden === true) out.hidden = true;
-    return out;
-  });
+  // aliases 为可缺省字段（升格面板可填），参与搜索
+  const customs = customList().map((c) => ({
+    id: c.id,
+    name: c.name,
+    category: c.category || '其他',
+    aliases: c.aliases || [],
+    isMainLift: false,
+    custom: true,
+    _id: c._id
+  }));
   const full = list.concat(customs);
   const byId = {};
   full.forEach((e) => { byId[e.id] = e; });

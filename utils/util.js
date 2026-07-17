@@ -135,6 +135,43 @@ function dayRepsValue(workout, ids) {
   return max;
 }
 
+// 动作 id 迁移计划（自建升格为全局用，见 exercise-lib-admin design D8）：
+// 找出所有引用 fromId 的训练记录/模板/曲线配置，生成改指 toId 的更新清单。
+// 纯函数不落库，由调用方逐条 updateLocalFirst / updatePrefs。
+// cus_ 动作是每用户私有的，只有本人数据引用它，故迁移只涉及自己的文档。
+function planExerciseIdMigration(fromId, toId, workouts, templates, prefs) {
+  const remapList = (list) => list.map((e) =>
+    e && e.exerciseId === fromId ? Object.assign({}, e, { exerciseId: toId }) : e
+  );
+  const pick = (docs) => {
+    const updates = [];
+    (docs || []).forEach((d) => {
+      if (((d && d.exercises) || []).some((e) => e && e.exerciseId === fromId)) {
+        updates.push({ id: d._id, data: { exercises: remapList(d.exercises) } });
+      }
+    });
+    return updates;
+  };
+  const workoutUpdates = pick(workouts);
+  const templateUpdates = pick(templates);
+  let prefsPatch = null;
+  if (prefs) {
+    const fromKey = 'ex_' + fromId; // 与 curveConfig.customKey 同一约定（单测锁定一致性）
+    const toKey = 'ex_' + toId;
+    const hit = ((prefs.curveOrder || []).indexOf(fromKey) >= 0) ||
+      (prefs.customCurves || []).some((c) => c && c.exerciseId === fromId);
+    if (hit) {
+      prefsPatch = {
+        curveOrder: (prefs.curveOrder || []).map((k) => (k === fromKey ? toKey : k)),
+        customCurves: (prefs.customCurves || []).map((c) =>
+          c && c.exerciseId === fromId ? Object.assign({}, c, { key: toKey, exerciseId: toId }) : c
+        )
+      };
+    }
+  }
+  return { workoutUpdates, templateUpdates, prefsPatch };
+}
+
 // 时间范围起始时间戳：'1M' | '3M' | '6M' | 'ALL'
 function rangeStartTs(range) {
   if (range === 'ALL') return 0;
@@ -156,5 +193,6 @@ module.exports = {
   buildPRMap,
   dayLiftValue,
   dayRepsValue,
+  planExerciseIdMigration,
   rangeStartTs
 };

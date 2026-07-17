@@ -36,10 +36,11 @@
 
 ## 5b. 自建动作升格为全局动作（管理员专属，实现期扩展，见 design D8）
 
-- [x] 5b.1 `utils/exerciseLib.js`：自建动作透传可缺省 `aliases`/`hidden` 字段（别名参与搜索；hidden 同内置语义）
-- [x] 5b.2 动作库页自建动作行在**管理模式**下提供「升格」（普通用户仅删除）：确认名称/分类/别名 → 云端新建 `gbl_` 全局动作 + 原 `cus_` 云写成功后自动隐藏（历史锚点，id 不改）；已隐藏自建可「取消隐藏」
-- [x] 5b.3 `docs/usermanual.md` 第七节：补删除对历史的影响提示（升格属管理员能力，不写入手册）
-- [x] 5b.4 单测：升格后状态（gbl_ 可见可搜 + 原 cus_ 隐藏但按 id 解析）、aliases 搜索命中、缺字段不报错
+- [x] 5b.1 `utils/exerciseLib.js`：自建动作透传可缺省 `aliases` 字段（别名参与搜索）
+- [x] 5b.2 动作库页自建动作行在**管理模式**下提供「升格」（普通用户仅删除）：确认名称/分类/别名 → 云端新建 `gbl_` 全局动作 → 本人训练记录/模板/曲线配置改指新 id → 删除原 `cus_`；云写失败不迁移不删除
+- [x] 5b.3 `utils/util.js`：`planExerciseIdMigration` 纯函数迁移计划器（workouts/templates/prefs，`ex_<id>` key 约定与 curveConfig.customKey 同源）
+- [x] 5b.4 `docs/usermanual.md` 第七节：补删除对历史的影响提示（升格属管理员能力，不写入手册）
+- [x] 5b.5 单测：迁移计划器（只挑引用文档、字段原样、prefs key 同源锁定、无引用空计划）、升格完成态（gbl_ 可见可搜、无占位退化）、aliases 搜索命中、缺字段不报错
 
 ## 6. 测试与验证
 

@@ -736,35 +736,71 @@ test('listCategories 含 order 里暂无动作的新类别（供归类），不�
   // 空类别不显示在分组里
   assert.ok(!Object.keys(exerciseLib.byCategory()).includes('前臂加强'));
 });
-test('自建动作 aliases/hidden 可缺省、编辑写入后语义与内置一致（D8）', () => {
+test('自建动作 aliases 可缺省、写入后参与搜索（D8）', () => {
   store.setCache(OVR, []);
-  // 老数据无 aliases/hidden 字段：不报错、正常列举
+  // 老数据无 aliases 字段：不报错、正常列举
   store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀' }]);
   assert.deepStrictEqual(exerciseLib.getExercise('cus_hip').aliases, []);
   assert.ok(exerciseLib.allExercises().some((e) => e.id === 'cus_hip'));
-  // 写入 aliases 后按别名可搜到
   store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
   assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'cus_hip'));
   assert.ok(exerciseLib.byCategory()['臀'].some((e) => e.id === 'cus_hip' && e.custom));
-  // hidden 同内置语义：列举/搜索排除，按 id 仍解析，管理视图可见
-  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', hidden: true }]);
-  assert.ok(!exerciseLib.allExercises().some((e) => e.id === 'cus_hip'));
-  assert.ok(!exerciseLib.searchExercises('臀推').some((e) => e.id === 'cus_hip'));
-  assert.strictEqual(exerciseLib.getName('cus_hip'), '臀推');
-  assert.ok(exerciseLib.byCategory({ includeHidden: true })['臀'].some((e) => e.id === 'cus_hip' && e.hidden));
   store.setCache('custom_exercises', []);
 });
-test('升格后状态：gbl_ 全体可见可搜，原 cus_ 隐藏但历史仍解析（D8）', () => {
-  // 模拟升格完成：exercise_overrides 里有全局版，custom_exercises 原文档 hidden
-  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
-  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', hidden: true }]);
-  const hip = exerciseLib.byCategory()['臀'];
-  assert.ok(hip.some((e) => e.id === 'gbl_hip' && e.global)); // 全局版对所有人可见
-  assert.ok(!hip.some((e) => e.id === 'cus_hip')); // 原自建不再重复出现
-  assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'gbl_hip'));
-  assert.strictEqual(exerciseLib.getName('cus_hip'), '臀推'); // 历史锚点仍解析
+
+console.log('util.planExerciseIdMigration（自建升格迁移，D8）:');
+test('只挑出引用 fromId 的训练/模板并整体改指 toId', () => {
+  const workouts = [
+    { _id: 'w1', exercises: [{ exerciseId: 'cus_hip', sets: [{ weight: 60, reps: 8 }] }, { exerciseId: 'bench', sets: [] }] },
+    { _id: 'w2', exercises: [{ exerciseId: 'bench', sets: [] }] }
+  ];
+  const templates = [
+    { _id: 't1', exercises: [{ exerciseId: 'cus_hip', targetSets: 4 }] },
+    { _id: 't2', exercises: [{ exerciseId: 'squat', targetSets: 3 }] }
+  ];
+  const plan = util.planExerciseIdMigration('cus_hip', 'gbl_9', workouts, templates, null);
+  assert.strictEqual(plan.workoutUpdates.length, 1);
+  assert.strictEqual(plan.workoutUpdates[0].id, 'w1');
+  assert.deepStrictEqual(plan.workoutUpdates[0].data.exercises.map((e) => e.exerciseId), ['gbl_9', 'bench']);
+  assert.deepStrictEqual(plan.workoutUpdates[0].data.exercises[0].sets, [{ weight: 60, reps: 8 }]); // 其余字段原样
+  assert.strictEqual(plan.templateUpdates.length, 1);
+  assert.strictEqual(plan.templateUpdates[0].data.exercises[0].exerciseId, 'gbl_9');
+  assert.strictEqual(plan.templateUpdates[0].data.exercises[0].targetSets, 4);
+  assert.strictEqual(plan.prefsPatch, null);
+});
+test('曲线配置 key/exerciseId 同步改指，key 约定与 curveConfig.customKey 同源', () => {
+  const prefs = {
+    curveOrder: ['bench', 'squat', 'deadlift', curveConfig.customKey('cus_hip')],
+    customCurves: [{ key: curveConfig.customKey('cus_hip'), exerciseId: 'cus_hip', slot: 0 }]
+  };
+  const plan = util.planExerciseIdMigration('cus_hip', 'gbl_9', [], [], prefs);
+  assert.ok(plan.prefsPatch);
+  assert.ok(plan.prefsPatch.curveOrder.includes(curveConfig.customKey('gbl_9')));
+  assert.ok(!plan.prefsPatch.curveOrder.includes(curveConfig.customKey('cus_hip')));
+  assert.deepStrictEqual(plan.prefsPatch.customCurves, [{ key: curveConfig.customKey('gbl_9'), exerciseId: 'gbl_9', slot: 0 }]);
+  // 迁移后曲线合成正常取到新 id
+  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_9', name: '臀推', category: '臀' }]);
+  const charts = curveConfig.composeCharts(plan.prefsPatch);
+  assert.ok(charts.some((c) => c.id === 'gbl_9' && c.name === '臀推'));
   store.setCache(OVR, []);
-  store.setCache('custom_exercises', []);
+});
+test('无任何引用时返回空计划（prefsPatch 为 null）', () => {
+  const plan = util.planExerciseIdMigration('cus_none', 'gbl_9',
+    [{ _id: 'w1', exercises: [{ exerciseId: 'bench' }] }],
+    [],
+    { curveOrder: ['bench'], customCurves: [] });
+  assert.deepStrictEqual(plan.workoutUpdates, []);
+  assert.deepStrictEqual(plan.templateUpdates, []);
+  assert.strictEqual(plan.prefsPatch, null);
+});
+test('升格完成态：gbl_ 全体可见可搜，原 cus_ 已删、迁移后无占位退化', () => {
+  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
+  store.setCache('custom_exercises', []); // 原自建已删除
+  const hip = exerciseLib.byCategory()['臀'];
+  assert.ok(hip.some((e) => e.id === 'gbl_hip' && e.global));
+  assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'gbl_hip'));
+  assert.strictEqual(exerciseLib.getName('gbl_hip'), '臀推'); // 迁移后历史引用 gbl_，正常解析
+  store.setCache(OVR, []);
 });
 test('缓存更新后合并 memo 失效（数据即时生效）', () => {
   store.setCache(OVR, []);

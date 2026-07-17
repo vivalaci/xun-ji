@@ -43,7 +43,7 @@
 >
 > 迭代十八 `fix-template-picker-first-load`（代码完成 + 待真机）：修复新用户选模板页首进空白、返回重进才有——① 选模板页（`pages/workout/pick`）加加载/错误态，`onLoad` 走 `load()` 不吞错、`onShow` 仅缓存有数据时刷新，不再渲染空白；② `db.ensureTemplatesSeeded` 云端为空播种由串行改 `Promise.all` 并发（`order` 字段定序、并发安全）；③ 播种失败进错误态可「重试」、`db` 层如实抛错；④ `app.js onLaunch` 预热播种。改主 spec `template-management`，不改集合字段、无迁移。
 >
-> 迭代十九 `exercise-lib-admin`（代码完成 + 待部署/真机）：动作库管理员内容管理——所有者在 App 内改名/改分类/改别名/隐藏内置动作、新增全局动作（`gbl_`）、编排类别顺序，改动经云端下发全体用户、不发版。项目首个云函数 `exerciseAdmin`（OPENID 权限门 + validate.js 纯函数校验，三大项禁隐藏）与首个共享集合 `exercise_overrides`（所有用户可读、仅管理端可写，只存相对 config 基线的差异）；`exerciseLib` 四层合并（内置+全局→patch→自建，memo）、hidden 从列举/搜索排除但按 id 仍解析（历史完整性）；管理写入走 `utils/adminApi.js` 直调云函数（铁律 1 唯一既定例外）、入口为动作库页计数文字连点 5 次（普通用户零云函数调用）。新增主 spec `exercise-lib-admin`、改 `exercise-library-management`。
+> 迭代十九 `exercise-lib-admin`（代码完成 + 待部署/真机）：动作库管理员内容管理——所有者在 App 内改名/改分类/改别名/隐藏内置动作、新增全局动作（`gbl_`）、编排类别顺序，改动经云端下发全体用户、不发版。项目首个云函数 `exerciseAdmin`（OPENID 权限门 + validate.js 纯函数校验，三大项禁隐藏）与首个共享集合 `exercise_overrides`（所有用户可读、仅管理端可写，只存相对 config 基线的差异）；`exerciseLib` 四层合并（内置+全局→patch→自建，memo）、hidden 从列举/搜索排除但按 id 仍解析（历史完整性）；管理写入走 `utils/adminApi.js` 直调云函数（铁律 1 唯一既定例外）、入口为动作库页计数文字连点 5 次（普通用户零云函数调用）。管理员另可把自建动作**升格**为全局动作：新建 `gbl_` + 本人训练/模板/曲线引用整体改指新 id（`util.planExerciseIdMigration`，曲线连续不分段）+ 删除原 `cus_`；普通用户对自建仅删除（design D8）。新增主 spec `exercise-lib-admin`、改 `exercise-library-management`。
 
 ## 文档索引
 

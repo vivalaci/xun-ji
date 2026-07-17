@@ -1,23 +1,19 @@
 ## ADDED Requirements
 
 ### Requirement: 自建动作升格为全局动作（管理员）
-自定义动作（`cus_`）对普通用户 SHALL 仅提供删除，MUST NOT 提供编辑入口。管理模式下自建动作 SHALL 提供「升格」：管理员确认/修改名称、分类、别名后保存，系统 SHALL 先经 `exerciseAdmin` 云函数新建 `gbl_` 全局动作（写入 `exercise_overrides`，对所有用户可见），云端写入成功后 SHALL 将原 `cus_` 文档标记 `hidden:true`（`db.updateLocalFirst`，仅作用于管理员自己的数据）。原 `cus_` id MUST NOT 被修改或复用——引用它的历史记录、曲线与 PR 聚合按原 id 不受影响（hidden 同语义：列举/搜索排除、按 id 仍解析）。云端写入失败时 MUST NOT 隐藏原自建动作。已隐藏的自建动作 SHALL 提供「取消隐藏」。分类选项 SHALL 取自当前合并后的类别列表（含管理员编排的新类别）。`aliases`/`hidden` 为 `custom_exercises` 可缺省新字段，无该字段的存量数据不受影响。
+自定义动作（`cus_`）对普通用户 SHALL 仅提供删除，MUST NOT 提供编辑入口。管理模式下自建动作 SHALL 提供「升格」：管理员确认/修改名称、分类、别名后保存，系统 SHALL 依次①经 `exerciseAdmin` 云函数新建 `gbl_` 全局动作（写入 `exercise_overrides`，对所有用户可见）；②云端写入成功后，将管理员本人所有引用原 `cus_` id 的数据改指新 `gbl_` id——训练记录、模板与曲线配置（迁移计划由纯函数 `util.planExerciseIdMigration` 生成，落库走 `db.updateLocalFirst`/`updatePrefs`）；③删除原 `cus_` 文档（`db.removeLocalFirst`）。迁移后按新 id 的历史记录、曲线与 PR 聚合 SHALL 完全连续（不分段、无占位退化）。云端写入失败时 MUST NOT 迁移、MUST NOT 删除原自建动作。`cus_` 为每用户私有，迁移仅触及管理员自己的文档，MUST NOT 影响其他用户数据。分类选项 SHALL 取自当前合并后的类别列表（含管理员编排的新类别）。`aliases` 为 `custom_exercises` 可缺省新字段，无该字段的存量数据不受影响。
 
 #### Scenario: 普通用户无升格/编辑入口
 - **WHEN** 普通用户（未进入管理模式）查看动作库中自己的自建动作
 - **THEN** 该行仅有「删除」，无「升格」或「编辑」入口
 
-#### Scenario: 升格后全体可见、原历史不破
+#### Scenario: 升格后全体可见、本人历史连续
 - **WHEN** 管理员把自建「臀推」升格（归入「臀」分类）并保存成功
-- **THEN** 所有用户的动作库「臀」分类下出现该全局动作（`gbl_`）；管理员引用原 `cus_` id 的历史记录仍显示「臀推」，列表中不再出现重复的自建项
+- **THEN** 所有用户的动作库「臀」分类下出现该全局动作（`gbl_`）；管理员的既有训练记录、模板、曲线配置均改指新 id，进步曲线与 PR 连续不分段；原自建项从列表消失，无「已删除动作」占位出现
 
 #### Scenario: 云端失败不动本地
 - **WHEN** 升格时云函数拒绝或网络失败
-- **THEN** 系统明确报错，不创建全局动作，原自建动作保持可见不被隐藏
-
-#### Scenario: 取消隐藏回退
-- **WHEN** 管理员对已隐藏（已升格）的自建动作执行「取消隐藏」
-- **THEN** 该自建动作恢复出现在自己的动作库中（如需完全撤销升格，可再隐藏对应全局动作）
+- **THEN** 系统明确报错，不创建全局动作，不迁移引用，原自建动作保持原样
 
 #### Scenario: 升格动作的别名参与搜索
 - **WHEN** 升格时定义了别名，任意用户按该别名搜索

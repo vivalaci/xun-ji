@@ -28,8 +28,7 @@
       </view>
       <view class="row ex-actions">
         <text wx:if="{{adminMode && !ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
-            <text wx:if="{{adminMode && ex.custom && !ex.hidden}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">升格</text>
-            <text wx:if="{{adminMode && ex.custom && ex.hidden}}" class="edit-btn" catchtap="onUnhideCustom" data-docid="{{ex._id}}">取消隐藏</text>
+            <text wx:if="{{adminMode && ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">升格</text>
         <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
       </view>
     </view>
@@ -51,8 +50,7 @@
           </view>
           <view class="row ex-actions">
             <text wx:if="{{adminMode && !ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
-            <text wx:if="{{adminMode && ex.custom && !ex.hidden}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">升格</text>
-            <text wx:if="{{adminMode && ex.custom && ex.hidden}}" class="edit-btn" catchtap="onUnhideCustom" data-docid="{{ex._id}}">取消隐藏</text>
+            <text wx:if="{{adminMode && ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">升格</text>
             <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
           </view>
         </view>
@@ -117,8 +115,8 @@
       </block>
       <text wx:else class="muted">有氧（固定）</text>
     </view>
-    <!-- 升格说明（自建）：保存即建全局动作并隐藏原自建 -->
-    <view wx:if="{{editTarget.custom}}" class="promote-note muted">保存后将成为全局动作，对所有用户可见；原自建动作自动隐藏，你的历史记录不受影响。</view>
+    <!-- 升格说明（自建）：建全局动作 + 本人引用改指新 id + 删除原自建 -->
+    <view wx:if="{{editTarget.custom}}" class="promote-note muted">保存后将成为全局动作，对所有用户可见；你的历史记录、模板与曲线会自动改指新动作（进步曲线连续），原自建动作删除。</view>
     <!-- 隐藏开关（内置/全局） -->
     <view wx:if="{{!editTarget.custom}}" class="field row between no-border">
       <view>
