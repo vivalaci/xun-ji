@@ -8,6 +8,8 @@
 .chart { width: 100%; height: 360rpx; }
 .chart-empty { width: 100%; height: 360rpx; display: flex; align-items: center; justify-content: center; font-size: 26rpx; }
 
+.guide-card { padding: 28rpx 32rpx; }
+
 .sec-title { font-size: 24rpx; margin: 24rpx 0 12rpx 8rpx; }
 .hist-item { padding: 24rpx 32rpx; }
 .hist-date { gap: 14rpx; }

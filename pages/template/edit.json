@@ -1,3 +1,7 @@
 {
-  "navigationBarTitleText": "编辑模板"
+  "navigationBarTitleText": "编辑模板",
+  "usingComponents": {
+    "exercise-thumb": "/components/exercise-thumb/exercise-thumb",
+    "exercise-viewer": "/components/exercise-viewer/exercise-viewer"
+  }
 }

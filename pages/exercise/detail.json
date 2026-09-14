@@ -1,3 +1,8 @@
 {
-  "navigationBarTitleText": "动作详情"
+  "navigationBarTitleText": "动作详情",
+  "usingComponents": {
+    "exercise-anim": "/components/exercise-anim/exercise-anim",
+    "exercise-guide": "/components/exercise-guide/exercise-guide",
+    "exercise-viewer": "/components/exercise-viewer/exercise-viewer"
+  }
 }

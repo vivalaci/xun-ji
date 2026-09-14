@@ -30,6 +30,7 @@
         <text wx:if="{{adminMode && !ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
             <text wx:if="{{adminMode && ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">升格</text>
         <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
+        <exercise-thumb exercise-id="{{ex.id}}" size="{{80}}" bind:enlarge="onEnlarge" />
       </view>
     </view>
   </view>
@@ -52,6 +53,7 @@
             <text wx:if="{{adminMode && !ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">编辑</text>
             <text wx:if="{{adminMode && ex.custom}}" class="edit-btn" catchtap="openEdit" data-id="{{ex.id}}">升格</text>
             <text wx:if="{{ex.custom}}" class="del-btn" catchtap="onDelete" data-docid="{{ex._id}}">删除</text>
+            <exercise-thumb exercise-id="{{ex.id}}" size="{{80}}" bind:enlarge="onEnlarge" />
           </view>
         </view>
       </view>
@@ -60,6 +62,9 @@
     <!-- 动作计数（连点 5 次为管理入口手势，对普通用户仅是计数文字） -->
     <view class="lib-footer muted" bindtap="onSecretTap">共 {{total}} 个动作</view>
   </block>
+
+  <!-- 示意图放大层（所在容器无 transform，fixed 可铺满全屏） -->
+  <exercise-viewer exercise-id="{{viewerId}}" bind:close="closeViewer" />
 </view>
 
 <view class="fab" bindtap="openAdd">+</view>

@@ -35,7 +35,10 @@ Component({
         this.setData({ playing: true });
       }
     },
-    onFrameError() { this.setData({ failed: true }); },
+    onFrameError() {
+      if (!this.data.failed) this.triggerEvent('fail', { id: this.data.exerciseId }); // 供页面收起空卡片
+      this.setData({ failed: true });
+    },
     onTap() {
       if (this.data.tappable) this.triggerEvent('enlarge', { id: this.data.exerciseId });
     }

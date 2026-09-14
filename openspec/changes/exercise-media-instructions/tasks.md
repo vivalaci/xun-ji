@@ -13,23 +13,23 @@
 - [x] 2.3 `config/exerciseInstructions.js`：94 条要领（93 力量 + `seal_row`），每条 `steps` 3–5、`tips` 1–2，按 design D4 用词口径与本应用动作实际形态撰写；有氧不写
 - [x] 2.4 `utils/exerciseMedia.js`：`framesFor(id)`、`thumbFor(id)`、`instructionsFor(id)`（无则 `[]`/`''`/`null`）
 - [x] 2.5 `utils/exerciseLib.js`：`displayName(id, snapshot)`（可解析→当前名；否则快照；否则「已删除动作」）
-- [ ] 2.6 `tests/algo.test.js` 补用例：媒体路径与无图（`cus_`/`gbl_`/`seal_row`）、要领存在性与格式（94 条、步骤 3–5、要点 1–2、不含「重复所需」「正握」「反握」「腿筋」「雪橇」「长凳」）、`displayName` 三级回退、旧名别名搜索命中、「斜托弯举」只命中牧师凳弯举、「海豹划船」只命中 `seal_row`、内置 101 且 id 唯一
+- [x] 2.6 `tests/algo.test.js` 补用例：媒体路径与无图（`cus_`/`gbl_`/`seal_row`）、要领存在性与格式（94 条、步骤 3–5、要点 1–2、不含「重复所需」「正握」「反握」「腿筋」「雪橇」「长凳」）、`displayName` 三级回退、旧名别名搜索命中、「斜托弯举」只命中牧师凳弯举、「海豹划船」只命中 `seal_row`、内置 101 且 id 唯一
 - [ ] 2.7 【用户】过目 94 条要领（我给一份按分类排好的清单）
 
 ## 3. 组件（首个 `components/` 目录）
 
-- [ ] 3.1 `components/exercise-thumb`：静态缩略图，`lazy-load`，`binderror` 隐藏，无图不渲染；`catchtap` 触发 `enlarge`（带 id），不冒泡到行点击
-- [ ] 3.2 `components/exercise-anim`：三层 `<image>` 叠放，CSS keyframes 乒乓 0→1→2→1（每步 450ms、硬切），三帧 `bindload` 齐后才播、之前静显第 0 帧，任一 `binderror` 整块隐藏；点击触发 `enlarge`
-- [ ] 3.3 `components/exercise-viewer`：全屏遮罩（z-index 高于添加动作面板），动作名 + `exercise-anim` 大图 + 要领（有才显示），点遮罩或关闭按钮触发 `close`
+- [x] 3.1 `components/exercise-thumb`：静态缩略图，`lazy-load`，`binderror` 隐藏，无图不渲染；`catchtap` 触发 `enlarge`（带 id），不冒泡到行点击
+- [x] 3.2 `components/exercise-anim`：三层 `<image>` 叠放，CSS keyframes 乒乓 0→1→2→1（每步 450ms、硬切），三帧 `bindload` 齐后才播、之前静显第 0 帧，任一 `binderror` 整块隐藏；点击触发 `enlarge`
+- [x] 3.3 `components/exercise-viewer`：全屏遮罩（z-index 高于添加动作面板），动作名 + `exercise-anim` 大图 + 要领（有才显示），点遮罩或关闭按钮触发 `close`（实现时要领区抽为 `components/exercise-guide`，详情页与放大层复用）
 
 ## 4. 页面接入
 
-- [ ] 4.1 动作库页 `pages/exercise/library`：分类分组行与搜索结果行右端加缩略图（与管理模式的编辑/升格/删除按钮共存），页面根部放 viewer
-- [ ] 4.2 训练编辑页 `pages/workout/edit`：添加动作面板的分类列表行与搜索结果行加缩略图，页面根部放 viewer；关闭 viewer 后面板状态（分类、搜索词）保持
-- [ ] 4.3 模板编辑页 `pages/template/edit`：同 4.2
-- [ ] 4.4 详情页 `pages/exercise/detail`：曲线卡下方加 `exercise-anim` + 要领（步骤/要点），点击示意图打开 viewer；硬拉家族用锚点 id；无图无要领不渲染该区
-- [ ] 4.5 `displayName` 替换 4 处：`workout/edit.js` 力量 `loadExisting`、`buildCardioItem`（传入 prev 的 name）、`workout/list.js` 有氧摘要、`exercise/detail.js` 变式标注；保存仍写 `name`
-- [ ] 4.6 各页 `.json` 注册 `usingComponents`；确认首页「添加曲线」选择器未受影响
+- [x] 4.1 动作库页 `pages/exercise/library`：分类分组行与搜索结果行右端加缩略图（与管理模式的编辑/升格/删除按钮共存），页面根部放 viewer
+- [x] 4.2 训练编辑页 `pages/workout/edit`：添加动作面板的分类列表行与搜索结果行加缩略图，页面根部放 viewer；关闭 viewer 后面板状态（分类、搜索词）保持
+- [x] 4.3 模板编辑页 `pages/template/edit`：同 4.2
+- [x] 4.4 详情页 `pages/exercise/detail`：曲线卡下方加 `exercise-anim` + 要领（步骤/要点），点击示意图打开 viewer；硬拉家族用锚点 id；无图无要领不渲染该区
+- [x] 4.5 `displayName` 替换 4 处：`workout/edit.js` 力量 `loadExisting`、`buildCardioItem`（传入 prev 的 name）、`workout/list.js` 有氧摘要、`exercise/detail.js` 变式标注；保存仍写 `name`
+- [x] 4.6 各页 `.json` 注册 `usingComponents`；确认首页「添加曲线」选择器未受影响
 
 ## 5. 文档
 

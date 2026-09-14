@@ -26,7 +26,8 @@ Page({
     searching: false,
 
     unitOptions: ['kg', 'lb'],
-    saving: false
+    saving: false,
+    viewerId: ''             // 示意图放大层（空 = 关闭）
   },
 
   // 三路分派：id=编辑既有；templateId=按模板新建；blank/其他=空白力量训练。
@@ -79,7 +80,7 @@ Page({
     const mainUnit = unit.currentUnit();
     const exercises = (w.exercises || []).map((ex) => ({
       exerciseId: ex.exerciseId,
-      name: ex.name,
+      name: lib.displayName(ex.exerciseId, ex.name), // 按 id 取当前名（跟随改名），已删则用保存时的名字
       loadType: (lib.getExercise(ex.exerciseId) || {}).loadType || 'weighted',
       unit: mainUnit,
       sets: (ex.sets || []).map((s) => ({ weight: unit.toDisplayWeight(s.weight, mainUnit), reps: s.reps }))
@@ -120,7 +121,7 @@ Page({
     const metric2 = metrics[1] || 'distance';
     return {
       exerciseId,
-      name: meta.name || exerciseId,
+      name: lib.displayName(exerciseId, prev && prev.name), // 已删动作回退到记录里保存的名字
       kind: 'cardio',
       metric2,
       label2: metric2 === 'floors' ? '层数' : '距离(km)',
@@ -265,6 +266,9 @@ Page({
   },
   clearSearch() { this.setData({ searchKw: '', searchResults: [], searching: false }); },
   onCustomInput(e) { this.setData({ customName: e.detail.value }); },
+  // 面板内缩略图 → 放大层（只动 viewerId，不影响面板的分类/搜索词）
+  onEnlarge(e) { this.setData({ viewerId: e.detail.id }); },
+  closeViewer() { this.setData({ viewerId: '' }); },
   pickFromLib(e) {
     const { id, name } = e.currentTarget.dataset;
     this.addExercise(id, name);

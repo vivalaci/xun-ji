@@ -1,3 +1,7 @@
 {
-  "navigationBarTitleText": "动作库"
+  "navigationBarTitleText": "动作库",
+  "usingComponents": {
+    "exercise-thumb": "/components/exercise-thumb/exercise-thumb",
+    "exercise-viewer": "/components/exercise-viewer/exercise-viewer"
+  }
 }

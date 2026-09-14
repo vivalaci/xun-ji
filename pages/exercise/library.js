@@ -38,7 +38,9 @@ Page({
     // 类别编排面板（管理模式）
     catPanelVisible: false,
     catList: [],
-    newCatName: ''
+    newCatName: '',
+    // 示意图放大层（空 = 关闭）
+    viewerId: ''
   },
 
   onShow() {
@@ -117,6 +119,10 @@ Page({
   goDetail(e) {
     wx.navigateTo({ url: `/pages/exercise/detail?id=${e.currentTarget.dataset.id}` });
   },
+
+  // 缩略图 → 放大层（缩略图 catchtap，不会同时触发进详情）
+  onEnlarge(e) { this.setData({ viewerId: e.detail.id }); },
+  closeViewer() { this.setData({ viewerId: '' }); },
 
   // ---------- 管理入口（隐藏手势：计数文字 1.5s 内连点 5 次） ----------
 

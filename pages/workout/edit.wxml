@@ -108,7 +108,10 @@
     <view wx:for="{{searchResults}}" wx:key="id"
           class="ex-pick row between" bindtap="pickFromLib" data-id="{{item.id}}" data-name="{{item.name}}">
       <text>{{item.name}}<text wx:if="{{item.isMainLift}}" class="main-badge">主项</text></text>
-      <text class="ex-cat muted">{{item.category}}</text>
+      <view class="row" style="gap: 20rpx;">
+        <text class="ex-cat muted">{{item.category}}</text>
+        <exercise-thumb exercise-id="{{item.id}}" size="{{72}}" bind:enlarge="onEnlarge" />
+      </view>
     </view>
   </scroll-view>
 
@@ -121,8 +124,9 @@
     </scroll-view>
     <scroll-view scroll-y class="ex-list">
       <view wx:for="{{libByCategory[categories[activeCategory]]}}" wx:key="id"
-            class="ex-pick" bindtap="pickFromLib" data-id="{{item.id}}" data-name="{{item.name}}">
-        {{item.name}}<text wx:if="{{item.isMainLift}}" class="main-badge">主项</text>
+            class="ex-pick row between" bindtap="pickFromLib" data-id="{{item.id}}" data-name="{{item.name}}">
+        <text>{{item.name}}<text wx:if="{{item.isMainLift}}" class="main-badge">主项</text></text>
+        <exercise-thumb exercise-id="{{item.id}}" size="{{72}}" bind:enlarge="onEnlarge" />
       </view>
     </scroll-view>
   </view>
@@ -131,3 +135,6 @@
     <view class="custom-add" bindtap="addCustom">添加</view>
   </view>
 </view>
+
+<!-- 示意图放大层：挂页面根部（面板带 transform，嵌在面板内的 fixed 会被裁切）；关闭后面板状态不变 -->
+<exercise-viewer exercise-id="{{viewerId}}" bind:close="closeViewer" />
