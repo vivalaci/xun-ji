@@ -14,7 +14,7 @@
 - [x] 2.4 `utils/exerciseMedia.js`：`framesFor(id)`、`thumbFor(id)`、`instructionsFor(id)`（无则 `[]`/`''`/`null`）
 - [x] 2.5 `utils/exerciseLib.js`：`displayName(id, snapshot)`（可解析→当前名；否则快照；否则「已删除动作」）
 - [x] 2.6 `tests/algo.test.js` 补用例：媒体路径与无图（`cus_`/`gbl_`/`seal_row`）、要领存在性与格式（94 条、步骤 3–5、要点 1–2、不含「重复所需」「正握」「反握」「腿筋」「雪橇」「长凳」）、`displayName` 三级回退、旧名别名搜索命中、「斜托弯举」只命中牧师凳弯举、「海豹划船」只命中 `seal_row`、内置 101 且 id 唯一
-- [ ] 2.7 【用户】过目 94 条要领（我给一份按分类排好的清单）
+- [x] 2.7 【用户】过目 94 条要领（我给一份按分类排好的清单）
 
 ## 3. 组件（首个 `components/` 目录）
 
@@ -44,5 +44,5 @@
 - [x] 6.2 算法单测：`node tests/algo.test.js` 全绿
 - [x] 6.3 `openspec validate exercise-media-instructions`
 - [x] 6.4 输出真机走查清单交给用户（含换账号/清缓存验证云存储读权限、面板内放大返回、离线无破图、改名与老记录显示、海豹划船无图）
-- [ ] 6.5 【用户】真机走查
+- [x] 6.5 【用户】真机走查
 - [ ] 6.6 【用户】`/opsx:sync` + `/opsx:archive`、push、开 PR、合并、打 tag
