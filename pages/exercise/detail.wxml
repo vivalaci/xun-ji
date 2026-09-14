@@ -13,6 +13,12 @@
     <view wx:else class="chart-empty muted">{{chartHint}}</view>
   </view>
 
+  <!-- 示意图（自动循环，点击放大）+ 要领；无图且无要领整块不渲染 -->
+  <view wx:if="{{showGuideCard}}" class="card guide-card">
+    <exercise-anim exercise-id="{{mediaId}}" size="md" bind:enlarge="onEnlarge" bind:fail="onMediaFail" />
+    <exercise-guide exercise-id="{{mediaId}}" />
+  </view>
+
   <view class="sec-title muted">历史记录</view>
   <view wx:if="{{history.length === 0}}" class="empty">暂无该动作的训练记录</view>
   <view wx:for="{{history}}" wx:key="key" class="card hist-item">
@@ -27,3 +33,6 @@
   </view>
 
 </view>
+
+<!-- 示意图放大层 -->
+<exercise-viewer exercise-id="{{viewerId}}" bind:close="closeViewer" />

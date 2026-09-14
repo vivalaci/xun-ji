@@ -1,0 +1,11 @@
+{
+  "name": "xunji-media-tools",
+  "private": true,
+  "description": "开发期脚本：动作示意图 SVG 母版 → 小程序用 PNG（不打进小程序包）",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "sharp": "^0.35.4"
+  }
+}

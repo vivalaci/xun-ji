@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "exercise-anim": "../exercise-anim/exercise-anim",
+    "exercise-guide": "../exercise-guide/exercise-guide"
+  }
+}

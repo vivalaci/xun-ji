@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-09-14（**已正式发布上线**；迭代一~十九全部归档，无活跃 change，进入持续迭代阶段）。
+> 其余文档为细节，本文是入口。最后更新：2026-09-14（**已正式发布上线**；迭代一~二十全部归档）。
 
 ---
 
@@ -12,13 +12,13 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑧测试上线 **全部完成**；**已正式发布上线** |
-| 开发 | 迭代一~十九全部代码完成、真机通过并归档；**无活跃 change** |
-| 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、15 个能力规格 |
+| 开发 | 迭代一~二十全部代码完成、真机通过并归档 |
+| 代码量 | 101 个动作（含 7 有氧）、94 条中文要领、8 套预设、14 页面、4 个自定义组件、16 个能力规格 |
 | 质量 | 算法单测全过；全 js `node --check` 通过 |
 | 上线 | **已发布**。个人认证 + ICP 备案通过、审核通过、正式发布；后续走迭代更新 |
-| git | 干净；tag 见 `git tag`（最新 `move-body-trend-to-body-page`/`template-new-blank-sets`）；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `exercise-media-instructions`）；最新 commit 见 `git log` |
 
-> 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。进入持续迭代更新阶段，见第八节。
+> 无活跃 change。迭代一~二十全部归档。进入持续迭代更新阶段，见第八节。
 
 ---
 
@@ -31,10 +31,11 @@
 5. **图表只用 `utils/chart.js`**（Canvas 2D，无第三方库），缺值断线不补零。
 6. **4 个核心集合既有字段不改**；新字段必须可缺省 + 写迁移方案。
 7. 凡改面向用户的功能，归档前必须同步 [usermanual.md](./usermanual.md)（发版必需）。
+8. **可复用展示组件放 `components/<组件名>/`**（迭代二十起），在页面 `.json` 的 `usingComponents` 注册；组件只做展示、数据经 `utils/` 纯函数取，样式自包含（组件不继承 app.wxss 的类）。
 
 ---
 
-## 三、当前能力清单（`openspec/specs/` 15 个，权威"App 现在做什么"）
+## 三、当前能力清单（`openspec/specs/` 16 个，权威"App 现在做什么"）
 
 | 能力 | 是什么 | 主要页面 |
 |------|--------|---------|
@@ -42,8 +43,9 @@
 | `training-calendar` | 首页训练月历，按类型配色、点天看详情 | curve/（首页顶部）|
 | `curve-customization` | 首页曲线可定制：长按编辑排序、自定义曲线≤2、存 user_prefs | curve/ |
 | `pr-tracking` | 主力工作组重量创新高自动标 🏆 | 列表、exercise/detail |
-| `exercise-detail` | 单动作进步曲线 + 历史 | exercise/detail |
-| `exercise-library-management` | 100 动作（内置+全局覆盖层+自建）分类/搜索/增删/升格 | exercise/library |
+| `exercise-detail` | 单动作进步曲线 + 历史；曲线下方示意图 + 要领 | exercise/detail |
+| `exercise-guide` | 动作示意图（列表缩略图 / 详情循环 / 放大层）+ 中文要领，云存储取图、无图降级 | exercise/library、exercise/detail、workout/edit、template/edit |
+| `exercise-library-management` | 101 动作（内置+全局覆盖层+自建）分类/搜索/增删/升格；规范中文名；历史动作名按 id 实时解析（快照回退） | exercise/library |
 | `exercise-lib-admin` | 管理员动作库内容管理：改名/改分类/别名/隐藏/全局新增/删除/类别编排（云函数权限门） | exercise/library |
 | `body-tracking` | 体重/体脂/腰围录入 + 「身体」页顶部三线合并趋势图（无标题） | body/ |
 | `unit-settings` | 主单位 kg/lb（全局显示+默认输入）| settings/ |
@@ -77,6 +79,7 @@
 - **迭代十七**（tag `enable-sharing-home-body`）：首页与身体页开放转发好友/群 + 朋友圈分享——分享封面用固定品牌图（不带个人数据），其它页面维持不可转发。新增主 spec `page-sharing`。
 - **迭代十八**（tag `fix-template-picker-first-load`）：修复新用户选模板页首进空白——加载/错误态、播种并发化、失败可重试。改主 spec `template-management`。
 - **迭代十九**（tag `exercise-lib-admin`）：动作库管理员内容管理——所有者在 App 内改名/改分类/改别名/隐藏内置动作、新增全局动作（`gbl_`）、编排类别顺序，改动经云端下发全体用户、不发版。项目首个云函数 `exerciseAdmin`（OPENID 权限门）与首个共享集合 `exercise_overrides`（所有用户可读、仅管理端可写）；管理员另可把自建动作升格为全局动作（引用整体迁移，曲线连续）。新增主 spec `exercise-lib-admin`、改 `exercise-library-management`。
+- **迭代二十**（tag `exercise-media-instructions`）：动作示意图（workout-guide/Everkinetic 线稿，已重新着色；存微信云存储；列表静态缩略图 + 详情页循环 + 放大层；首批自定义组件 `components/`）+ 94 条中文要领统一重写 + 12 个内置动作规范中文名、新增海豹划船 `seal_row` + 历史动作名按 id 实时解析（快照回退）+ 出图脚本 `tools/media`。新增主 spec `exercise-guide`，改 `exercise-detail`/`exercise-library-management`/`in-app-usermanual`。
 
 ---
 
@@ -101,12 +104,15 @@
 config/exercises.js   动作库（含 id/元数据/有氧 kind+metrics）
 config/templates.js   8 套预设（带目标组次）
 config/manual.js      使用说明内容（结构化，与 docs/usermanual.md 同源）
+config/exerciseMedia.js         示意图云存储前缀 + 有图动作清单
+config/exerciseInstructions.js  中文要领（94 条，steps + tips）
 utils/db.js           数据访问层（缓存优先读 + 本地先写队列 + 模板播种/版本重刷）
 utils/store.js        本地存储底层（缓存 + 队列 + settings）
 utils/util.js         主力工作组重量、PR 现算、容量、日期
 utils/unit.js         单位换算层（主单位 + 显式单位族 toStoreFrom/toDisplayIn）
 utils/exerciseLib.js  动作合并查询（内置+全局覆盖层+自建，按 id 取名、搜索、分类）
 utils/adminApi.js     管理写入通道（exerciseAdmin 云函数薄封装）
+utils/exerciseMedia.js  示意图取图（framesFor/thumbFor）/ 要领取数纯函数
 utils/templateLib.js  模板分组/迁移/分组循证说明（GROUP_NOTES）
 utils/curveConfig.js  曲线配置纯函数（合成/排序/增删/槽位配色）
 utils/calendar.js     训练日历纯函数（月网格/聚合/类型配色）
@@ -119,6 +125,9 @@ pages/template/       模板管理 / 编辑
 pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
 cloudfunctions/exerciseAdmin/  云函数：全局动作库管理写入（权限门 + 校验纯函数）
+components/           可复用展示组件：exercise-thumb / exercise-anim / exercise-guide / exercise-viewer
+assets/exercise-media/  示意图 SVG 母版（PNG 由 tools/media 生成、传云存储，不进 git）
+tools/media/          开发期出图脚本（sharp，不打包）
 tests/algo.test.js    纯函数单测
 ```
 
@@ -149,7 +158,7 @@ node tests/algo.test.js
 
 进入**持续迭代更新**阶段：后续每个功能/修复仍走 OpenSpec change + PR 分支流程（见第七节与 [[feedback-pr-flow]]），归档打 tag；发版按 [07 发布流程](./07-development-guide.md) 上传 → 提交审核 → 发布。
 
-开发侧迭代一~十九均已归档打 tag，无遗留 change。备好但未开工的料：动作示意图（`assets/exercise-media`、`docs/11`、`docs/12`、media-map）。
+开发侧迭代一~二十均已归档打 tag。后续可补：海豹划船示意图（上游无素材，可按 [docs/12](./12-illustration-production-guide.md) 自制）。
 
 ---
 

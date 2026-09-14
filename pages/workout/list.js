@@ -2,6 +2,7 @@
 const db = require('../../utils/db.js');
 const util = require('../../utils/util.js');
 const unit = require('../../utils/unit.js');
+const lib = require('../../utils/exerciseLib.js');
 
 const PAGE_SIZE = 30;
 
@@ -72,7 +73,7 @@ Page({
         // 有氧摘要：每个活动 "名称 时长min·距离km/层数"
         base.cardioText = (w.exercises || []).map((ex) => {
           const second = ex.distance != null ? `${ex.distance}km` : (ex.floors != null ? `${ex.floors}层` : '');
-          return `${ex.name} ${ex.duration || 0}min${second ? ' · ' + second : ''}`;
+          return `${lib.displayName(ex.exerciseId, ex.name)} ${ex.duration || 0}min${second ? ' · ' + second : ''}`;
         }).join('；');
         return base;
       }

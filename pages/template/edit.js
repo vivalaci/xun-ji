@@ -16,7 +16,8 @@ Page({
     searchKw: '',
     searchResults: [],
     searching: false,
-    saving: false
+    saving: false,
+    viewerId: ''            // 示意图放大层（空 = 关闭）
   },
 
   onLoad(options) {
@@ -71,6 +72,9 @@ Page({
     this.setData({ searchKw: kw, searchResults: res || [], searching: res !== null });
   },
   clearSearch() { this.setData({ searchKw: '', searchResults: [], searching: false }); },
+  // 面板内缩略图 → 放大层（只动 viewerId，不影响面板的分类/搜索词）
+  onEnlarge(e) { this.setData({ viewerId: e.detail.id }); },
+  closeViewer() { this.setData({ viewerId: '' }); },
   pickFromLib(e) {
     const { id, name } = e.currentTarget.dataset;
     if (this.data.exercises.some((x) => x.exerciseId === id)) {

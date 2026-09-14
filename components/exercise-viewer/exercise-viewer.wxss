@@ -1,0 +1,48 @@
+/* components/exercise-viewer —— z-index 高于「添加动作」面板（mask 200 / panel 201） */
+.viewer-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 24, 39, 0.55);
+  z-index: 300;
+}
+
+.viewer-card {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 88vh;
+  box-sizing: border-box;
+  padding: 28rpx 32rpx 32rpx;
+  background: #fff;
+  border-radius: 28rpx;
+  display: flex;
+  flex-direction: column;
+  z-index: 301;
+}
+
+.viewer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.viewer-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+.viewer-close {
+  font-size: 28rpx;
+  color: var(--accent, #1D4ED8);
+  padding: 8rpx 0 8rpx 32rpx;
+}
+
+.viewer-guide {
+  max-height: 34vh;
+  margin-top: 16rpx;
+}

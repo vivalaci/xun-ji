@@ -1,0 +1,44 @@
+/* components/exercise-guide —— 组件内不继承 app.wxss 的类，样式自包含（CSS 变量带兜底色） */
+.guide { padding-top: 4rpx; }
+
+.g-title {
+  font-size: 24rpx;
+  color: var(--muted, #6B7280);
+  margin: 12rpx 0 12rpx;
+}
+.g-title-tips { margin-top: 24rpx; }
+
+.g-line {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
+.g-idx {
+  flex: none;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  margin: 6rpx 16rpx 0 0;
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--accent, #1D4ED8);
+  background: var(--accent-light, #EFF6FF);
+  border-radius: 50%;
+}
+
+.g-dot {
+  flex: none;
+  width: 36rpx;
+  margin-right: 16rpx;
+  text-align: center;
+  line-height: 1.6;
+  color: var(--accent, #1D4ED8);
+}
+
+.g-text {
+  flex: 1;
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--text, #111827);
+}

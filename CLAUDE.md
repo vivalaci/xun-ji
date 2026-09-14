@@ -1,6 +1,6 @@
 # 训记 · 微信小程序（健身数据记录）
 
-面向进阶训练者的训练记录工具。微信原生小程序 + 云开发，**小程序端**无 npm 依赖、无构建步骤（云函数在 `cloudfunctions/` 下各自带 `wx-server-sdk` 依赖，经开发者工具「上传并部署：云端安装依赖」部署，本地不装 node_modules）。
+面向进阶训练者的训练记录工具。微信原生小程序 + 云开发，**小程序端**无 npm 依赖、无构建步骤（云函数在 `cloudfunctions/` 下各自带 `wx-server-sdk` 依赖，经开发者工具「上传并部署：云端安装依赖」部署，本地不装 node_modules；开发期出图脚本 `tools/media/` 自带 `sharp` 依赖，仅本地 `npm install`，不打包、与小程序端无关）。
 
 **接手先读 [docs/10-project-handoff.md](docs/10-project-handoff.md)**（项目交接/入职速览：现状、能力清单、迭代史、代码地图）。开发必须遵循 [docs/07-development-guide.md](docs/07-development-guide.md)（流程与规范），技术背景见 [docs/06-technical-architecture.md](docs/06-technical-architecture.md)。下面是每次改代码都生效的硬约定。
 
@@ -20,7 +20,7 @@
 4. PR 读取侧现算（`util.buildPRMap`），不落库字段。
 5. 图表只用 `utils/chart.js`（Canvas 2D，无第三方库）；缺值断线不补零。
 6. 不改 4 集合（workouts/body_records/workout_templates/custom_exercises）的既有字段；新字段必须可缺省并写迁移方案。
-7. 新页面放 `pages/<域>/<页面>` 扁平分组，并在 `app.json` 注册。
+7. 新页面放 `pages/<域>/<页面>` 扁平分组，并在 `app.json` 注册。可复用展示组件放 `components/<组件名>/`，在用到的页面 `.json` 的 `usingComponents` 注册；组件只做展示、数据经 `utils/` 纯函数取；组件内不继承 `app.wxss` 的类，样式自包含（CSS 变量写兜底色）。
 
 ## 每次改动后的验证
 
@@ -36,3 +36,4 @@ node tests/algo.test.js                                                         
 
 - `project.private.config.json` 与 AppID 属个人配置，推远端前注意脱敏。
 - 早期草稿在 `draft_archive/`，已作废，仅备查，不要从中复用代码。
+- 动作示意图：SVG 母版在 `assets/exercise-media/<id>/`（进 git），PNG 由 `tools/media/build.js` 生成、上传微信云存储（PNG 不进 git、不打包）；取图前缀与有图清单在 `config/exerciseMedia.js`，要领在 `config/exerciseInstructions.js`（新增内置动作若要示意图/要领需在两处补条目；素材 CC BY-SA 4.0，署名见使用说明「致谢」）。

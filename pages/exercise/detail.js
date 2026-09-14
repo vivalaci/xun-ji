@@ -5,6 +5,7 @@ const unit = require('../../utils/unit.js');
 const chart = require('../../utils/chart.js');
 const lib = require('../../utils/exerciseLib.js');
 const curveConfig = require('../../utils/curveConfig.js');
+const media = require('../../utils/exerciseMedia.js');
 
 const LIFT_COLOR = { bench: '#1D4ED8', squat: '#7C3AED', deadlift: '#0891B2' };
 
@@ -19,7 +20,12 @@ Page({
     hasData: false,
     isBodyweight: false,
     chartHint: '暂无数据',
-    metricCap: '主力工作组重量（kg）'
+    metricCap: '主力工作组重量（kg）',
+    // 曲线下方示意图 + 要领（按页面锚点 id；硬拉家族显示硬拉本身）
+    mediaId: '',
+    showGuideCard: false,
+    guideHasText: false,
+    viewerId: ''     // 放大层（空 = 关闭）
   },
 
   onLoad(options) {
@@ -29,9 +35,13 @@ Page({
     this.color = LIFT_COLOR[options.id] || '#1D4ED8';
     wx.setNavigationBarTitle({ title: lib.getName(options.id) });
     const isBW = this.loadType === 'bodyweight';
+    // 无图且无要领 → 整块不渲染；图加载失败时若也无要领则收起（onMediaFail）
+    const hasMedia = media.hasMedia(options.id);
+    const hasText = !!media.instructionsFor(options.id);
     this.setData({
       exerciseId: options.id, name: lib.getName(options.id), unitLabel: unit.label(),
-      isBodyweight: isBW, chartHint: isBW ? '纯自重，进步看次数' : '暂无数据'
+      isBodyweight: isBW, chartHint: isBW ? '纯自重，进步看次数' : '暂无数据',
+      mediaId: options.id, showGuideCard: hasMedia || hasText, guideHasText: hasText
     });
   },
 
@@ -78,7 +88,7 @@ Page({
           key: w._id + '_' + ex.exerciseId,
           ts,
           date: w.date,
-          variant: isFamily ? (ex.name || lib.getName(ex.exerciseId)) : '',
+          variant: isFamily ? lib.displayName(ex.exerciseId, ex.name) : '', // 当前名，已删回退保存时名字
           loadType: (lib.getExercise(ex.exerciseId) || {}).loadType || 'weighted',
           sets: ex.sets || [],
           isPR: !!(prMap[w._id] && prMap[w._id].has(ex.exerciseId))
@@ -105,6 +115,11 @@ Page({
       metricCap: reps ? '最大次数（次）' : ('主力工作组重量（' + unit.label() + '）')
     }, () => this.draw());
   },
+
+  // ---- 示意图放大层 ----
+  onEnlarge(e) { this.setData({ viewerId: e.detail.id }); },
+  closeViewer() { this.setData({ viewerId: '' }); },
+  onMediaFail() { if (!this.data.guideHasText) this.setData({ showGuideCard: false }); },
 
   draw() {
     const dpr = (wx.getWindowInfo && wx.getWindowInfo().pixelRatio) || 2;

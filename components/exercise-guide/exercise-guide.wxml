@@ -1,0 +1,14 @@
+<!-- components/exercise-guide -->
+<view wx:if="{{guide}}" class="guide">
+  <view class="g-title">步骤</view>
+  <view wx:for="{{guide.steps}}" wx:key="*this" class="g-line">
+    <text class="g-idx">{{index + 1}}</text>
+    <text class="g-text">{{item}}</text>
+  </view>
+
+  <view class="g-title g-title-tips">要点</view>
+  <view wx:for="{{guide.tips}}" wx:key="*this" class="g-line">
+    <text class="g-dot">•</text>
+    <text class="g-text">{{item}}</text>
+  </view>
+</view>
