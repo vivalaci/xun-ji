@@ -139,6 +139,16 @@ function getName(id) {
   return ex ? ex.name : '已删除动作';
 }
 
+// 历史记录显示名：动作仍可解析（含 hidden）→ 当前名（改名后老记录跟着变）；
+// 已不存在（自建/全局动作被删）→ 保存时写入的快照名；都没有 → 占位。
+// 与 getName 的区别：不会把「删了但记录里存有名字」的历史退化成「已删除动作」。
+function displayName(id, snapshot) {
+  const ex = getExercise(id);
+  if (ex) return ex.name;
+  const s = typeof snapshot === 'string' ? snapshot.trim() : '';
+  return s || '已删除动作';
+}
+
 // 生成稳定自建动作 id
 function genCustomId() {
   return 'cus_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -160,6 +170,7 @@ module.exports = {
   listCategories,
   getExercise,
   getName,
+  displayName,
   searchExercises,
   genCustomId,
   genGlobalId

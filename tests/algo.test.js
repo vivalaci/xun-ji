@@ -859,4 +859,107 @@ test('类别顺序清洗：去重、剔除有氧与空项，空结果拒绝', ()
   assert.strictEqual(adminValidate.sanitizeCategoryOrder('胸').ok, false);
 });
 
+console.log('exercise-media-instructions（迭代二十：示意图/要领/改名/历史显示名）:');
+const exerciseMedia = require('../utils/exerciseMedia.js');
+const exerciseMediaCfg = require('../config/exerciseMedia.js');
+const exerciseInstructions = require('../config/exerciseInstructions.js');
+const fs = require('fs');
+const path = require('path');
+
+test('示意图：有图动作按路径约定返回 3 帧 + 缩略图', () => {
+  const m = exerciseMedia.create({ PREFIX: 'cloud://env-x.bucket/exercise-media', MEDIA: { bench: 3 } });
+  assert.deepStrictEqual(m.framesFor('bench'), [
+    'cloud://env-x.bucket/exercise-media/bench/0.png',
+    'cloud://env-x.bucket/exercise-media/bench/1.png',
+    'cloud://env-x.bucket/exercise-media/bench/2.png'
+  ]);
+  assert.strictEqual(m.thumbFor('bench'), 'cloud://env-x.bucket/exercise-media/bench/thumb.png');
+  assert.strictEqual(m.hasMedia('bench'), true);
+});
+test('示意图：不在清单（cus_/gbl_/seal_row）、空 id、原型属性名均视为无图', () => {
+  const m = exerciseMedia.create({ PREFIX: 'cloud://env-x.bucket/exercise-media', MEDIA: { bench: 3 } });
+  ['cus_1', 'gbl_1', 'seal_row', '', null, undefined, 'toString'].forEach((id) => {
+    assert.deepStrictEqual(m.framesFor(id), []);
+    assert.strictEqual(m.thumbFor(id), '');
+  });
+});
+test('示意图：PREFIX 未配置时一律无图（上传云存储前不破图）', () => {
+  const m = exerciseMedia.create({ PREFIX: '', MEDIA: { bench: 3 } });
+  assert.deepStrictEqual(m.framesFor('bench'), []);
+  assert.strictEqual(m.thumbFor('bench'), '');
+});
+test('有图清单：100 个内置动作、均 3 帧、不含 seal_row，SVG 母版齐全，PREFIX 末尾无 /', () => {
+  const ids = exercises.EXERCISES.map((e) => e.id);
+  const keys = Object.keys(exerciseMediaCfg.MEDIA);
+  assert.strictEqual(keys.length, 100);
+  assert.ok(!keys.includes('seal_row'));
+  keys.forEach((id) => {
+    assert.ok(ids.includes(id), '清单含未知动作: ' + id);
+    assert.strictEqual(exerciseMediaCfg.MEDIA[id], 3);
+    [0, 1, 2].forEach((n) => assert.ok(
+      fs.existsSync(path.join(__dirname, '../assets/exercise-media', id, n + '.svg')),
+      '缺母版: ' + id + '/' + n + '.svg'
+    ));
+  });
+  assert.ok(!/\/$/.test(exerciseMediaCfg.PREFIX));
+});
+test('要领：力量动作全覆盖（含海豹划船），有氧无要领，无多余条目', () => {
+  const strength = exercises.EXERCISES.filter((e) => e.kind !== 'cardio').map((e) => e.id);
+  const cardio = exercises.EXERCISES.filter((e) => e.kind === 'cardio').map((e) => e.id);
+  const keys = Object.keys(exerciseInstructions);
+  assert.strictEqual(keys.length, 94);
+  strength.forEach((id) => assert.ok(exerciseInstructions[id], '缺要领: ' + id));
+  keys.forEach((id) => assert.ok(strength.includes(id), '多余要领: ' + id));
+  cardio.forEach((id) => assert.strictEqual(exerciseMedia.instructionsFor(id), null));
+  assert.ok(exerciseMedia.instructionsFor('seal_row'));
+});
+test('要领格式与用词口径：步骤 3–5、要点 1–2，不含机翻套话与歧义握法词', () => {
+  const BANNED = ['重复所需', '正握', '反握', '腿筋', '雪橇', '长凳'];
+  Object.keys(exerciseInstructions).forEach((id) => {
+    const it = exerciseInstructions[id];
+    assert.ok(it.steps.length >= 3 && it.steps.length <= 5, id + ' 步骤数 ' + it.steps.length);
+    assert.ok(it.tips.length >= 1 && it.tips.length <= 2, id + ' 要点数 ' + it.tips.length);
+    it.steps.concat(it.tips).forEach((s) => {
+      assert.ok(typeof s === 'string' && s.trim(), id + ' 含空条目');
+      BANNED.forEach((w) => assert.ok(!s.includes(w), id + ' 含「' + w + '」'));
+    });
+  });
+  assert.ok(exerciseMedia.instructionsFor('reverse_curl').steps.join('').includes('掌心朝下'));
+});
+test('要领：instructionsFor 返回拷贝，无条目返回 null', () => {
+  const a = exerciseMedia.instructionsFor('bench');
+  a.steps.push('x');
+  a.tips.length = 0;
+  const b = exerciseMedia.instructionsFor('bench');
+  assert.strictEqual(b.steps.length, exerciseInstructions.bench.steps.length);
+  assert.ok(b.tips.length > 0);
+  assert.strictEqual(exerciseMedia.instructionsFor('cus_x'), null);
+  assert.strictEqual(exerciseMedia.instructionsFor('toString'), null);
+});
+test('内置 101 个：改名旧名可搜、斜托弯举归牧师凳弯举、海豹划船与 T杠划船分开', () => {
+  store.setCache(OVR, []);
+  store.setCache('custom_exercises', []);
+  assert.strictEqual(exercises.EXERCISES.length, 101);
+  const hit = (kw) => exerciseLib.searchExercises(kw).map((e) => e.id);
+  assert.ok(hit('哑铃后撑').includes('db_kickback'));
+  assert.strictEqual(exerciseLib.getName('db_kickback'), '哑铃俯身臂屈伸');
+  assert.ok(hit('斜托弯举').includes('preacher_curl'));
+  assert.ok(!hit('斜托弯举').includes('incline_db_curl'));
+  assert.deepStrictEqual(hit('海豹划船'), ['seal_row']);
+  assert.ok(!hit('俯卧划船').includes('t_bar_row'));
+  assert.strictEqual(exerciseLib.getName('t_bar_row'), 'T杠划船');
+});
+test('displayName：可解析取当前名，已删取保存时快照，都无则占位', () => {
+  store.setCache(OVR, []);
+  store.setCache('custom_exercises', []);
+  assert.strictEqual(exerciseLib.displayName('db_kickback', '哑铃后撑'), '哑铃俯身臂屈伸'); // 改名后老记录跟随
+  assert.strictEqual(exerciseLib.displayName('cus_gone', '我的划船'), '我的划船');
+  assert.strictEqual(exerciseLib.displayName('cus_gone', ''), '已删除动作');
+  assert.strictEqual(exerciseLib.displayName('cus_gone', '   '), '已删除动作');
+  assert.strictEqual(exerciseLib.displayName('cus_gone'), '已删除动作');
+  store.setCache(OVR, [{ kind: 'patch', targetId: 'incline_bench', hidden: true }]);
+  assert.strictEqual(exerciseLib.displayName('incline_bench', '旧名'), '上斜卧推'); // hidden 仍按 id 解析
+  store.setCache(OVR, []);
+});
+
 console.log(`\nAll ${passed} tests passed ✓`);

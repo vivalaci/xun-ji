@@ -8,11 +8,11 @@
 
 ## 2. 数据层与纯函数
 
-- [ ] 2.1 `config/exercises.js`：12 个改名（旧名入 `aliases`）；「斜托弯举」别名从 `incline_db_curl` 移到 `preacher_curl`；`t_bar_row` 别名改为 胸部支撑T杠划船/胸部支撑划船/chest supported row/t bar row（移除海豹划船/俯卧划船/seal row）；新增 `seal_row` 海豹划船（背/杠铃/水平拉/背阔肌，辅斜方肌、肱二头肌，别名 卧式划船/俯卧划船/seal row）
-- [ ] 2.2 `config/exerciseMedia.js`：`PREFIX`（占位，待 1.5 回填）+ 有图 id 清单（现有 100 个，不含 `seal_row`）
-- [ ] 2.3 `config/exerciseInstructions.js`：94 条要领（93 力量 + `seal_row`），每条 `steps` 3–5、`tips` 1–2，按 design D4 用词口径与本应用动作实际形态撰写；有氧不写
-- [ ] 2.4 `utils/exerciseMedia.js`：`framesFor(id)`、`thumbFor(id)`、`instructionsFor(id)`（无则 `[]`/`''`/`null`）
-- [ ] 2.5 `utils/exerciseLib.js`：`displayName(id, snapshot)`（可解析→当前名；否则快照；否则「已删除动作」）
+- [x] 2.1 `config/exercises.js`：12 个改名（旧名入 `aliases`）；「斜托弯举」别名从 `incline_db_curl` 移到 `preacher_curl`；`t_bar_row` 别名改为 胸部支撑T杠划船/胸部支撑划船/chest supported row/t bar row（移除海豹划船/俯卧划船/seal row）；新增 `seal_row` 海豹划船（背/杠铃/水平拉/背阔肌，辅斜方肌、肱二头肌，别名 卧式划船/俯卧划船/seal row）
+- [x] 2.2 `config/exerciseMedia.js`：`PREFIX`（占位，待 1.5 回填）+ 有图 id 清单（现有 100 个，不含 `seal_row`）
+- [x] 2.3 `config/exerciseInstructions.js`：94 条要领（93 力量 + `seal_row`），每条 `steps` 3–5、`tips` 1–2，按 design D4 用词口径与本应用动作实际形态撰写；有氧不写
+- [x] 2.4 `utils/exerciseMedia.js`：`framesFor(id)`、`thumbFor(id)`、`instructionsFor(id)`（无则 `[]`/`''`/`null`）
+- [x] 2.5 `utils/exerciseLib.js`：`displayName(id, snapshot)`（可解析→当前名；否则快照；否则「已删除动作」）
 - [ ] 2.6 `tests/algo.test.js` 补用例：媒体路径与无图（`cus_`/`gbl_`/`seal_row`）、要领存在性与格式（94 条、步骤 3–5、要点 1–2、不含「重复所需」「正握」「反握」「腿筋」「雪橇」「长凳」）、`displayName` 三级回退、旧名别名搜索命中、「斜托弯举」只命中牧师凳弯举、「海豹划船」只命中 `seal_row`、内置 101 且 id 唯一
 - [ ] 2.7 【用户】过目 94 条要领（我给一份按分类排好的清单）
 
