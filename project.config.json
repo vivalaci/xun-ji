@@ -8,7 +8,7 @@
       { "type": "folder", "value": "draft_archive" },
       { "type": "folder", "value": "tests" },
       { "type": "folder", "value": "assets/exercise-media" },
-      { "type": "folder", "value": "assets/pose-ref" },
+      { "type": "folder", "value": "tools" },
       { "type": "folder", "value": ".claude" },
       { "type": "file", "value": "README.md" },
       { "type": "file", "value": "CLAUDE.md" }
