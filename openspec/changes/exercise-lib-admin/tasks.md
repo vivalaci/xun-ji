@@ -55,8 +55,8 @@
 - [x] 6.2 三大项拒绝隐藏的纯函数用例
 - [x] 6.3 语法检查：`Get-ChildItem -Recurse -Filter *.js | ForEach-Object { node --check $_.FullName }`（注意排除或单独处理 cloudfunctions 的 node_modules）
 - [x] 6.4 `node tests/algo.test.js` 全绿
-- [ ] 6.5 真机/模拟器走查：管理员进管理模式改名 → 另一账号（或清缓存）验证改动下发；非管理员触发手势被拒；无网时看到基线不报错
-- [ ] 6.6 **安全验证**：直接用客户端 `wx.cloud.database()` 写 `exercise_overrides` 应被集合权限拒绝；伪造调用 `exerciseAdmin` 应被 OPENID 校验拒绝
+- [x] 6.5 真机/模拟器走查：管理员进管理模式改名 → 另一账号（或清缓存）验证改动下发；非管理员触发手势被拒；无网时看到基线不报错
+- [x] 6.6 **安全验证**：直接用客户端 `wx.cloud.database()` 写 `exercise_overrides` 应被集合权限拒绝；伪造调用 `exerciseAdmin` 应被 OPENID 校验拒绝
 
 ## 7. 文档与归档
 
