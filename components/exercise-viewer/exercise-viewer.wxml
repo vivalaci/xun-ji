@@ -1,0 +1,15 @@
+<!-- components/exercise-viewer -->
+<block wx:if="{{exerciseId}}">
+  <!-- 遮罩与卡片为兄弟节点：遮罩拦截滚动与点击关闭，卡片内要领区可正常滚动 -->
+  <view class="viewer-mask" bindtap="onClose" catchtouchmove="noop"></view>
+  <view class="viewer-card">
+    <view class="viewer-head">
+      <text class="viewer-name">{{name}}</text>
+      <text class="viewer-close" bindtap="onClose">关闭</text>
+    </view>
+    <exercise-anim exercise-id="{{exerciseId}}" size="lg" tappable="{{false}}" />
+    <scroll-view scroll-y class="viewer-guide">
+      <exercise-guide exercise-id="{{exerciseId}}" />
+    </scroll-view>
+  </view>
+</block>

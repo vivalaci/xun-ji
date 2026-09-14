@@ -1,0 +1,12 @@
+<!-- components/exercise-thumb -->
+<image
+  wx:if="{{src && !failed}}"
+  class="thumb"
+  style="width: {{size}}rpx; height: {{size}}rpx;"
+  src="{{src}}"
+  mode="aspectFit"
+  lazy-load="{{true}}"
+  show-menu-by-longpress="{{false}}"
+  catchtap="onTap"
+  binderror="onError"
+></image>

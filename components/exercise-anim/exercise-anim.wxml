@@ -1,0 +1,18 @@
+<!-- components/exercise-anim -->
+<view
+  wx:if="{{frames.length && !failed}}"
+  class="anim {{size}} {{playing ? 'playing' : ''}}"
+  bindtap="onTap"
+>
+  <image
+    wx:for="{{frames}}"
+    wx:key="*this"
+    class="frame f{{index}}"
+    src="{{item}}"
+    mode="aspectFit"
+    data-i="{{index}}"
+    show-menu-by-longpress="{{false}}"
+    bindload="onFrameLoad"
+    binderror="onFrameError"
+  ></image>
+</view>
