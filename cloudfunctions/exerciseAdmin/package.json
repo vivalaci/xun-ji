@@ -1,0 +1,9 @@
+{
+  "name": "exerciseAdmin",
+  "version": "1.0.0",
+  "description": "训记：全局动作库管理写入（管理员权限门），写 exercise_overrides 集合",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

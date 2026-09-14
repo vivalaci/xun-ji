@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-06-26（**已正式发布上线**；迭代一~十六全部归档，无活跃 change，进入持续迭代阶段）。
+> 其余文档为细节，本文是入口。最后更新：2026-09-14（**已正式发布上线**；迭代一~十九全部归档，无活跃 change，进入持续迭代阶段）。
 
 ---
 
@@ -12,21 +12,21 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑧测试上线 **全部完成**；**已正式发布上线** |
-| 开发 | 迭代一~十六全部代码完成、真机通过并归档；**无活跃 change** |
-| 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、13 个能力规格 |
-| 质量 | 95 个算法单测全过；全 js `node --check` 通过 |
+| 开发 | 迭代一~十九全部代码完成、真机通过并归档；**无活跃 change** |
+| 代码量 | 100 个动作（含 7 有氧）、8 套预设、14 页面、15 个能力规格 |
+| 质量 | 算法单测全过；全 js `node --check` 通过 |
 | 上线 | **已发布**。个人认证 + ICP 备案通过、审核通过、正式发布；后续走迭代更新 |
 | git | 干净；tag 见 `git tag`（最新 `move-body-trend-to-body-page`/`template-new-blank-sets`）；最新 commit 见 `git log` |
 
-> 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。下一步是阶段⑧上线，见第八节。
+> 当前无活跃 change（`openspec/changes/` 下仅 `archive/`）。进入持续迭代更新阶段，见第八节。
 
 ---
 
 ## 二、架构铁律（改代码前必读，详见 [CLAUDE.md](../CLAUDE.md)）
 
-1. **云读写只走 `utils/db.js`**：读 = `getCache` 先渲染 + `refresh` 异步更新；写 = `saveLocalFirst/updateLocalFirst/removeLocalFirst`（本地先落 + 队列重试，弱网兜底）。页面禁止直连 `wx.cloud.database()`。
+1. **云读写只走 `utils/db.js`**：读 = `getCache` 先渲染 + `refresh` 异步更新；写 = `saveLocalFirst/updateLocalFirst/removeLocalFirst`（本地先落 + 队列重试，弱网兜底）。页面禁止直连 `wx.cloud.database()`。**既定例外**：管理员对 `exercise_overrides` 的写入走 `utils/adminApi.js` 直调 `exerciseAdmin` 云函数（服务端权威共享内容，本地先写无意义）；读仍走 db.js。
 2. **重量恒以 kg 落库**（kg 完整精度；lb 录入取整到 0.5kg）；换算只在 `utils/unit.js`。训练组重量显示用 `toDisplayWeight`（量化到 0.5），体重等用 `toDisplay`（保留 0.1）。
-3. **动作身份靠 `exerciseId`**（曲线/PR/历史聚合都按 id，不靠名字）；展示名经 `utils/exerciseLib.js`（内置+自建合并，含被删占位回退）。
+3. **动作身份靠 `exerciseId`**（曲线/PR/历史聚合都按 id，不靠名字）；展示名经 `utils/exerciseLib.js`（内置+全局覆盖层+自建合并，含被删占位回退）。
 4. **PR 读取侧现算**（`util.buildPRMap`），不落库。
 5. **图表只用 `utils/chart.js`**（Canvas 2D，无第三方库），缺值断线不补零。
 6. **4 个核心集合既有字段不改**；新字段必须可缺省 + 写迁移方案。
@@ -34,7 +34,7 @@
 
 ---
 
-## 三、当前能力清单（`openspec/specs/` 13 个，权威"App 现在做什么"）
+## 三、当前能力清单（`openspec/specs/` 15 个，权威"App 现在做什么"）
 
 | 能力 | 是什么 | 主要页面 |
 |------|--------|---------|
@@ -43,7 +43,8 @@
 | `curve-customization` | 首页曲线可定制：长按编辑排序、自定义曲线≤2、存 user_prefs | curve/ |
 | `pr-tracking` | 主力工作组重量创新高自动标 🏆 | 列表、exercise/detail |
 | `exercise-detail` | 单动作进步曲线 + 历史 | exercise/detail |
-| `exercise-library-management` | 100 动作（内置+自建）分类/搜索/增删 | exercise/library |
+| `exercise-library-management` | 100 动作（内置+全局覆盖层+自建）分类/搜索/增删/升格 | exercise/library |
+| `exercise-lib-admin` | 管理员动作库内容管理：改名/改分类/别名/隐藏/全局新增/删除/类别编排（云函数权限门） | exercise/library |
 | `body-tracking` | 体重/体脂/腰围录入 + 「身体」页顶部三线合并趋势图（无标题） | body/ |
 | `unit-settings` | 主单位 kg/lb（全局显示+默认输入）| settings/ |
 | `per-entry-input-unit` | 录入时每个动作临时切 kg/lb，存仍 kg；显示去浮点长尾 | workout/edit |
@@ -51,6 +52,7 @@
 | `cardio-tracking` | 有氧大类：7 活动、时长+距离/层数、`workouts.type` 区分 | workout/edit、list、calendar |
 | `in-app-usermanual` | 应用内使用说明：我的页入口 + 独立页按节渲染手册，内容源 `config/manual.js`（与 docs/usermanual.md 同源）| profile/、manual/ |
 | `workout-list` | 训练记录列表展示规则：今日记录左侧强调色竖条高亮（`util.isToday`，渲染层判定）| workout/list |
+| `page-sharing` | 首页与身体页转发好友/群 + 朋友圈分享（品牌封面图，不带个人数据）| curve/、body/ |
 
 ---
 
@@ -72,20 +74,24 @@
 - **迭代十四**（tag `template-naming-and-bodyweight-trend`）：①模板命名后缀幂等去重 + 重名编号 + 保存确认窗可编辑（`templateLib.baseTemplateName`/`recordToTemplatePayload`）；②纯自重动作趋势按当日最大次数（`util.dayRepsValue`，曲线/详情整条统一口径）；③选模板页（`pages/workout/pick`）加删除「我的模板」（预设不可删）。
 - **迭代十五**（tag `move-body-trend-to-body-page`）：身体趋势三线合并图从曲线首页迁至「身体」页上方（无标题）、首页固定项 4→3（`curveConfig` 去 body、抽 `BODY_SERIES`，旧 body 配置自愈剔除）；手册新增「参考资料」节（docs/09 四条文献）。
 - **迭代十六**（tag `template-new-blank-sets`）：按模板新建训练取消历史值预填、始终铺空组（`buildFromTemplate` 去 lastSame，按 targetSets 铺空组 + 区间提示，有氧不预填）；配合既有「未填补 0 + 完全空白拦截」杜绝"未练却存上次数据"。
+- **迭代十七**（tag `enable-sharing-home-body`）：首页与身体页开放转发好友/群 + 朋友圈分享——分享封面用固定品牌图（不带个人数据），其它页面维持不可转发。新增主 spec `page-sharing`。
+- **迭代十八**（tag `fix-template-picker-first-load`）：修复新用户选模板页首进空白——加载/错误态、播种并发化、失败可重试。改主 spec `template-management`。
+- **迭代十九**（tag `exercise-lib-admin`）：动作库管理员内容管理——所有者在 App 内改名/改分类/改别名/隐藏内置动作、新增全局动作（`gbl_`）、编排类别顺序，改动经云端下发全体用户、不发版。项目首个云函数 `exerciseAdmin`（OPENID 权限门）与首个共享集合 `exercise_overrides`（所有用户可读、仅管理端可写）；管理员另可把自建动作升格为全局动作（引用整体迁移，曲线连续）。新增主 spec `exercise-lib-admin`、改 `exercise-library-management`。
 
 ---
 
-## 五、数据模型（5 集合，详见 [06-technical-architecture](./06-technical-architecture.md)）
+## 五、数据模型（6 集合，详见 [06-technical-architecture](./06-technical-architecture.md)）
 
 | 集合 | 内容 | 关键字段 |
 |------|------|---------|
 | `workouts` | 训练记录 | `date`、`type`(strength/cardio)、`templateId`、`exercises[]`（力量含 `sets[{weight,reps}]`；有氧含 `duration`+`distance`/`floors`，无 sets）|
 | `body_records` | 身体数据 | `weight`(kg)、`bodyFat`(%)、`waist`(cm) |
 | `workout_templates` | 训练模板 | `group`、`order`、`type`、`exercises[{exerciseId,targetSets?,repLow?,repHigh?}]` |
-| `custom_exercises` | 自建动作 | `id`(cus_)、`name`、`category` |
+| `custom_exercises` | 自建动作 | `id`(cus_)、`name`、`category`、`aliases`(可缺省) |
 | `user_prefs` | 用户偏好（单文档）| `curveOrder`、`customCurves`、`presetVersion`、`seededCardio` |
+| `exercise_overrides` | 全局动作库覆盖层（管理员内容管理） | `kind`(patch/exercise/categories)、`targetId`、`name`、`category`、`hidden`、`order` |
 
-全部「仅创建者可读写」；写入自动带 `_openid`，无需登录。
+前 5 集合「仅创建者可读写」；`exercise_overrides`「所有用户可读，仅管理端可写」。写入自动带 `_openid`，无需登录。
 
 ---
 
@@ -99,7 +105,8 @@ utils/db.js           数据访问层（缓存优先读 + 本地先写队列 + �
 utils/store.js        本地存储底层（缓存 + 队列 + settings）
 utils/util.js         主力工作组重量、PR 现算、容量、日期
 utils/unit.js         单位换算层（主单位 + 显式单位族 toStoreFrom/toDisplayIn）
-utils/exerciseLib.js  动作合并查询（内置+自建，按 id 取名、搜索、分类）
+utils/exerciseLib.js  动作合并查询（内置+全局覆盖层+自建，按 id 取名、搜索、分类）
+utils/adminApi.js     管理写入通道（exerciseAdmin 云函数薄封装）
 utils/templateLib.js  模板分组/迁移/分组循证说明（GROUP_NOTES）
 utils/curveConfig.js  曲线配置纯函数（合成/排序/增删/槽位配色）
 utils/calendar.js     训练日历纯函数（月网格/聚合/类型配色）
@@ -111,7 +118,8 @@ pages/exercise/       动作库管理 / 动作详情
 pages/template/       模板管理 / 编辑
 pages/manual/         使用说明（渲染 config/manual.js）
 pages/settings/ profile/  设置 / 我的
-tests/algo.test.js    95 个纯函数单测
+cloudfunctions/exerciseAdmin/  云函数：全局动作库管理写入（权限门 + 校验纯函数）
+tests/algo.test.js    纯函数单测
 ```
 
 ---
@@ -141,7 +149,7 @@ node tests/algo.test.js
 
 进入**持续迭代更新**阶段：后续每个功能/修复仍走 OpenSpec change + PR 分支流程（见第七节与 [[feedback-pr-flow]]），归档打 tag；发版按 [07 发布流程](./07-development-guide.md) 上传 → 提交审核 → 发布。
 
-开发侧迭代一~十六均已归档打 tag，无遗留 change。备好但未开工的料：动作示意图（`assets/exercise-media`、`docs/11`、`docs/12`、media-map）。
+开发侧迭代一~十九均已归档打 tag，无遗留 change。备好但未开工的料：动作示意图（`assets/exercise-media`、`docs/11`、`docs/12`、media-map）。
 
 ---
 

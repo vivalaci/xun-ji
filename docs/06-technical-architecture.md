@@ -80,10 +80,17 @@
 
 // 用户自定义动作：集合 custom_exercises
 { _id, _openid, id: "cus_xxx", name: "自定义动作", category, createTime }
+
+// 全局动作库覆盖层：共享集合 exercise_overrides（迭代十九，所有用户可读、仅管理端可写）
+// 只存相对 config 基线的差异，三种文档：
+{ kind: "patch", targetId, name?, category?, aliases?, hidden? }   // 改内置/全局动作
+{ kind: "exercise", id: "gbl_xxx", name, category, aliases? }      // 管理员新增的全局动作
+{ kind: "categories", order: ["背", "胸", ...] }                    // 类别顺序（不含有氧，恒置末）
 ```
 
-- **三大项**（bench / squat / deadlift）标记 `isMainLift`，与首页曲线绑定。
+- **三大项**（bench / squat / deadlift）标记 `isMainLift`，与首页曲线绑定；服务端禁止隐藏。
 - 训练记录里存 `exerciseId`，曲线按 id 聚合，**不靠动作名字符串匹配**。
+- `utils/exerciseLib.js` 四层合并：（内置 + 全局 `gbl_`）→ 套 patch → 拼自建 `cus_`；结果 memo，缓存变更时失效。`hidden` 动作从列举/搜索排除，但 `getExercise`/`getName` 仍按 id 解析（历史完整性）。无 overrides（无网/首启）自动回退内置基线。
 
 ---
 
@@ -125,16 +132,25 @@
 | 曲线数据计算 | 前端 | 数据量小，避免云函数冷启动 |
 | PR 检测 | 前端 | 保存时实时对比 |
 | 用户身份 | 云开发自动（_openid） | 无需手写 |
-| 云函数 | 暂不需要 | 后续有复杂统计再加 |
+| 全局动作库管理写入 | 云函数 `exerciseAdmin`（项目首个云函数） | 安全边界：`cloud.getWXContext().OPENID === ADMIN_OPENID`（环境变量），客户端伪造不了 |
+
+### 云函数 `exerciseAdmin`（迭代十九，管理写入通道）
+
+- **铁律 1 的既定例外（仅此一个）**：管理员写 `exercise_overrides` 走 `utils/adminApi.js` 直调云函数，不走 `db.saveLocalFirst` 乐观队列——服务端权威的共享内容本地先写无意义，且集合权限本就禁止客户端写。**读**仍走 db.js（`refreshOverrides`：缓存优先 + 后台刷新）。
+- 函数极薄：OPENID 权限门 + 写入；校验逻辑在 `cloudfunctions/exerciseAdmin/validate.js` 纯函数（`tests/algo.test.js` 直接单测），含：patch 字段白名单（id 不可改）、三大项禁隐藏、`gbl_` 前缀与查重、类别顺序清洗。
+- 管理入口：动作库页底部计数文字连点 5 次 → `ping` 验证 → 管理模式。**不在启动/进页时自动调用**——云函数调用次数不随用户数增长（普通用户≈0 次）。
+- 部署：开发者工具 → 云开发 → 对 `cloudfunctions/exerciseAdmin` 右键「上传并部署：云端安装依赖」；`ADMIN_OPENID` 配在云函数**环境变量**（控制台 → 云函数 → 配置），不进代码不进 git。首次取 openid：部署后任意端调一次该函数，FORBIDDEN 响应里回显调用者 openid。
 
 ---
 
 ## 四、数据库安全规则
 
-三个用户数据集合（workouts / body_records / workout_templates / custom_exercises）均设「**仅创建者可读写**」：
+用户数据集合（workouts / body_records / workout_templates / custom_exercises / user_prefs）均设「**仅创建者可读写**」：
 - 每个用户只能读写自己的数据
 - _openid 由云开发自动注入和匹配
 - 无需任何手写登录逻辑
+
+共享集合 `exercise_overrides`（迭代十九）设「**所有用户可读，仅管理端可写**」：客户端只读；一切写入经 `exerciseAdmin` 云函数的 OPENID 权限门。
 
 ---
 

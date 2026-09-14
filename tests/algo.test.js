@@ -660,4 +660,203 @@ test('空数组兜底不抛错', () => {
   assert.deepStrictEqual(chart.computeBand([], 5), { lo: 0, hi: 1 });
 });
 
+console.log('exercise-lib-admin（覆盖层合并）:');
+const OVR = exerciseLib.OVERRIDES_COLL;
+test('无 overrides 回退内置基线', () => {
+  store.setCache(OVR, []);
+  store.setCache('custom_exercises', []);
+  assert.strictEqual(exerciseLib.getName('bench'), '卧推');
+  const cats = Object.keys(exerciseLib.byCategory());
+  assert.strictEqual(cats[0], '胸');
+  assert.strictEqual(cats[cats.length - 1], '有氧');
+});
+test('patch 覆盖名称/分类/别名，按 id 聚合身份不变', () => {
+  store.setCache(OVR, [{ kind: 'patch', targetId: 'bench', name: '平板杠铃卧推', category: '肩', aliases: ['大平板'] }]);
+  const ex = exerciseLib.getExercise('bench');
+  assert.strictEqual(ex.name, '平板杠铃卧推');
+  assert.strictEqual(ex.category, '肩');
+  assert.strictEqual(ex.id, 'bench'); // id 恒不变
+  assert.strictEqual(ex.isMainLift, true); // 主项标记保留
+  assert.strictEqual(exerciseLib.getName('bench'), '平板杠铃卧推');
+  assert.ok(exerciseLib.byCategory()['肩'].some((e) => e.id === 'bench'));
+  assert.ok(!exerciseLib.byCategory()['胸'].some((e) => e.id === 'bench'));
+  assert.ok(exerciseLib.searchExercises('大平板').some((e) => e.id === 'bench'));
+});
+test('hidden：列举/搜索排除，但按 id 仍解析（历史完整性）', () => {
+  store.setCache(OVR, [{ kind: 'patch', targetId: 'incline_bench', hidden: true }]);
+  assert.ok(!exerciseLib.allExercises().some((e) => e.id === 'incline_bench'));
+  assert.ok(!(exerciseLib.byCategory()['胸'] || []).some((e) => e.id === 'incline_bench'));
+  assert.ok(!exerciseLib.searchExercises('上斜卧推').some((e) => e.id === 'incline_bench'));
+  assert.strictEqual(exerciseLib.getName('incline_bench'), '上斜卧推'); // 不退化为「已删除动作」
+  assert.strictEqual(exerciseLib.getExercise('incline_bench').hidden, true);
+});
+test('管理视图 includeHidden 列出隐藏动作', () => {
+  store.setCache(OVR, [{ kind: 'patch', targetId: 'incline_bench', hidden: true }]);
+  const adminChest = exerciseLib.byCategory({ includeHidden: true })['胸'];
+  assert.ok(adminChest.some((e) => e.id === 'incline_bench' && e.hidden === true));
+});
+test('hidden:false（撤销隐藏）恢复列举', () => {
+  store.setCache(OVR, [{ kind: 'patch', targetId: 'incline_bench', hidden: false }]);
+  assert.ok(exerciseLib.allExercises().some((e) => e.id === 'incline_bench'));
+});
+test('全局动作拼接：所有人可见可搜，patch 亦可作用其上', () => {
+  store.setCache(OVR, [
+    { kind: 'exercise', id: 'gbl_1', name: '地雷管推举', category: '肩', aliases: ['landmine press'] },
+    { kind: 'patch', targetId: 'gbl_1', name: '地雷架推举' }
+  ]);
+  const ex = exerciseLib.getExercise('gbl_1');
+  assert.strictEqual(ex.name, '地雷架推举'); // patch 对全局动作同样生效
+  assert.strictEqual(ex.global, true);
+  assert.strictEqual(ex.custom, false); // 非自建，不给删除入口
+  assert.ok(exerciseLib.byCategory()['肩'].some((e) => e.id === 'gbl_1'));
+  assert.ok(exerciseLib.searchExercises('landmine').some((e) => e.id === 'gbl_1'));
+});
+test('gbl_/cus_ 命名空间并存互不干扰', () => {
+  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_2', name: '全局动作X', category: '背' }]);
+  store.setCache('custom_exercises', [{ _id: 'd9', id: 'cus_9', name: '自建动作Y', category: '背' }]);
+  const back = exerciseLib.byCategory()['背'];
+  assert.ok(back.some((e) => e.id === 'gbl_2' && !e.custom));
+  assert.ok(back.some((e) => e.id === 'cus_9' && e.custom));
+  assert.ok(exerciseLib.genGlobalId().startsWith('gbl_'));
+  assert.ok(exerciseLib.genCustomId().startsWith('cus_'));
+  store.setCache('custom_exercises', []);
+});
+test('类别 order 生效且有氧恒置末，order 未涵盖的类别追加', () => {
+  store.setCache(OVR, [{ kind: 'categories', order: ['背', '胸', '有氧', '肩'] }]);
+  const cats = Object.keys(exerciseLib.byCategory());
+  assert.deepStrictEqual(cats.slice(0, 3), ['背', '胸', '肩']); // order 内的 有氧 被忽略
+  assert.strictEqual(cats[cats.length - 1], '有氧');
+  assert.ok(cats.includes('核心')); // 未入 order 的既有类别不丢
+});
+test('listCategories 含 order 里暂无动作的新类别（供归类），不含有氧', () => {
+  store.setCache(OVR, [{ kind: 'categories', order: ['前臂加强', '胸'] }]);
+  const cats = exerciseLib.listCategories();
+  assert.strictEqual(cats[0], '前臂加强');
+  assert.ok(!cats.includes('有氧'));
+  // 空类别不显示在分组里
+  assert.ok(!Object.keys(exerciseLib.byCategory()).includes('前臂加强'));
+});
+test('自建动作 aliases 可缺省、写入后参与搜索（D8）', () => {
+  store.setCache(OVR, []);
+  // 老数据无 aliases 字段：不报错、正常列举
+  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀' }]);
+  assert.deepStrictEqual(exerciseLib.getExercise('cus_hip').aliases, []);
+  assert.ok(exerciseLib.allExercises().some((e) => e.id === 'cus_hip'));
+  store.setCache('custom_exercises', [{ _id: 'd1', id: 'cus_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
+  assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'cus_hip'));
+  assert.ok(exerciseLib.byCategory()['臀'].some((e) => e.id === 'cus_hip' && e.custom));
+  store.setCache('custom_exercises', []);
+});
+
+console.log('util.planExerciseIdMigration（自建升格迁移，D8）:');
+test('只挑出引用 fromId 的训练/模板并整体改指 toId', () => {
+  const workouts = [
+    { _id: 'w1', exercises: [{ exerciseId: 'cus_hip', sets: [{ weight: 60, reps: 8 }] }, { exerciseId: 'bench', sets: [] }] },
+    { _id: 'w2', exercises: [{ exerciseId: 'bench', sets: [] }] }
+  ];
+  const templates = [
+    { _id: 't1', exercises: [{ exerciseId: 'cus_hip', targetSets: 4 }] },
+    { _id: 't2', exercises: [{ exerciseId: 'squat', targetSets: 3 }] }
+  ];
+  const plan = util.planExerciseIdMigration('cus_hip', 'gbl_9', workouts, templates, null);
+  assert.strictEqual(plan.workoutUpdates.length, 1);
+  assert.strictEqual(plan.workoutUpdates[0].id, 'w1');
+  assert.deepStrictEqual(plan.workoutUpdates[0].data.exercises.map((e) => e.exerciseId), ['gbl_9', 'bench']);
+  assert.deepStrictEqual(plan.workoutUpdates[0].data.exercises[0].sets, [{ weight: 60, reps: 8 }]); // 其余字段原样
+  assert.strictEqual(plan.templateUpdates.length, 1);
+  assert.strictEqual(plan.templateUpdates[0].data.exercises[0].exerciseId, 'gbl_9');
+  assert.strictEqual(plan.templateUpdates[0].data.exercises[0].targetSets, 4);
+  assert.strictEqual(plan.prefsPatch, null);
+});
+test('曲线配置 key/exerciseId 同步改指，key 约定与 curveConfig.customKey 同源', () => {
+  const prefs = {
+    curveOrder: ['bench', 'squat', 'deadlift', curveConfig.customKey('cus_hip')],
+    customCurves: [{ key: curveConfig.customKey('cus_hip'), exerciseId: 'cus_hip', slot: 0 }]
+  };
+  const plan = util.planExerciseIdMigration('cus_hip', 'gbl_9', [], [], prefs);
+  assert.ok(plan.prefsPatch);
+  assert.ok(plan.prefsPatch.curveOrder.includes(curveConfig.customKey('gbl_9')));
+  assert.ok(!plan.prefsPatch.curveOrder.includes(curveConfig.customKey('cus_hip')));
+  assert.deepStrictEqual(plan.prefsPatch.customCurves, [{ key: curveConfig.customKey('gbl_9'), exerciseId: 'gbl_9', slot: 0 }]);
+  // 迁移后曲线合成正常取到新 id
+  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_9', name: '臀推', category: '臀' }]);
+  const charts = curveConfig.composeCharts(plan.prefsPatch);
+  assert.ok(charts.some((c) => c.id === 'gbl_9' && c.name === '臀推'));
+  store.setCache(OVR, []);
+});
+test('无任何引用时返回空计划（prefsPatch 为 null）', () => {
+  const plan = util.planExerciseIdMigration('cus_none', 'gbl_9',
+    [{ _id: 'w1', exercises: [{ exerciseId: 'bench' }] }],
+    [],
+    { curveOrder: ['bench'], customCurves: [] });
+  assert.deepStrictEqual(plan.workoutUpdates, []);
+  assert.deepStrictEqual(plan.templateUpdates, []);
+  assert.strictEqual(plan.prefsPatch, null);
+});
+test('升格完成态：gbl_ 全体可见可搜，原 cus_ 已删、迁移后无占位退化', () => {
+  store.setCache(OVR, [{ kind: 'exercise', id: 'gbl_hip', name: '臀推', category: '臀', aliases: ['hip thrust'] }]);
+  store.setCache('custom_exercises', []); // 原自建已删除
+  const hip = exerciseLib.byCategory()['臀'];
+  assert.ok(hip.some((e) => e.id === 'gbl_hip' && e.global));
+  assert.ok(exerciseLib.searchExercises('hip thrust').some((e) => e.id === 'gbl_hip'));
+  assert.strictEqual(exerciseLib.getName('gbl_hip'), '臀推'); // 迁移后历史引用 gbl_，正常解析
+  store.setCache(OVR, []);
+});
+test('缓存更新后合并 memo 失效（数据即时生效）', () => {
+  store.setCache(OVR, []);
+  assert.strictEqual(exerciseLib.getName('bench'), '卧推');
+  store.setCache(OVR, [{ kind: 'patch', targetId: 'bench', name: '新名' }]);
+  assert.strictEqual(exerciseLib.getName('bench'), '新名');
+  store.setCache(OVR, []);
+});
+
+console.log('exerciseAdmin 云函数校验（validate.js 纯函数）:');
+const adminValidate = require('../cloudfunctions/exerciseAdmin/validate.js');
+test('三大项 hidden:true 一律拒绝（服务端强制）', () => {
+  adminValidate.MAIN_LIFTS.forEach((id) => {
+    assert.strictEqual(adminValidate.validatePatch(id, { hidden: true }).ok, false, id + ' 不应可隐藏');
+  });
+  assert.deepStrictEqual(adminValidate.MAIN_LIFTS.slice().sort(), exercises.MAIN_LIFTS.slice().sort()); // 与 config 名单一致
+});
+test('三大项改名/改类不受限；非三大项可隐藏', () => {
+  assert.strictEqual(adminValidate.validatePatch('bench', { name: '平板卧推', category: '胸' }).ok, true);
+  assert.strictEqual(adminValidate.validatePatch('bench', { hidden: false }).ok, true);
+  assert.strictEqual(adminValidate.validatePatch('incline_bench', { hidden: true }).ok, true);
+});
+test('patch 白名单：改 id / 未知字段拒绝，空 patch 拒绝', () => {
+  assert.strictEqual(adminValidate.validatePatch('bench', { id: 'bench2' }).ok, false);
+  assert.strictEqual(adminValidate.validatePatch('bench', { foo: 1 }).ok, false);
+  assert.strictEqual(adminValidate.validatePatch('bench', {}).ok, false);
+  assert.strictEqual(adminValidate.validatePatch('', { name: 'x' }).ok, false);
+  assert.strictEqual(adminValidate.validatePatch('bench', { name: '  ' }).ok, false);
+});
+test('patch 清洗：trim、别名数组过滤空项', () => {
+  const r = adminValidate.validatePatch('bench', { name: ' 平板卧推 ', aliases: [' bp ', '', 'bench press'] });
+  assert.strictEqual(r.ok, true);
+  assert.strictEqual(r.fields.name, '平板卧推');
+  assert.deepStrictEqual(r.fields.aliases, ['bp', 'bench press']);
+});
+test('新增全局动作：gbl_ 前缀强制、id 查重、必填校验', () => {
+  assert.strictEqual(adminValidate.validateNewExercise({ id: 'gbl_ok', name: 'X', category: '胸' }, []).ok, true);
+  assert.strictEqual(adminValidate.validateNewExercise({ id: 'cus_x', name: 'X', category: '胸' }, []).ok, false);
+  assert.strictEqual(adminValidate.validateNewExercise({ id: 'bench2', name: 'X', category: '胸' }, []).ok, false);
+  assert.strictEqual(adminValidate.validateNewExercise({ id: 'gbl_dup', name: 'X', category: '胸' }, ['gbl_dup']).ok, false);
+  assert.strictEqual(adminValidate.validateNewExercise({ id: 'gbl_a', name: '', category: '胸' }, []).ok, false);
+  assert.strictEqual(adminValidate.validateNewExercise({ id: 'gbl_a', name: 'X', category: '' }, []).ok, false);
+});
+test('isGlobalId：gbl_ 前缀合法，内置/cus_/空值拒绝（removeExercise 守卫）', () => {
+  assert.strictEqual(adminValidate.isGlobalId('gbl_123_45'), true);
+  assert.strictEqual(adminValidate.isGlobalId('bench'), false);
+  assert.strictEqual(adminValidate.isGlobalId('cus_1'), false);
+  assert.strictEqual(adminValidate.isGlobalId(''), false);
+  assert.strictEqual(adminValidate.isGlobalId(null), false);
+});
+test('类别顺序清洗：去重、剔除有氧与空项，空结果拒绝', () => {
+  const r = adminValidate.sanitizeCategoryOrder(['背', '胸', '背', '有氧', ' ', '肩']);
+  assert.strictEqual(r.ok, true);
+  assert.deepStrictEqual(r.order, ['背', '胸', '肩']);
+  assert.strictEqual(adminValidate.sanitizeCategoryOrder(['有氧']).ok, false);
+  assert.strictEqual(adminValidate.sanitizeCategoryOrder('胸').ok, false);
+});
+
 console.log(`\nAll ${passed} tests passed ✓`);

@@ -15,9 +15,16 @@ function getCache(coll) {
   return wx.getStorageSync(cacheKey(coll)) || [];
 }
 
+// 缓存变更监听（exerciseLib 靠它失效合并 memo；回调只收 coll 名，不带数据）
+const cacheListeners = [];
+function onCacheChange(fn) {
+  cacheListeners.push(fn);
+}
+
 // 写缓存
 function setCache(coll, list) {
   wx.setStorageSync(cacheKey(coll), list);
+  cacheListeners.forEach((fn) => { try { fn(coll); } catch (e) { /* 监听方异常不影响写入 */ } });
 }
 
 // 待同步队列
@@ -38,4 +45,4 @@ function setSettings(patch) {
   return next;
 }
 
-module.exports = { getCache, setCache, getQueue, setQueue, getSettings, setSettings };
+module.exports = { getCache, setCache, onCacheChange, getQueue, setQueue, getSettings, setSettings };
