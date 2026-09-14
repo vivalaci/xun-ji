@@ -1,7 +1,7 @@
 # 10 · 项目交接 / 入职速览
 
 > **读这一篇就懂**：训记当前做了什么、是什么状态、代码在哪、怎么继续。
-> 其余文档为细节，本文是入口。最后更新：2026-09-14（**已正式发布上线**；迭代一~十九全部归档；迭代二十 `exercise-media-instructions` 代码完成、待真机）。
+> 其余文档为细节，本文是入口。最后更新：2026-09-14（**已正式发布上线**；迭代一~二十全部归档）。
 
 ---
 
@@ -12,13 +12,13 @@
 | 维度 | 状态 |
 |------|------|
 | 阶段 | ①产品定义~⑧测试上线 **全部完成**；**已正式发布上线** |
-| 开发 | 迭代一~十九全部代码完成、真机通过并归档；迭代二十（动作示意图 + 中文要领）代码完成、**待真机** |
-| 代码量 | 101 个动作（含 7 有氧）、94 条中文要领、8 套预设、14 页面、4 个自定义组件、15 个能力规格（迭代二十归档后 16） |
+| 开发 | 迭代一~二十全部代码完成、真机通过并归档 |
+| 代码量 | 101 个动作（含 7 有氧）、94 条中文要领、8 套预设、14 页面、4 个自定义组件、16 个能力规格 |
 | 质量 | 算法单测全过；全 js `node --check` 通过 |
 | 上线 | **已发布**。个人认证 + ICP 备案通过、审核通过、正式发布；后续走迭代更新 |
-| git | 干净；tag 见 `git tag`（最新 `exercise-lib-admin`）；最新 commit 见 `git log` |
+| git | 干净；tag 见 `git tag`（最新 `exercise-media-instructions`）；最新 commit 见 `git log` |
 
-> 活跃 change：`exercise-media-instructions`（迭代二十，分支 `feat/exercise-media-instructions`，待真机走查）。进入持续迭代更新阶段，见第八节。
+> 无活跃 change。迭代一~二十全部归档。进入持续迭代更新阶段，见第八节。
 
 ---
 
@@ -35,7 +35,7 @@
 
 ---
 
-## 三、当前能力清单（`openspec/specs/` 15 个，权威"App 现在做什么"）
+## 三、当前能力清单（`openspec/specs/` 16 个，权威"App 现在做什么"）
 
 | 能力 | 是什么 | 主要页面 |
 |------|--------|---------|
@@ -44,7 +44,7 @@
 | `curve-customization` | 首页曲线可定制：长按编辑排序、自定义曲线≤2、存 user_prefs | curve/ |
 | `pr-tracking` | 主力工作组重量创新高自动标 🏆 | 列表、exercise/detail |
 | `exercise-detail` | 单动作进步曲线 + 历史；曲线下方示意图 + 要领 | exercise/detail |
-| `exercise-guide`（迭代二十，待归档） | 动作示意图（列表缩略图 / 详情循环 / 放大层）+ 中文要领，云存储取图、无图降级 | exercise/library、exercise/detail、workout/edit、template/edit |
+| `exercise-guide` | 动作示意图（列表缩略图 / 详情循环 / 放大层）+ 中文要领，云存储取图、无图降级 | exercise/library、exercise/detail、workout/edit、template/edit |
 | `exercise-library-management` | 101 动作（内置+全局覆盖层+自建）分类/搜索/增删/升格；规范中文名；历史动作名按 id 实时解析（快照回退） | exercise/library |
 | `exercise-lib-admin` | 管理员动作库内容管理：改名/改分类/别名/隐藏/全局新增/删除/类别编排（云函数权限门） | exercise/library |
 | `body-tracking` | 体重/体脂/腰围录入 + 「身体」页顶部三线合并趋势图（无标题） | body/ |
@@ -79,7 +79,7 @@
 - **迭代十七**（tag `enable-sharing-home-body`）：首页与身体页开放转发好友/群 + 朋友圈分享——分享封面用固定品牌图（不带个人数据），其它页面维持不可转发。新增主 spec `page-sharing`。
 - **迭代十八**（tag `fix-template-picker-first-load`）：修复新用户选模板页首进空白——加载/错误态、播种并发化、失败可重试。改主 spec `template-management`。
 - **迭代十九**（tag `exercise-lib-admin`）：动作库管理员内容管理——所有者在 App 内改名/改分类/改别名/隐藏内置动作、新增全局动作（`gbl_`）、编排类别顺序，改动经云端下发全体用户、不发版。项目首个云函数 `exerciseAdmin`（OPENID 权限门）与首个共享集合 `exercise_overrides`（所有用户可读、仅管理端可写）；管理员另可把自建动作升格为全局动作（引用整体迁移，曲线连续）。新增主 spec `exercise-lib-admin`、改 `exercise-library-management`。
-- **迭代二十**（change `exercise-media-instructions`，待真机、未打 tag）：动作示意图（workout-guide/Everkinetic 线稿，已重新着色；存微信云存储；列表静态缩略图 + 详情页循环 + 放大层；首批自定义组件 `components/`）+ 94 条中文要领统一重写 + 12 个内置动作规范中文名、新增海豹划船 `seal_row` + 历史动作名按 id 实时解析（快照回退）+ 出图脚本 `tools/media`。新增主 spec `exercise-guide`，改 `exercise-detail`/`exercise-library-management`/`in-app-usermanual`。
+- **迭代二十**（tag `exercise-media-instructions`）：动作示意图（workout-guide/Everkinetic 线稿，已重新着色；存微信云存储；列表静态缩略图 + 详情页循环 + 放大层；首批自定义组件 `components/`）+ 94 条中文要领统一重写 + 12 个内置动作规范中文名、新增海豹划船 `seal_row` + 历史动作名按 id 实时解析（快照回退）+ 出图脚本 `tools/media`。新增主 spec `exercise-guide`，改 `exercise-detail`/`exercise-library-management`/`in-app-usermanual`。
 
 ---
 
@@ -158,7 +158,7 @@ node tests/algo.test.js
 
 进入**持续迭代更新**阶段：后续每个功能/修复仍走 OpenSpec change + PR 分支流程（见第七节与 [[feedback-pr-flow]]），归档打 tag；发版按 [07 发布流程](./07-development-guide.md) 上传 → 提交审核 → 发布。
 
-开发侧迭代一~十九均已归档打 tag。**进行中**：迭代二十 `exercise-media-instructions`（代码完成，示意图已上传云存储并回填 `PREFIX`；待：94 条要领过目、真机走查、sync/archive/tag）。后续可补：海豹划船示意图（上游无素材，可按 [docs/12](./12-illustration-production-guide.md) 自制）。
+开发侧迭代一~二十均已归档打 tag。后续可补：海豹划船示意图（上游无素材，可按 [docs/12](./12-illustration-production-guide.md) 自制）。
 
 ---
 

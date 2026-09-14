@@ -45,4 +45,4 @@
 - [x] 6.3 `openspec validate exercise-media-instructions`
 - [x] 6.4 输出真机走查清单交给用户（含换账号/清缓存验证云存储读权限、面板内放大返回、离线无破图、改名与老记录显示、海豹划船无图）
 - [x] 6.5 【用户】真机走查
-- [ ] 6.6 【用户】`/opsx:sync` + `/opsx:archive`、push、开 PR、合并、打 tag
+- [x] 6.6 【用户】`/opsx:sync` + `/opsx:archive`、push、开 PR、合并、打 tag
