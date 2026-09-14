@@ -1,0 +1,1008 @@
+{
+  "_source": "bryllim/workout-guide (assets CC BY-SA 4.0, based on Everkinetic; code MIT)",
+  "_rawPrefix": "https://raw.githubusercontent.com/bryllim/workout-guide/main/packages/workout-guide/",
+  "_frames": 3,
+  "_format": "svg 512x512 transparent",
+  "map": {
+    "bench": {
+      "slug": "bench-press",
+      "wgName": "Bench Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "incline_bench": {
+      "slug": "incline-bench-press",
+      "wgName": "Incline Bench Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "decline_bench": {
+      "slug": "decline-bench-press",
+      "wgName": "Decline Bench Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "db_bench": {
+      "slug": "dumbbell-bench-press",
+      "wgName": "Dumbbell Bench Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "incline_db_bench": {
+      "slug": "incline-dumbbell-press",
+      "wgName": "Incline Dumbbell Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "smith_bench": {
+      "slug": "smith-machine-bench-press",
+      "wgName": "Smith Machine Bench Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "machine_chest_press": {
+      "slug": "machine-chest-press",
+      "wgName": "Machine Chest Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "dips": {
+      "slug": "chest-dip",
+      "wgName": "Chest Dip",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "pushup": {
+      "slug": "push-up",
+      "wgName": "Push-up",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "incline_db_fly": {
+      "slug": "incline-cable-fly",
+      "wgName": "Incline Cable Fly",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "db_fly": {
+      "slug": "dumbbell-fly",
+      "wgName": "Dumbbell Fly",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cable_fly": {
+      "slug": "cable-fly",
+      "wgName": "Cable Fly",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "pec_deck": {
+      "slug": "pec-deck",
+      "wgName": "Pec Deck",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "deadlift": {
+      "slug": "deadlift",
+      "wgName": "Deadlift",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "rack_pull": {
+      "slug": "rack-pull",
+      "wgName": "Rack Pull",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "pullup": {
+      "slug": "pull-up",
+      "wgName": "Pull-up",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "chinup": {
+      "slug": "chin-up",
+      "wgName": "Chin-up",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "lat_pulldown": {
+      "slug": "lat-pulldown",
+      "wgName": "Lat Pulldown",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "barbell_row": {
+      "slug": "barbell-row",
+      "wgName": "Barbell Row",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "t_bar_row": {
+      "slug": "chest-supported-row",
+      "wgName": "Chest Supported Row",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "db_row": {
+      "slug": "one-arm-dumbbell-row",
+      "wgName": "One-Arm Dumbbell Row",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "seated_row": {
+      "slug": "seated-row",
+      "wgName": "Seated Cable Row",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "machine_row": {
+      "slug": "machine-row",
+      "wgName": "Machine Row",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "straight_arm_pulldown": {
+      "slug": "straight-arm-pulldown",
+      "wgName": "Straight-Arm Pulldown",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "shrug": {
+      "slug": "shrug",
+      "wgName": "Barbell Shrug",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "db_shrug": {
+      "slug": "dumbbell-shrug",
+      "wgName": "Dumbbell Shrug",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "back_extension": {
+      "slug": "back-extension",
+      "wgName": "Back Extension",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "ohp": {
+      "slug": "overhead-press",
+      "wgName": "Overhead Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "seated_ohp": {
+      "slug": "seated-dumbbell-press",
+      "wgName": "Dumbbell Seated Shoulder Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "db_press": {
+      "slug": "standing-dumbbell-press",
+      "wgName": "Standing Dumbbell Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "seated_db_press": {
+      "slug": "seated-dumbbell-press",
+      "wgName": "Dumbbell Seated Shoulder Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "arnold_press": {
+      "slug": "arnold-press",
+      "wgName": "Arnold Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "machine_shoulder_press": {
+      "slug": "machine-shoulder-press",
+      "wgName": "Machine Shoulder Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "upright_row": {
+      "slug": "upright-row",
+      "wgName": "Upright Row",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "lateral_raise": {
+      "slug": "lateral-raise",
+      "wgName": "Lateral Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cable_lateral_raise": {
+      "slug": "cable-lateral-raise",
+      "wgName": "Cable Lateral Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "front_raise": {
+      "slug": "front-raise",
+      "wgName": "Front Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "rear_delt_fly": {
+      "slug": "rear-delt-fly",
+      "wgName": "Rear Delt Fly",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "face_pull": {
+      "slug": "face-pull",
+      "wgName": "Face Pull",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "barbell_curl": {
+      "slug": "bicep-curl",
+      "wgName": "Bicep Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "ez_bar_curl": {
+      "slug": "ez-bar-curl",
+      "wgName": "EZ-Bar Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "db_curl": {
+      "slug": "bicep-curl",
+      "wgName": "Bicep Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "incline_db_curl": {
+      "slug": "incline-dumbbell-curl",
+      "wgName": "Incline Dumbbell Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "hammer_curl": {
+      "slug": "hammer-curl",
+      "wgName": "Hammer Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "preacher_curl": {
+      "slug": "preacher-curl",
+      "wgName": "Preacher Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cable_curl": {
+      "slug": "cable-curl",
+      "wgName": "Cable Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "concentration_curl": {
+      "slug": "concentration-curl",
+      "wgName": "Concentration Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "close_grip_bench": {
+      "slug": "close-grip-bench-press",
+      "wgName": "Close-Grip Bench Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "bench_dip": {
+      "slug": "bench-dip",
+      "wgName": "Bench Dip",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "tricep_pushdown": {
+      "slug": "tricep-pushdown",
+      "wgName": "Tricep Pushdown",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "rope_pushdown": {
+      "slug": "rope-tricep-pushdown",
+      "wgName": "Rope Tricep Pushdown",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "overhead_extension": {
+      "slug": "dumbbell-overhead-tricep-extension",
+      "wgName": "Dumbbell Overhead Tricep Extension",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "skullcrusher": {
+      "slug": "skull-crusher",
+      "wgName": "Skull Crusher",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "db_kickback": {
+      "slug": "tricep-kickback",
+      "wgName": "Tricep Kickback",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "reverse_curl": {
+      "slug": "reverse-curl",
+      "wgName": "Reverse Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "wrist_curl": {
+      "slug": "wrist-curl",
+      "wgName": "Wrist Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "reverse_wrist_curl": {
+      "slug": "wrist-extension",
+      "wgName": "Wrist Extension",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "farmer_walk": {
+      "slug": "farmer-carry",
+      "wgName": "Farmer Carry",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "squat": {
+      "slug": "squat",
+      "wgName": "Squat",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "front_squat": {
+      "slug": "front-squat",
+      "wgName": "Front Squat",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "hack_squat": {
+      "slug": "hack-squat",
+      "wgName": "Hack Squat",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "smith_squat": {
+      "slug": "smith-machine-squat",
+      "wgName": "Smith Machine Squat",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "leg_press": {
+      "slug": "leg-press",
+      "wgName": "Leg Press",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "goblet_squat": {
+      "slug": "goblet-squat",
+      "wgName": "Goblet Squat",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "bulgarian_split_squat": {
+      "slug": "bulgarian-split-squat",
+      "wgName": "Bulgarian Split Squat",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "lunge": {
+      "slug": "forward-lunge",
+      "wgName": "Forward Lunge",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "walking_lunge": {
+      "slug": "walking-lunge",
+      "wgName": "Walking Lunge",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "step_up": {
+      "slug": "step-up",
+      "wgName": "Step-Up",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "leg_ext": {
+      "slug": "leg-extension",
+      "wgName": "Leg Extension",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "rdl": {
+      "slug": "romanian-deadlift",
+      "wgName": "Romanian Deadlift",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "stiff_leg_deadlift": {
+      "slug": "romanian-deadlift",
+      "wgName": "Romanian Deadlift",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "good_morning": {
+      "slug": "good-morning",
+      "wgName": "Good Morning",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "glute_ham_raise": {
+      "slug": "nordic-hamstring-curl",
+      "wgName": "Nordic Hamstring Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "leg_curl": {
+      "slug": "lying-leg-curl",
+      "wgName": "Lying Leg Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "seated_leg_curl": {
+      "slug": "seated-leg-curl",
+      "wgName": "Seated Leg Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "nordic_curl": {
+      "slug": "nordic-hamstring-curl",
+      "wgName": "Nordic Hamstring Curl",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "hip_thrust": {
+      "slug": "hip-thrust",
+      "wgName": "Hip Thrust",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "sumo_deadlift": {
+      "slug": "sumo-deadlift",
+      "wgName": "Sumo Deadlift",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "glute_bridge": {
+      "slug": "glute-bridge",
+      "wgName": "Glute Bridge",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cable_pull_through": {
+      "slug": "cable-pull-through",
+      "wgName": "Cable Pull-Through",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cable_kickback": {
+      "slug": "cable-kickback",
+      "wgName": "Cable Kickback",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "hip_abduction": {
+      "slug": "hip-abduction-machine",
+      "wgName": "Hip Abduction Machine",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "calf_raise": {
+      "slug": "standing-calf-raise",
+      "wgName": "Standing Calf Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "seated_calf_raise": {
+      "slug": "seated-calf-raise",
+      "wgName": "Seated Calf Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "leg_press_calf_raise": {
+      "slug": "leg-press-calf-raise",
+      "wgName": "Leg Press Calf Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "hanging_leg_raise": {
+      "slug": "hanging-leg-raise",
+      "wgName": "Hanging Leg Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "ab_wheel": {
+      "slug": "ab-wheel",
+      "wgName": "Ab Wheel Rollout",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cable_crunch": {
+      "slug": "cable-crunch",
+      "wgName": "Cable Crunch",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "crunch": {
+      "slug": "crunch",
+      "wgName": "Crunch",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "leg_raise": {
+      "slug": "lying-leg-raise",
+      "wgName": "Lying Leg Raise",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "russian_twist": {
+      "slug": "russian-twist",
+      "wgName": "Russian Twist",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "plank": {
+      "slug": "plank",
+      "wgName": "Plank",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "side_plank": {
+      "slug": "side-plank",
+      "wgName": "Side Plank",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "run_outdoor": {
+      "slug": "running",
+      "wgName": "Running",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "run_indoor": {
+      "slug": "running",
+      "wgName": "Running",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "walk_outdoor": {
+      "slug": "walking",
+      "wgName": "Walking",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "walk_indoor": {
+      "slug": "treadmill-incline-walk",
+      "wgName": "Treadmill Incline Walk",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "近似"
+    },
+    "elliptical": {
+      "slug": "elliptical",
+      "wgName": "Elliptical",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "cycling": {
+      "slug": "cycling",
+      "wgName": "Cycling",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    },
+    "stairs": {
+      "slug": "stair-climber",
+      "wgName": "Stair Climber",
+      "frames": [
+        "0.svg",
+        "1.svg",
+        "2.svg"
+      ],
+      "flag": "OK"
+    }
+  }
+}

@@ -91,6 +91,9 @@
 - **三大项**（bench / squat / deadlift）标记 `isMainLift`，与首页曲线绑定；服务端禁止隐藏。
 - 训练记录里存 `exerciseId`，曲线按 id 聚合，**不靠动作名字符串匹配**。
 - `utils/exerciseLib.js` 四层合并：（内置 + 全局 `gbl_`）→ 套 patch → 拼自建 `cus_`；结果 memo，缓存变更时失效。`hidden` 动作从列举/搜索排除，但 `getExercise`/`getName` 仍按 id 解析（历史完整性）。无 overrides（无网/首启）自动回退内置基线。
+- 内置动作 101 个（迭代二十新增 `seal_row` 海豹划船；12 个动作改用规范中文名，旧名留作 `aliases`，id 不变）。
+- **历史显示名**：`exerciseLib.displayName(id, snapshot)`——可解析取当前名（老记录跟随改名）；动作已删则回退训练记录里保存的 `name` 快照；都没有才显示「已删除动作」。保存训练仍写 `name` 快照供回退。
+- **示意图 / 要领**（迭代二十）：不入集合、不加字段。示意图按路径约定取 `config/exerciseMedia.js` 的 `PREFIX/<id>/0|1|2.png` 与 `thumb.png`（不在有图清单一律无图）；要领随包 `config/exerciseInstructions.js`（`{ steps, tips }`）；统一经 `utils/exerciseMedia.js` 纯函数取。详见「三、职责划分 → 动作示意图」。
 
 ---
 
@@ -140,6 +143,13 @@
 - 函数极薄：OPENID 权限门 + 写入；校验逻辑在 `cloudfunctions/exerciseAdmin/validate.js` 纯函数（`tests/algo.test.js` 直接单测），含：patch 字段白名单（id 不可改）、三大项禁隐藏、`gbl_` 前缀与查重、类别顺序清洗。
 - 管理入口：动作库页底部计数文字连点 5 次 → `ping` 验证 → 管理模式。**不在启动/进页时自动调用**——云函数调用次数不随用户数增长（普通用户≈0 次）。
 - 部署：开发者工具 → 云开发 → 对 `cloudfunctions/exerciseAdmin` 右键「上传并部署：云端安装依赖」；`ADMIN_OPENID` 配在云函数**环境变量**（控制台 → 云函数 → 配置），不进代码不进 git。首次取 openid：部署后任意端调一次该函数，FORBIDDEN 响应里回显调用者 openid。
+
+### 动作示意图（迭代二十，微信云存储 + 首批自定义组件）
+
+- **存储**：3 帧 PNG + 缩略图共约 3.7MB，远超主包 2MB，且分包资源主包页面引用不到 → 放**微信云存储** `exercise-media/<id>/`，权限「所有用户可读」；小程序 `<image>` 直接用 `cloud://` fileID。前缀常量只在 `config/exerciseMedia.js` 一处（换云环境改一行）；`PREFIX` 为空时全部按无图处理，不破图。
+- **产物**：`tools/media/build.js`（`sharp`，开发期依赖，不打包）从 `assets/exercise-media/<id>/*.svg` 母版改色 `#1F2937`，出 512 调色板 PNG + 160px 缩略图；SVG 进 git、PNG 不进 git，由管理员在云开发控制台手工上传。
+- **组件**（`components/`，只做展示）：`exercise-thumb` 列表静态缩略图（lazy-load，catchtap 放大不触发行点击）；`exercise-anim` 三层叠放 + CSS keyframes 乒乓循环（三帧 bindload 齐才播、任一失败隐藏；不用 setInterval 换 src，避免云端图重载闪白与频繁 setData）；`exercise-guide` 要领；`exercise-viewer` 放大层——由页面根部挂载，因「添加动作」面板带 `transform`，嵌在其中的 `position:fixed` 会被裁切。
+- **署名**：素材 CC BY-SA 4.0，重新着色属改编，致谢写在使用说明末节。
 
 ---
 

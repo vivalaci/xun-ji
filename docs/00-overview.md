@@ -10,7 +10,7 @@
 | ④ | 交互设计 | ✅ 完成 |
 | ⑤ | 视觉设计 | ✅ 完成（组件定义留至开发阶段） |
 | ⑥ | 技术方案 | ✅ 完成 |
-| ⑦ | 开发实现 | ✅ 迭代一~十九全部完成、真机通过并归档（十八=修复选模板页首进空白 fix-template-picker-first-load；十九=动作库管理员内容管理 exercise-lib-admin） |
+| ⑦ | 开发实现 | ✅ 迭代一~十九全部完成、真机通过并归档（十八=修复选模板页首进空白 fix-template-picker-first-load；十九=动作库管理员内容管理 exercise-lib-admin）；🔄 迭代二十 动作示意图 + 中文要领 exercise-media-instructions 代码完成、待真机 |
 | ⑧ | 测试上线 | ✅ 完成（ICP 备案通过、个人认证、审核通过，**已正式发布上线**）|
 
 > 迭代二（身体数据、模板/动作库管理、设置含 lb、动作详情、PR 标记）、迭代三（模板分组 + 曲线首页可定制）均已真机验证并归档至 `openspec/changes/archive/`。主 specs 7 个：body-tracking、curve-customization、exercise-detail、exercise-library-management、pr-tracking、template-management、unit-settings。集合共 5 个（含 `user_prefs`）。
@@ -44,6 +44,8 @@
 > 迭代十八 `fix-template-picker-first-load`（代码完成 + 待真机）：修复新用户选模板页首进空白、返回重进才有——① 选模板页（`pages/workout/pick`）加加载/错误态，`onLoad` 走 `load()` 不吞错、`onShow` 仅缓存有数据时刷新，不再渲染空白；② `db.ensureTemplatesSeeded` 云端为空播种由串行改 `Promise.all` 并发（`order` 字段定序、并发安全）；③ 播种失败进错误态可「重试」、`db` 层如实抛错；④ `app.js onLaunch` 预热播种。改主 spec `template-management`，不改集合字段、无迁移。
 >
 > 迭代十九 `exercise-lib-admin`（代码完成 + 真机通过 + 已归档）：动作库管理员内容管理——所有者在 App 内改名/改分类/改别名/隐藏内置动作、新增全局动作（`gbl_`）、编排类别顺序，改动经云端下发全体用户、不发版。项目首个云函数 `exerciseAdmin`（OPENID 权限门 + validate.js 纯函数校验，三大项禁隐藏）与首个共享集合 `exercise_overrides`（所有用户可读、仅管理端可写，只存相对 config 基线的差异）；`exerciseLib` 四层合并（内置+全局→patch→自建，memo）、hidden 从列举/搜索排除但按 id 仍解析（历史完整性）；管理写入走 `utils/adminApi.js` 直调云函数（铁律 1 唯一既定例外）、入口为动作库页计数文字连点 5 次（普通用户零云函数调用）。管理员另可把自建动作**升格**为全局动作：新建 `gbl_` + 本人训练/模板/曲线引用整体改指新 id（`util.planExerciseIdMigration`，曲线连续不分段）+ 删除原 `cus_`；普通用户对自建仅删除（design D8）。新增主 spec `exercise-lib-admin`、改 `exercise-library-management`。
+>
+> 迭代二十 `exercise-media-instructions`（代码完成 + 待真机）：动作示意图 + 中文要领——内置动作 3 帧线稿（workout-guide/Everkinetic，已重新着色，CC BY-SA 4.0）存微信云存储；动作库与两处「添加动作」面板行右端静态缩略图，详情页曲线下方循环播放 + 要领，点击全屏放大（首批自定义组件 `components/exercise-{thumb,anim,guide,viewer}`，取图/要领纯函数 `utils/exerciseMedia.js`）；94 条力量动作要领统一重写；12 个内置动作规范中文名（旧名留作别名）、新增海豹划船 `seal_row`（内置 100→101）；历史动作名按 id 实时解析并回退保存时名称（`exerciseLib.displayName`）；出图脚本 `tools/media`（SVG 母版入库、PNG 不入库）。新增主 spec `exercise-guide`，改 `exercise-detail`/`exercise-library-management`/`in-app-usermanual`，不改集合字段。
 
 ## 文档索引
 

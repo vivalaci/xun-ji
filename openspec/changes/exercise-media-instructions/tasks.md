@@ -33,10 +33,10 @@
 
 ## 5. 文档
 
-- [ ] 5.1 `docs/usermanual.md` + `config/manual.js` 同源：动作库节改「内置 101 个」并说明缩略图/点击放大；首页或动作详情说明示意图与要领；FAQ 加「海豹划船已独立为新动作，此前记为『海豹划船』的记录现显示为『T杠划船』」；新增末节「致谢」（示意图改编已重新着色 CC BY-SA 4.0 + 许可链接文本；要领参考 exercises-dataset MIT）
-- [ ] 5.2 `CLAUDE.md` 与 `docs/06-technical-architecture.md`：`components/` 目录约定、云存储示意图、`tools/media` 开发期依赖说明；`docs/10-project-handoff.md` 代码地图/能力清单/动作数 101
-- [ ] 5.3 `README.md` 功能区（示意图与要领）+ `CHANGELOG.md` 迭代二十 + `docs/00-overview.md` 阶段表与迭代史
-- [ ] 5.4 `docs/11`、`docs/12`、`docs/13` 与两份映射 json：状态改为「已接入（迭代二十）」，要领以 `config/exerciseInstructions.js` 为准；一并入库
+- [x] 5.1 `docs/usermanual.md` + `config/manual.js` 同源：动作库节改「内置 101 个」并说明缩略图/点击放大；首页或动作详情说明示意图与要领；FAQ 加「海豹划船已独立为新动作，此前记为『海豹划船』的记录现显示为『T杠划船』」；新增末节「致谢」（示意图改编已重新着色 CC BY-SA 4.0 + 许可链接文本；要领参考 exercises-dataset MIT）
+- [x] 5.2 `CLAUDE.md` 与 `docs/06-technical-architecture.md`：`components/` 目录约定、云存储示意图、`tools/media` 开发期依赖说明；`docs/10-project-handoff.md` 代码地图/能力清单/动作数 101
+- [x] 5.3 `README.md` 功能区（示意图与要领）+ `CHANGELOG.md` 迭代二十 + `docs/00-overview.md` 阶段表与迭代史
+- [x] 5.4 `docs/11`、`docs/12`、`docs/13` 与两份映射 json：状态改为「已接入（迭代二十）」，要领以 `config/exerciseInstructions.js` 为准；一并入库
 
 ## 6. 验证与交接
 
