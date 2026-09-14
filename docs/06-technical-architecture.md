@@ -146,7 +146,7 @@
 
 ### 动作示意图（迭代二十，微信云存储 + 首批自定义组件）
 
-- **存储**：3 帧 PNG + 缩略图共约 3.7MB，远超主包 2MB，且分包资源主包页面引用不到 → 放**微信云存储** `exercise-media/<id>/`，权限「所有用户可读」；小程序 `<image>` 直接用 `cloud://` fileID。前缀常量只在 `config/exerciseMedia.js` 一处（换云环境改一行）；`PREFIX` 为空时全部按无图处理，不破图。
+- **存储**：3 帧 PNG + 缩略图共约 3.7MB，远超主包 2MB，且分包资源主包页面引用不到 → 放**微信云存储**，按 `<id>/` 文件夹上传（当前在存储桶根目录），权限「所有用户可读」；小程序 `<image>` 直接用 `cloud://` fileID。前缀常量只在 `config/exerciseMedia.js` 一处（换云环境改一行）；`PREFIX` 为空时全部按无图处理，不破图。
 - **产物**：`tools/media/build.js`（`sharp`，开发期依赖，不打包）从 `assets/exercise-media/<id>/*.svg` 母版改色 `#1F2937`，出 512 调色板 PNG + 160px 缩略图；SVG 进 git、PNG 不进 git，由管理员在云开发控制台手工上传。
 - **组件**（`components/`，只做展示）：`exercise-thumb` 列表静态缩略图（lazy-load，catchtap 放大不触发行点击）；`exercise-anim` 三层叠放 + CSS keyframes 乒乓循环（三帧 bindload 齐才播、任一失败隐藏；不用 setInterval 换 src，避免云端图重载闪白与频繁 setData）；`exercise-guide` 要领；`exercise-viewer` 放大层——由页面根部挂载，因「添加动作」面板带 `transform`，嵌在其中的 `position:fixed` 会被裁切。
 - **署名**：素材 CC BY-SA 4.0，重新着色属改编，致谢写在使用说明末节。

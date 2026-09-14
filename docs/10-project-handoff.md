@@ -158,7 +158,7 @@ node tests/algo.test.js
 
 进入**持续迭代更新**阶段：后续每个功能/修复仍走 OpenSpec change + PR 分支流程（见第七节与 [[feedback-pr-flow]]），归档打 tag；发版按 [07 发布流程](./07-development-guide.md) 上传 → 提交审核 → 发布。
 
-开发侧迭代一~十九均已归档打 tag。**进行中**：迭代二十 `exercise-media-instructions`（代码完成；待：示意图 PNG 上传云存储并回填 `config/exerciseMedia.js` 的 `PREFIX`、94 条要领过目、真机走查、sync/archive/tag）。后续可补：海豹划船示意图（上游无素材，可按 [docs/12](./12-illustration-production-guide.md) 自制）。
+开发侧迭代一~十九均已归档打 tag。**进行中**：迭代二十 `exercise-media-instructions`（代码完成，示意图已上传云存储并回填 `PREFIX`；待：94 条要领过目、真机走查、sync/archive/tag）。后续可补：海豹划船示意图（上游无素材，可按 [docs/12](./12-illustration-production-guide.md) 自制）。
 
 ---
 

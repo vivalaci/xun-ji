@@ -95,9 +95,9 @@ https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html
 
 ### 7. 上传动作示意图（可选，不做则 App 不显示示意图、其余功能正常）
 1. 出图：`cd tools/media`，`npm install`，`node build.js`（在 `assets/exercise-media/<id>/` 生成 `0/1/2.png` 与 `thumb.png`）。
-2. 云开发控制台 → 存储 → 新建目录 `exercise-media`，把各动作子目录（仅 PNG）上传进去，保持 `exercise-media/<id>/0.png` 结构。
+2. 云开发控制台 → 存储，把各动作子目录（文件夹名 = 动作 id，原样不改，仅 PNG）上传，保持 `<id>/0.png` 结构（可放根目录，也可放进某个子目录）。
 3. 存储权限设为「所有用户可读」。
-4. 复制任一文件的 File ID，把 `.../exercise-media` 之前的部分连同 `exercise-media` 填进 `config/exerciseMedia.js` 的 `PREFIX`（形如 `cloud://<环境ID>.<存储桶>/exercise-media`，末尾不带 `/`）。
+4. 复制任一文件的 File ID（如 `cloud://<环境ID>.<存储桶>/ab_wheel/0.png`），去掉末尾的 `/<id>/0.png`，剩下的部分填进 `config/exerciseMedia.js` 的 `PREFIX`（末尾不带 `/`；若放在子目录里，前缀要带上子目录名）。
 
 ### 8. 编译运行
 点「编译」即可在模拟器使用；首次进入「新建训练」会自动创建 5 套预设模板（三分化：推日/拉日/蹲日；二分化：上肢/下肢）。旧版本数据会自动迁移（模板归组、腿日更名蹲日、补种二分化）。「预览」可扫码真机体验。
