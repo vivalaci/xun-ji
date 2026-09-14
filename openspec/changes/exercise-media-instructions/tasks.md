@@ -40,9 +40,9 @@
 
 ## 6. 验证与交接
 
-- [ ] 6.1 语法校验：`Get-ChildItem -Recurse -Filter *.js | Where-Object { $_.FullName -notmatch 'node_modules' } | ForEach-Object { node --check $_.FullName }`
-- [ ] 6.2 算法单测：`node tests/algo.test.js` 全绿
-- [ ] 6.3 `openspec validate exercise-media-instructions`
-- [ ] 6.4 输出真机走查清单交给用户（含换账号/清缓存验证云存储读权限、面板内放大返回、离线无破图、改名与老记录显示、海豹划船无图）
+- [x] 6.1 语法校验：`Get-ChildItem -Recurse -Filter *.js | Where-Object { $_.FullName -notmatch 'node_modules' } | ForEach-Object { node --check $_.FullName }`
+- [x] 6.2 算法单测：`node tests/algo.test.js` 全绿
+- [x] 6.3 `openspec validate exercise-media-instructions`
+- [x] 6.4 输出真机走查清单交给用户（含换账号/清缓存验证云存储读权限、面板内放大返回、离线无破图、改名与老记录显示、海豹划船无图）
 - [ ] 6.5 【用户】真机走查
 - [ ] 6.6 【用户】`/opsx:sync` + `/opsx:archive`、push、开 PR、合并、打 tag
