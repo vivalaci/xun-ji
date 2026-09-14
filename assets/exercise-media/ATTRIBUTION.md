@@ -15,7 +15,7 @@
   - `0.svg`/`1.svg`/`2.svg`：512×512 透明底**矢量母版**（原始 `fill="#fff"`）——**进 git**。
   - `0.png`/`1.png`/`2.png`：512×512 透明底、重新着色 `#1F2937`、调色板压缩——详情页/放大层循环播放。
   - `thumb.png`：160px 静态缩略图（取第 1 帧，直接从 SVG 栅格化）——列表用。
-  - PNG 均由脚本生成、按 `<id>/` 文件夹上传微信云存储（位置由 `config/exerciseMedia.js` 的 `PREFIX` 决定），**不进 git**（`.gitignore`）。
+  - PNG 均由脚本生成、上传微信云存储 `exercise-media/<id>/`（取图前缀见 `config/exerciseMedia.js` 的 `PREFIX`），**不进 git**（`.gitignore`）。
 - **100 个动作全覆盖**（93 精确 + 7 近似）。id→slug 映射见 [docs/exercise-media-map.json](../../docs/exercise-media-map.json)。
 
 ## 用途与注意

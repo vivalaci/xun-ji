@@ -1,13 +1,12 @@
 // config/exerciseMedia.js —— 动作示意图（微信云存储）
 // 取图规则见 utils/exerciseMedia.js：<PREFIX>/<id>/0.png|1.png|2.png（循环帧）与 thumb.png（列表缩略图）。
-// 素材由 tools/media/build.js 从 assets/exercise-media/<id>/*.svg 生成，按 <动作id>/ 文件夹上传到云存储。
+// 素材由 tools/media/build.js 从 assets/exercise-media/<id>/*.svg 生成，上传到云存储 exercise-media/<id>/。
 // 来源：bryllim/workout-guide（基于 Everkinetic），已重新着色，CC BY-SA 4.0（署名见使用说明「致谢」）。
 
-// 云存储前缀 = 动作文件夹所在位置（末尾不带 /）。当前各动作文件夹直接放在存储桶根目录：
-//   cloud://<环境ID>.<存储桶>/<id>/0.png
-// 若日后改放到子目录，把子目录名接在前缀后面即可（如 '.../exercise-media'）。
+// 云存储前缀 = 动作文件夹所在目录（末尾不带 /）。各动作文件夹统一放在云存储 exercise-media/ 下：
+//   cloud://<环境ID>.<存储桶>/exercise-media/<id>/0.png
 // 留空 = 未上传：所有动作按「无图」处理，页面不显示示意图、不报错。
-const PREFIX = 'cloud://cloud1-d2g9e9fcu17d998fe.636c-cloud1-d2g9e9fcu17d998fe-1442218470';
+const PREFIX = 'cloud://cloud1-d2g9e9fcu17d998fe.636c-cloud1-d2g9e9fcu17d998fe-1442218470/exercise-media';
 
 // 有图动作清单：id → 帧数。只列出已上传素材的内置动作；
 // 自建（cus_）/全局（gbl_）动作、seal_row 等不在清单即视为无图，新增内置动作忘记配图也不会破图。

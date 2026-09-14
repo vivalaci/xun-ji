@@ -25,7 +25,7 @@
 ## Decisions
 
 ### D1：素材放云存储，按「路径约定 + 前缀常量 + 有图清单」取图
-云存储路径 `<PREFIX>/<id>/0.png|1.png|2.png|thumb.png`（方案期设想放 `exercise-media/` 子目录；实际上传在存储桶根目录，前缀随之取根，代码不受影响）。`config/exerciseMedia.js` 只存 `PREFIX`（形如 `cloud://<env>.<bucket>`，或其下子目录；用户上传后提供）与有图 id 清单（`{ bench: 3, ... }`）。`utils/exerciseMedia.js` 纯函数 `framesFor(id)` → 3 个 fileID 或 `[]`、`thumbFor(id)` → fileID 或 `''`，不在清单（`cus_`/`gbl_`/`seal_row`/未来新增内置）一律无图。
+云存储路径 `exercise-media/<id>/0.png|1.png|2.png|thumb.png`。`config/exerciseMedia.js` 只存 `PREFIX`（形如 `cloud://<env>.<bucket>/exercise-media`，用户上传后提供）与有图 id 清单（`{ bench: 3, ... }`）。`utils/exerciseMedia.js` 纯函数 `framesFor(id)` → 3 个 fileID 或 `[]`、`thumbFor(id)` → fileID 或 `''`，不在清单（`cus_`/`gbl_`/`seal_row`/未来新增内置）一律无图。
 - 否决「打进包/分包」：10MB 远超主包 2MB；分包资源主包页面引用不到。
 - 否决「每个动作存 fileID 字段」：300 个 fileID 绑死云环境，换环境全失效；且内置动作不在集合里，铁律 6 与之无关。
 - 否决「默认内置动作都有图」：未来往 config 加动作忘了配图会破图；显式清单更稳。
@@ -94,7 +94,7 @@
 
 ## Migration Plan
 
-无数据迁移。发布顺序：① 跑 `tools/media` 产出 PNG → ② 用户按 `<id>/` 文件夹上传至云存储、设「所有用户可读」、提供一个 fileID → ③ 填 `config/exerciseMedia.js` 的 `PREFIX` → ④ 真机走查 → ⑤ 发版。先于发版上传不影响线上（旧版本不读这些文件）。回滚：发版回退即可，云存储文件可保留。
+无数据迁移。发布顺序：① 跑 `tools/media` 产出 PNG → ② 用户上传至云存储 `exercise-media/<id>/`、设「所有用户可读」、提供一个 fileID → ③ 填 `config/exerciseMedia.js` 的 `PREFIX` → ④ 真机走查 → ⑤ 发版。先于发版上传不影响线上（旧版本不读这些文件）。回滚：发版回退即可，云存储文件可保留。
 
 ## Open Questions
 

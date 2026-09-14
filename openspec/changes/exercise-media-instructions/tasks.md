@@ -4,7 +4,7 @@
 - [x] 1.2 `.gitignore` 加 `assets/exercise-media/**/*.png`；`project.config.json` `packOptions.ignore` 加 `tools`（连同已删目录 `assets/pose-ref` 条目的移除）
 - [x] 1.3 运行脚本；抽样目视对比新旧 PNG（改色、线条、透明底），择定缩略图帧；记录单张与总体积（结果：与旧图目视一致；缩略图取第 1 帧 160px；300 帧共 3.36MB 均 11.2KB，100 缩略图共 295KB 均 2.9KB）
 - [x] 1.4 更正 `assets/exercise-media/ATTRIBUTION.md`（重新着色属改编，须注明已修改、同协议共享）；SVG 母版 + ATTRIBUTION.md + 脚本入库，确认 PNG 未进暂存区
-- [x] 1.5 【用户】在云开发控制台把 `assets/exercise-media/<id>/*.png`（共 400 个）上传到云存储（实际放在存储桶根目录 `<id>/`，`PREFIX` 已回填），存储权限设「所有用户可读」，发一个上传后文件的 fileID（我先给少量文件的试传步骤，确定批量方式）
+- [x] 1.5 【用户】在云开发控制台把 `assets/exercise-media/<id>/*.png`（共 400 个）上传到云存储 `exercise-media/<id>/`（`PREFIX` 已回填），存储权限设「所有用户可读」，发一个上传后文件的 fileID（我先给少量文件的试传步骤，确定批量方式）
 
 ## 2. 数据层与纯函数
 
